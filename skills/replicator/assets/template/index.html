@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <title>__EFFECT_TITLE__</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        font-family: "IBM Plex Sans", "Helvetica Neue", sans-serif;
+      }
+
+      html,
+      body {
+        margin: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        background: #050608;
+      }
+
+      body {
+        position: relative;
+      }
+
+      #app {
+        display: block;
+        width: 100%;
+        height: 100%;
+      }
+
+      .hud {
+        position: fixed;
+        top: 16px;
+        left: 16px;
+        z-index: 10;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        max-width: min(420px, calc(100vw - 32px));
+        padding: 12px 14px;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 14px;
+        background: rgba(10, 12, 15, 0.55);
+        backdrop-filter: blur(14px);
+        color: rgba(255, 255, 255, 0.92);
+        pointer-events: none;
+      }
+
+      .hud strong {
+        font-size: 13px;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+      }
+
+      .hud span {
+        font-size: 12px;
+        line-height: 1.45;
+        color: rgba(255, 255, 255, 0.7);
+      }
+    </style>
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js",
+          "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/",
+          "lil-gui": "https://cdn.jsdelivr.net/npm/lil-gui@0.20/+esm"
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <canvas id="app"></canvas>
+    <div class="hud">
+      <strong>__EFFECT_TITLE__</strong>
+      <span>Use this starter as the baseline and replace the placeholder look with the replicated effect.</span>
+    </div>
+    <script type="module" src="./main.js"></script>
+  </body>
+</html>

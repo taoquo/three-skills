@@ -1,0 +1,4 @@
+interface:
+  display_name: "Replicator"
+  short_description: "Recreate linked graphics effects in Three.js"
+  default_prompt: "Use $replicator to analyze these references and build a faithful Three.js remake with REPORT.md."
