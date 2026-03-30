@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
-"""
-Minimal validator for skills/*/SKILL.md files.
-"""
+"""Validator for the local skills repository."""
 
 from __future__ import annotations
 
@@ -10,6 +8,49 @@ import sys
 from pathlib import Path
 
 MAX_NAME_LENGTH = 64
+REQUIRED_TOP_LEVEL_FIELDS = ("name", "description", "license")
+REQUIRED_METADATA_FIELDS = ("version", "category", "render_backends", "shader_language")
+
+
+def parse_frontmatter(text: str) -> dict[str, object]:
+    data: dict[str, object] = {}
+    current_key: str | None = None
+    current_list_key: str | None = None
+
+    for raw_line in text.splitlines():
+        if not raw_line.strip():
+            continue
+
+        if re.match(r"^\s+-\s+", raw_line) and current_key == "metadata" and current_list_key:
+            data.setdefault(f"metadata.{current_list_key}", [])
+            casted = data[f"metadata.{current_list_key}"]
+            if isinstance(casted, list):
+                casted.append(re.sub(r"^\s+-\s+", "", raw_line).strip().strip('"'))
+            continue
+
+        top_match = re.match(r"^([A-Za-z0-9_-]+):\s*(.*)$", raw_line)
+        if top_match and not raw_line.startswith("  "):
+            key, value = top_match.groups()
+            current_key = key
+            current_list_key = None
+            if value:
+                data[key] = value.strip().strip('"')
+            else:
+                data[key] = {}
+            continue
+
+        meta_match = re.match(r"^  ([A-Za-z0-9_-]+):\s*(.*)$", raw_line)
+        if meta_match and current_key == "metadata":
+            key, value = meta_match.groups()
+            if value:
+                data[f"metadata.{key}"] = value.strip().strip('"')
+                current_list_key = None
+            else:
+                data[f"metadata.{key}"] = []
+                current_list_key = key
+            continue
+
+    return data
 
 
 def extract_frontmatter(text: str) -> str | None:
@@ -19,11 +60,23 @@ def extract_frontmatter(text: str) -> str | None:
     return match.group(1)
 
 
-def parse_scalar(frontmatter: str, key: str) -> str | None:
-    match = re.search(rf"^{re.escape(key)}:\s*(.+)$", frontmatter, re.M)
-    if not match:
-        return None
-    return match.group(1).strip()
+def find_markdown_links(text: str) -> list[str]:
+    return re.findall(r"\[[^\]]+\]\(([^)]+)\)", text)
+
+
+def validate_markdown_links(markdown_path: Path) -> list[str]:
+    errors: list[str] = []
+    text = markdown_path.read_text()
+    for target in find_markdown_links(text):
+        if target.startswith(("http://", "https://", "#", "mailto:")):
+            continue
+        clean_target = target.split("#", 1)[0]
+        if not clean_target:
+            continue
+        resolved = (markdown_path.parent / clean_target).resolve()
+        if not resolved.exists():
+            errors.append(f"{markdown_path.relative_to(markdown_path.parents[2])}: missing linked path {target}")
+    return errors
 
 
 def validate_skill(skill_dir: Path) -> list[str]:
@@ -37,8 +90,17 @@ def validate_skill(skill_dir: Path) -> list[str]:
     if frontmatter is None:
         return [f"{skill_dir.name}: missing or invalid YAML frontmatter block"]
 
-    name = parse_scalar(frontmatter, "name")
-    description = parse_scalar(frontmatter, "description")
+    data = parse_frontmatter(frontmatter)
+    name = data.get("name") if isinstance(data.get("name"), str) else None
+    description = data.get("description") if isinstance(data.get("description"), str) else None
+
+    for field in REQUIRED_TOP_LEVEL_FIELDS:
+        if not data.get(field):
+            errors.append(f"{skill_dir.name}: missing frontmatter {field}")
+
+    for field in REQUIRED_METADATA_FIELDS:
+        if not data.get(f"metadata.{field}"):
+            errors.append(f"{skill_dir.name}: missing metadata.{field}")
 
     if not name:
         errors.append(f"{skill_dir.name}: missing frontmatter name")
@@ -53,6 +115,38 @@ def validate_skill(skill_dir: Path) -> list[str]:
         errors.append(f"{skill_dir.name}: missing frontmatter description")
     elif "<" in description or ">" in description:
         errors.append(f"{skill_dir.name}: description contains angle brackets")
+
+    if not (skill_dir / "references").exists():
+        errors.append(f"{skill_dir.name}: missing references/ directory")
+
+    template_root = skill_dir / "assets" / "templates"
+    if not template_root.exists():
+        errors.append(f"{skill_dir.name}: missing assets/templates/ directory")
+    elif skill_dir.name == "replicator":
+        expected_templates = ("tsl-webgpu", "tsl-webgl2", "legacy-glsl")
+        for template_name in expected_templates:
+            template_dir = template_root / template_name
+            if not template_dir.exists():
+                errors.append(f"{skill_dir.name}: missing template {template_name}")
+
+    errors.extend(validate_markdown_links(skill_md))
+    for doc in skill_dir.rglob("*.md"):
+        if doc != skill_md:
+            errors.extend(validate_markdown_links(doc))
+
+    return errors
+
+
+def validate_readme(repo_root: Path, skill_dirs: list[Path]) -> list[str]:
+    errors: list[str] = []
+    readme = repo_root / "README.md"
+    if not readme.exists():
+        return ["README.md: missing file"]
+
+    text = readme.read_text()
+    for skill_dir in skill_dirs:
+        if f"`{skill_dir.name}`" not in text:
+            errors.append(f"README.md: missing skill listing for {skill_dir.name}")
 
     return errors
 
@@ -73,6 +167,7 @@ def main() -> int:
     errors: list[str] = []
     for skill_dir in skill_dirs:
         errors.extend(validate_skill(skill_dir))
+    errors.extend(validate_readme(repo_root, skill_dirs))
 
     if errors:
         for error in errors:

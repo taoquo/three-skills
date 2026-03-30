@@ -14,6 +14,12 @@
 
 Start with the user-provided links at depth 0.
 
+Rank source types in this order unless the task clearly demands otherwise:
+
+1. Mainstream graphics sources: SIGGRAPH, papers, widely cited talks, production notes, official writeups, and high-signal canonical repos.
+2. Cross-engine references: Unreal Engine, Unity, custom renderer writeups, or other rendering pipelines that explain how the effect is achieved.
+3. Three.js landing sources: current Three.js docs, manual pages, examples, forum posts, and implementation notes that help adapt the technique into a browser demo.
+
 Include all high-signal secondary sources you can extract from:
 
 - Article body and footnotes
@@ -74,6 +80,14 @@ Extract:
 - Visible post stack: glow, aberration, vignette, grain, distortion
 
 When code is unavailable, reverse-engineer the pass structure from the visuals.
+
+### Engine-specific reference
+
+Extract:
+
+- which part of the look is engine-specific and which part is generic
+- whether the engine is using material graph, custom shader code, compute, or a post stack
+- which parts can be translated into Three.js directly and which parts require adaptation
 
 ### Discussion, comments, or issues
 
@@ -165,12 +179,21 @@ Query patterns:
 Query patterns:
 
 - `<technique> three.js`
-- `<technique> WebGL`
-- `<technique> EffectComposer`
-- `<technique> ping pong framebuffer`
+- `<technique> WebGPU`
+- `<technique> TSL`
+- `<technique> three.js webgpu`
+- `<technique> three.js webgpu tsl`
 - `<technique> post-processing best settings`
 
 Prefer sources that contain runnable code, author commentary, or explicit pitfall notes.
+
+## Ignore Premature Performance Work
+
+For the default desktop-first path:
+
+- do not water down the look early just to save cycles
+- do not reject the best-looking path because it might be expensive
+- only optimize after the look is correct, unless the user explicitly gives a device or frame budget
 
 ## Enforce the coding gate
 

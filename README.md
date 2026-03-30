@@ -1,11 +1,10 @@
 # Three Skills
 
-Skills repository for reusable Codex-oriented workflows. The repo follows a simple structure inspired by the MiniMax `skills` repository: the root holds repository metadata and install notes, and the actual skills live under `skills/`.
+Skills repository for reusable Codex-oriented Three.js workflows. The current flagship skill is `replicator`, which now uses a TSL-first workflow with backend-aware guidance for `WebGPU` and `WebGL2`.
 
 ## Layout
 
 - `skills/`: reusable skills, one folder per skill
-- `assets/`: shared repository-level assets
 - `plugins/`: optional heavier plugin packages
 - `.codex/`: Codex-specific installation notes
 
@@ -13,7 +12,19 @@ Skills repository for reusable Codex-oriented workflows. The repo follows a simp
 
 | Skill | Description |
 | --- | --- |
-| `replicator` | Analyze graphics references and recreate the effect in Three.js, with research notes, a runnable demo, GUI controls, and a required `REPORT.md`. |
+| `replicator` | Analyze graphics references and recreate the effect in Three.js with a TSL-first workflow, backend selection, research notes, a runnable demo, GUI controls, and a required `REPORT.md`. |
+
+## Replicator v2 Highlights
+
+- `TSL-first`: prefer TSL for shader and material logic, then choose the runtime backend.
+- Backend priority: choose the strongest `WebGPU` path first, then fall back only when needed.
+- Legacy shaders remain allowed as a documented fallback, not the default path.
+- Research order is explicit: mainstream graphics references first, engine cross-checks second, Three.js landing details last.
+- Template matrix under `skills/replicator/assets/templates/` supports:
+  - `tsl-webgpu`
+  - `tsl-webgl2`
+  - `legacy-glsl`
+- Final demo output should stay as a minimal HTML page with no decorative text outside GUI or explicit error state.
 
 ## Codex Installation
 
@@ -29,7 +40,7 @@ See [`.codex/INSTALL.md`](./.codex/INSTALL.md) for a shorter explanation.
 
 ## Validation
 
-Run the lightweight validator before publishing changes:
+Run the validator before publishing changes:
 
 ```bash
 python3 scripts/validate_skills.py
