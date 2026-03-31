@@ -8,6 +8,7 @@ from __future__ import annotations
 import argparse
 import json
 import re
+import shlex
 import shutil
 import sys
 from pathlib import Path
@@ -482,8 +483,12 @@ def main() -> int:
         print(f"[ERROR] {exc}", file=sys.stderr)
         return 1
 
+    server_root = output_root
+    preview_url = f"http://localhost:4173/effects/{slug}/"
     print(f"[OK] Created {effect_dir}")
     print("[OK] Update REPORT.md and research/summary.md first, then replace the inline starter scene in index.html")
+    print(f"[OK] Preview with: python3 -m http.server 4173 -d {shlex.quote(str(server_root))}")
+    print(f"[OK] Then open: {preview_url}")
     return 0
 
 

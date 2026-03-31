@@ -68,21 +68,29 @@
         status.style.borderColor = "rgba(248, 113, 113, 0.35)";
         if (!window.__REPLICATOR_STARTER_BOOTED__) {
           status.textContent =
-            "Legacy starter module did not boot. Check import-map support and module loading before debugging the effect itself.";
+            "Legacy starter module did not boot. Check import-map support, module loading, and localhost preview before debugging the effect itself.";
         }
       }, 4500);
     </script>
     <script type="module">
-      import * as THREE from "three";
-      import { OrbitControls } from "three/addons/controls/OrbitControls.js";
-      import { GUI } from "lil-gui";
-
       const effectTitle = "__EFFECT_TITLE__";
       const canvas = document.getElementById("app");
       const status = document.getElementById("status");
+      window.__REPLICATOR_STARTER_BOOTED__ = true;
+
+      if (window.location.protocol === "file:") {
+        status.style.display = "block";
+        status.style.borderColor = "rgba(248, 113, 113, 0.35)";
+        status.textContent =
+          "Zero-build demos must be previewed over http://localhost/..., not file://. Run a local HTTP server from the repo root and reopen this path over localhost.";
+        throw new Error("localhost preview required");
+      }
+
+      const THREE = await import("three");
+      const { OrbitControls } = await import("three/addons/controls/OrbitControls.js");
+      const { GUI } = await import("lil-gui");
       const clock = new THREE.Clock();
       const size = new THREE.Vector2();
-      window.__REPLICATOR_STARTER_BOOTED__ = true;
 
       const params = {
         dpr: Math.min(window.devicePixelRatio, 2),

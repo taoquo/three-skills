@@ -220,7 +220,30 @@ Create the output under `effects/<effect-slug>/`.
 - Prefer a canonical archetype profile when the effect is not mixed.
 - Copy `assets/report-template.md` to `effects/<effect-slug>/REPORT.md` if the script is not used.
 - Reuse `assets/templates/tsl-webgpu/`, `assets/templates/tsl-webgl2/`, or `assets/templates/legacy-glsl/` based on the selected path unless the project already has a stronger local setup.
-- Keep the demo shell minimal: a plain HTML page, direct browser preview, and no extra explanatory text in the body outside GUI or explicit error state.
+- Keep the demo shell minimal: a plain HTML page, localhost browser preview, and no extra explanatory text in the body outside GUI or explicit error state.
+
+#### Zero-build import-map constraints
+
+For any HTML demo that uses import maps:
+
+- Always include a base `"three"` mapping.
+- If `"three/addons/"` is present, `"three"` must also be present.
+- Do not assume `"three/webgpu"` or `"three/addons/"` alone are enough.
+- Do not call the demo runnable if the base `"three"` mapping is missing.
+
+Use this baseline unless the current Three.js release requires a documented change:
+
+```json
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@<version>/build/three.module.js",
+    "three/webgpu": "https://cdn.jsdelivr.net/npm/three@<version>/build/three.webgpu.js",
+    "three/tsl": "https://cdn.jsdelivr.net/npm/three@<version>/build/three.tsl.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@<version>/examples/jsm/",
+    "lil-gui": "https://cdn.jsdelivr.net/npm/lil-gui@<version>/+esm"
+  }
+}
+```
 
 Keep the folder self-contained and easy to run.
 
@@ -264,6 +287,21 @@ Before finishing:
 - Record which modules stayed pure TSL and which ones required interop or raw shader fallbacks.
 - Cross-check the final renderer, TSL, post, and node usage against current official Three.js docs and manual pages before you call the implementation done.
 - Update `REPORT.md` with source notes, choices, open risks, and the latest change log entry.
+
+#### Preview and runtime constraints
+
+For zero-build browser demos:
+
+- Never assume `file://` is a supported preview mode.
+- Treat `http://localhost/...` as the default preview contract.
+- Final user instructions must include a local HTTP server command.
+- If preview was not validated over localhost, do not claim file-url compatibility.
+
+Before calling a zero-build HTML demo runnable, verify all of the following:
+
+1. the import map includes a base `"three"` entry
+2. the intended preview mode is `http://localhost/...`, not `file://`
+3. final user instructions include a local server command or equivalent localhost preview method
 
 Do not treat the report as optional. Every meaningful edit must be reflected there.
 

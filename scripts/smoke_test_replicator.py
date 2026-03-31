@@ -79,8 +79,15 @@ def main() -> int:
 
             if "__THREE_VERSION__" in index_text or "__LIL_GUI_VERSION__" in index_text:
                 raise AssertionError(f"runtime version token was not replaced in {index_path}")
+            assert_contains(
+                index_text,
+                f'"three": "https://cdn.jsdelivr.net/npm/three@{module.THREE_VERSION}/build/three.module.js"',
+                str(index_path),
+            )
             assert_contains(index_text, f"three@{module.THREE_VERSION}", str(index_path))
             assert_contains(index_text, f"lil-gui@{module.LIL_GUI_VERSION}", str(index_path))
+            assert_contains(index_text, 'window.location.protocol === "file:"', str(index_path))
+            assert_contains(index_text, "http://localhost/...", str(index_path))
 
             assert_contains(report_text, "## Archetype Route", str(report_path))
             assert_contains(report_text, "## Search Log", str(report_path))

@@ -1,0 +1,27 @@
+{
+  "effect_slug": "volumetric-lighting-webgpu",
+  "effect_title": "Volumetric Lighting (Froxel-based)",
+  "effect_archetype": "scene-post",
+  "canonical_profile": "scene-post",
+  "authoring_path": "pure-tsl",
+  "runtime_renderer": "webgpu-renderer",
+  "resource_model": "uniforms",
+  "pass_topology": "scene-plus-post",
+  "compatibility_contract": "desktop-webgpu-plus-webgl2-fallback",
+  "target_device_class": "desktop-mid",
+  "performance_contract": "balanced",
+  "dominant_bottleneck": "post-chain",
+  "post_pipeline_type": "selective-post",
+  "render_target_layout": "single-intermediate",
+  "history_requirement": "none",
+  "nearest_rejected_route": "fullscreen-raymarch",
+  "target_environment": "desktop-first",
+  "performance_priority": "deferred until look is correct",
+  "sources": [
+    "https://discourse.threejs.org/t/volumetric-lighting-in-webgpu/87959",
+    "https://www.youtube.com/watch?v=SW30QX1wxTY",
+    "https://research.nvidia.com/labs/rtr/approximate-mie/publications/approximate-mie.pdf",
+    "https://threejs.org/examples/webgpu_volume_lighting.html",
+    "https://github.com/mrdoob/three.js/pull/30530"
+  ]
+}

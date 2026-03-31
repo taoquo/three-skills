@@ -5,6 +5,8 @@ Skills repository for a single reusable Codex-oriented Three.js workflow: `repli
 ## Layout
 
 - `skills/`: reusable skills, one folder per skill
+- `effects/`: public example effects generated with the replicator workflow
+- `test/`: checked-in replicator fixtures used by validation scripts
 - `plugins/`: reserved for future heavier plugin packages; currently unused
 - `.codex/`: Codex-specific installation notes
 
@@ -52,6 +54,24 @@ ln -s ~/.codex/three-skills/skills ~/.agents/skills/three-skills
 ```
 
 See [`.codex/INSTALL.md`](./.codex/INSTALL.md) for a shorter explanation of the single-skill install model.
+
+## Example Effect
+
+The repository now includes a public example under [`effects/volumetric-lighting-webgpu/`](./effects/volumetric-lighting-webgpu/).
+
+Preview it from the repository root with:
+
+```bash
+python3 -m http.server 4173 -d .
+```
+
+Then open:
+
+```text
+http://localhost:4173/effects/volumetric-lighting-webgpu/
+```
+
+Do not treat `file://` as a supported preview mode for the zero-build demos in this repository.
 
 ## Validation
 

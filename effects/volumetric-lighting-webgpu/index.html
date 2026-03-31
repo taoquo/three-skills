@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <title>Volumetric Lighting (Froxel-based)</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        font-family: "IBM Plex Sans", "Helvetica Neue", sans-serif;
+      }
+
+      html,
+      body {
+        margin: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        background: #050608;
+      }
+
+      #app {
+        display: block;
+        width: 100%;
+        height: 100%;
+      }
+
+      .status {
+        position: fixed;
+        right: 16px;
+        bottom: 16px;
+        z-index: 10;
+        display: none;
+        max-width: min(420px, calc(100vw - 32px));
+        padding: 12px 14px;
+        border: 1px solid rgba(103, 232, 249, 0.22);
+        border-radius: 14px;
+        background: rgba(5, 8, 12, 0.8);
+        color: rgba(255, 255, 255, 0.82);
+        font-size: 12px;
+        line-height: 1.5;
+      }
+    </style>
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js",
+          "three/webgpu": "https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.webgpu.js",
+          "three/tsl": "https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.tsl.js",
+          "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/",
+          "lil-gui": "https://cdn.jsdelivr.net/npm/lil-gui@0.20/+esm"
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <canvas id="app"></canvas>
+    <div class="status" id="status">Initializing WebGPU starter...</div>
+    <script>
+      window.__REPLICATOR_STARTER_BOOTED__ = false;
+      window.__REPLICATOR_STARTER_RENDERER_READY__ = false;
+      window.setTimeout(() => {
+        const status = document.getElementById("status");
+        if (!status || window.__REPLICATOR_STARTER_RENDERER_READY__) return;
+        status.style.display = "block";
+        status.style.borderColor = "rgba(248, 113, 113, 0.35)";
+        if (!window.__REPLICATOR_STARTER_BOOTED__) {
+          status.textContent =
+            "WebGPU starter module did not boot. Check import-map support, module loading, and localhost preview before debugging the effect itself.";
+          return;
+        }
+        status.textContent =
+          "WebGPU starter is still initializing. Confirm you are previewing over http://localhost/... and try the WebGL2 fallback template if this does not progress.";
+      }, 4500);
+    </script>
+    <script>
+      const status = document.getElementById("status");
+      if (window.location.protocol === "file:") {
+        window.__REPLICATOR_STARTER_BOOTED__ = true;
+        status.style.display = "block";
+        status.style.borderColor = "rgba(248, 113, 113, 0.35)";
+        status.textContent =
+          "Zero-build demos must be previewed over http://localhost/..., not file://. Run a local HTTP server from the repo root and reopen this path over localhost.";
+      } else {
+        const moduleScript = document.createElement("script");
+        moduleScript.type = "module";
+        moduleScript.src = "./main.js";
+        document.body.appendChild(moduleScript);
+      }
+    </script>
+  </body>
+</html>
