@@ -19,6 +19,12 @@
 - History requirement:
 - Fallback path:
 
+## User Decision Log
+
+| Decision | Why it was asked | Options shown | Selected answer | Impact on plan |
+| --- | --- | --- | --- | --- |
+| `TODO` | `TODO` | `TODO` | `TODO` | `TODO` |
+
 ## Source Set
 
 | URL | Type | Contribution |
@@ -73,6 +79,12 @@
 | Query | Why it mattered | Decision changed |
 | --- | --- | --- |
 | `TODO` | `TODO` | `TODO` |
+
+## Delegated Research
+
+| Task | Scope | Key findings | Impact on plan |
+| --- | --- | --- | --- |
+| `TODO` | `TODO` | `TODO` | `TODO` |
 
 ## Evidence vs Inference
 

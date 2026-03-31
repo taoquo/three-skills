@@ -321,6 +321,8 @@ def write_supporting_files(
         "## Notes",
         "",
         "- Search canonical and mainstream graphics sources first, then engine references, then the Three.js landing path.",
+        "- Use AskUserOption for unresolved product-level tradeoffs such as renderer contract, fidelity target, or compatibility scope.",
+        "- Delegate bounded research work such as source parsing, link-tree expansion, and pitfall scans to subagents when it speeds up coverage.",
         "- Validate the final implementation surface against the official Three.js docs before sign-off.",
         "- Add the link tree, search terms, and implementation takeaways here.",
         "- Mirror the final internal implementation-surface decision, post-pipeline decision, performance contract, and fallback path in `../REPORT.md`.",
@@ -374,6 +376,8 @@ def write_supporting_files(
         "quality_ladder": quality_ladder,
         "target_environment": "desktop-first",
         "performance_priority": "deferred until look is correct",
+        "user_decision_log": [],
+        "delegated_research": [],
         "sources": [],
     }
     (research_dir / "sources.json").write_text(json.dumps(sources, indent=2) + "\n")

@@ -3,7 +3,7 @@ name: replicator
 license: MIT
 description: Analyze one or more graphics references and recreate the effect in Three.js. Use when the user shares a demo, article, video, Shadertoy, CodePen, GitHub repo, social thread, or screenshot and wants: a visual breakdown, a faithful or improved Three.js remake, research on likely rendering techniques, a runnable demo, tuning controls, or a REPORT.md that records sources, decisions, and revisions.
 metadata:
-  version: "3.0.0"
+  version: "3.1.0"
   category: threejs
   render_backends:
     - webgpu
@@ -40,6 +40,43 @@ Default environment assumptions for this skill:
 - Target desktop or laptop browsers first.
 - Ignore aggressive performance optimization unless the user gives a hard device, FPS, or power constraint.
 - Prefer the strongest visually convincing solution that still lands cleanly in current Three.js.
+
+## Escalate Material Choices With AskUserOption
+
+Use `AskUserOption` only for decisions that change product intent, compatibility promises, maintenance cost, or acceptance criteria.
+
+Do not ask the user to choose low-level implementation details that can be decided cleanly from the references and constraints.
+
+Good `AskUserOption` prompts are coarse, downstream-shaping choices with 2 to 4 concrete options and a clear recommended default.
+
+Bad `AskUserOption` prompts are:
+
+- numeric tuning values
+- pass-local implementation details
+- choices already forced by the reference or browser target
+- questions whose answers would not change the implementation plan
+
+Ask at most 2 to 4 questions total. If more uncertainty exists, rank the decisions by impact and ask only the ones that materially change the route.
+
+Use this matrix:
+
+| Decision area | Ask when | Structured options | Default stance |
+| --- | --- | --- | --- |
+| Delivery intent | The user shared a reference but did not say whether the goal is exact match, cleaned-up match, or inspired variant | `faithful-remake`, `faithful-plus-cleanup`, `inspired-variant` | Prefer `faithful-remake` unless the user signals creative freedom |
+| Renderer and compatibility contract | The effect could land on either `WebGPU` or `WebGL2`, and browser reach or maintenance cost is unclear | `desktop-webgpu`, `webgl2-first`, `desktop-webgpu-plus-webgl2-fallback` | Prefer `desktop-webgpu` for controlled demos and `webgl2-first` for public compatibility-sensitive demos |
+| Authoring path strictness | A legacy shader port or low-level route is plausible, but it is unclear whether the user values maintainability over direct porting | `pure-tsl`, `tsl-plus-interop`, `raw-port` | Prefer `pure-tsl`, then `tsl-plus-interop`, then raw shader fallback |
+| Device and performance target | The user has not stated whether the effect is desktop-only, laptop-balanced, or mobile-safe | `desktop-high`, `laptop-balanced`, `mobile-safe` | Prefer `laptop-balanced` when no hard requirement exists |
+| Post fidelity | The look could be achieved either with a heavy post stack or a simpler base render plus light polish | `preserve-full-post-look`, `balanced-post`, `minimal-post` | Prefer the lightest post stack that still preserves the signature finish |
+| Route arbitration | Two archetypes or pipelines preserve different non-negotiable traits from the references | `route-a`, `route-b`, `hybrid-follow-up` | Prefer one dominant route first; do not build a hybrid first pass unless the user explicitly wants it |
+| Interaction scope | The reference suggests possible pointer, scroll, camera, or audio interaction but the required scope is unclear | `no-extra-interaction`, `pointer-only`, `rich-interaction` | Prefer `pointer-only` when interactivity affects the look but is not the main product requirement |
+
+Each `AskUserOption` prompt should include:
+
+- what decision is being made
+- why it changes the implementation plan
+- 2 to 4 options with explicit tradeoffs
+- one recommended option
+- what will happen if the user does not answer and the default is applied
 
 ## Route By Archetype First
 
@@ -78,6 +115,7 @@ If two references conflict, preserve the primary reference and treat the other o
 Produce all of the following for each effect:
 
 - A chosen archetype and a short justification for why it fits better than the nearest alternative route.
+- A user-decision log whenever `AskUserOption` was used, including the question, options shown, selected answer, and impact on the plan.
 - A measurable effect spec covering look, motion, interaction, invariants, and constraints.
 - An implementation-surface decision covering authoring path, runtime renderer, resource model, pass topology, compatibility contract, and fallback path.
 - A performance decision covering target device class, performance contract, dominant bottleneck, degradation ladder, and exposed controls.
@@ -106,7 +144,7 @@ At minimum, record:
 - which traits are non-negotiable from each accepted reference
 - which internal decision domains are expected to matter: implementation surface, post pipeline, performance contract
 
-If the archetype is unclear, write `mixed` and explain what would settle it.
+If the archetype is unclear, write `mixed` and explain what would settle it. If two materially different routes remain plausible after that analysis, use `AskUserOption` to let the user choose which tradeoff to preserve first.
 
 ### 2. Model the effect before coding
 
@@ -144,6 +182,36 @@ Use technique names, not vague adjectives. Record the module list in `REPORT.md`
 ### 4. Check TSL fit and research before coding
 
 Treat the user links as the starting point, not the full source of truth.
+
+Use subagents for bounded research and evidence-gathering work when that work is parallelizable.
+
+Good subagent tasks:
+
+- parse one provided source and extract the core idea, parameters, outbound links, and likely pass structure
+- expand one branch of the link tree
+- scan comments, issues, or discussions for pitfalls and workarounds
+- survey engine-specific references for one module
+- survey Three.js landing references for one module
+- generate terminology and English-first search phrases for one module
+
+Subagent outputs should be structured and easy to merge:
+
+- source
+- takeaway
+- evidence vs inference
+- open question
+- recommended next link or next search
+
+Keep these tasks local to the main agent:
+
+- final archetype choice
+- final implementation-surface choice
+- final post and performance decisions
+- conflict resolution between sources
+- implementation plan ownership
+- code edits and report synthesis
+
+Do not split the same source branch across multiple subagents unless the branch is large enough to partition cleanly.
 
 If there are multiple references, unify them into one effect spec before coding:
 
@@ -191,6 +259,8 @@ State all of these in the report:
 - Rejected backend options
 - Fallback path if the preferred backend or authoring path stalls
 
+If the renderer or compatibility route is still ambiguous after research, use `AskUserOption` instead of silently picking a product contract the user may not want.
+
 Use the internal implementation-surface references as the source of truth for this decision. Read [references/platform/interface-decision-tree.md](references/platform/interface-decision-tree.md), [references/platform/authoring-paths.md](references/platform/authoring-paths.md), [references/platform/backend-capability-matrix.md](references/platform/backend-capability-matrix.md), [references/platform/webgpu-resource-patterns.md](references/platform/webgpu-resource-patterns.md), [references/platform/pipeline-archetypes.md](references/platform/pipeline-archetypes.md), [references/platform/renderer-compatibility.md](references/platform/renderer-compatibility.md), and [references/platform/official-threejs-webgpu.md](references/platform/official-threejs-webgpu.md) based on the chosen route.
 
 Use these scene archetypes:
@@ -209,6 +279,8 @@ If the look depends on post, decide these explicitly:
 - pass order
 - history requirement
 - quality tiers
+
+If the main open question is how much finish must survive versus how much cost can be cut, use `AskUserOption` to let the user choose the post-fidelity contract.
 
 Use the internal post-pipeline references as the source of truth for this decision. Read [references/postfx/post-chain-selection.md](references/postfx/post-chain-selection.md), [references/postfx/render-target-patterns.md](references/postfx/render-target-patterns.md), [references/postfx/history-feedback.md](references/postfx/history-feedback.md), [references/postfx/quality-tiering.md](references/postfx/quality-tiering.md), and [references/postfx/official-three-postfx.md](references/postfx/official-three-postfx.md) based on the chosen route.
 
@@ -342,6 +414,7 @@ Load only the files that help the current task:
 State these decisions clearly in the report and the user-facing summary:
 
 - Which archetype was chosen and why.
+- Which `AskUserOption` prompts were used, which options were shown, and how the answers changed the plan.
 - What the effect is made of.
 - Which techniques are required versus replaceable.
 - Which authoring path was chosen and why.
@@ -350,5 +423,6 @@ State these decisions clearly in the report and the user-facing summary:
 - Which post pipeline type, render-target layout, history requirement, and pass order were chosen and why.
 - Which captures were used for acceptance and what the fidelity score was.
 - Which sources influenced the final plan.
+- Which research branches were delegated to subagents and what they contributed.
 - Which risks remain unresolved.
 - Which switches preserve the look when performance drops.

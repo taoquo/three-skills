@@ -31,6 +31,8 @@ The knowledge for those domains now lives under [`skills/replicator/references/`
 ## Replicator v3 Highlights
 
 - Archetype-first routing: choose `material-study`, `scene-post`, `fullscreen-raymarch`, `instanced-particles`, or `feedback-trails` before implementation.
+- Structured user-option escalation: ask the user to choose only when renderer, compatibility, fidelity, or scope tradeoffs would materially change the route.
+- Research delegation: bounded source parsing, link-tree expansion, and pitfall scans can be split across subagents while final routing stays local.
 - `TSL-first`: prefer TSL for shader and material logic, then choose the runtime backend.
 - Backend priority: choose the strongest `WebGPU` path first, then fall back only when needed.
 - Legacy shaders remain allowed as a documented fallback, not the default path.

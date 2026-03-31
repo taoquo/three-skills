@@ -1,4 +1,4 @@
 interface:
   display_name: "Replicator"
-  short_description: "Recreate linked graphics effects in Three.js with internal platform, post, and performance decisions"
-  default_prompt: "Use $replicator to analyze these references, choose the implementation surface, post pipeline, and performance contract, and build a faithful Three.js remake with REPORT.md."
+  short_description: "Recreate linked graphics effects in Three.js with structured user-option decisions and delegated research"
+  default_prompt: "Use $replicator to analyze these references, escalate material renderer or scope tradeoffs with AskUserOption, delegate bounded research tasks to subagents, choose the implementation surface, post pipeline, and performance contract, and build a faithful Three.js remake with REPORT.md."
