@@ -12,6 +12,14 @@ Useful starting points:
 - https://threejs.org/examples/?q=post
 - https://threejs.org/examples/?q=webgpu
 - https://threejs.org/manual/
+- https://github.com/mrdoob/three.js/tree/dev/examples/jsm
+
+Check these concrete topics:
+
+- `EffectComposer`-style patterns on the WebGL path
+- render-target and texture handoff patterns in official examples
+- current WebGPU examples that do post or post-adjacent screen-space composition
+- whether the chosen pass order mirrors an official example, a documented manual pattern, or a local inference
 
 ## Validate These Points
 
@@ -25,3 +33,4 @@ Useful starting points:
 - which official examples or docs were checked
 - which pass-order or render-target decisions they confirm
 - which parts of the design still rely on inference
+- whether the chosen implementation follows a concrete pattern from [code-patterns.md](code-patterns.md)

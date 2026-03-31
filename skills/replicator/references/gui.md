@@ -18,6 +18,25 @@ Favor:
 
 Mirror the GUI defaults in `REPORT.md`.
 
+## Recommended ranges
+
+Use these as default starting ranges unless the effect clearly needs a tighter or wider contract.
+
+| Control | Recommended default | Recommended range | Notes |
+| --- | --- | --- | --- |
+| `dpr` | `min(devicePixelRatio, 2)` | `0.5-2.0` | Expose in coarse steps when it is a performance lever |
+| `exposure` | `1.0` | `0.2-2.4` | Keep broad enough for tone-mapping alignment, not look destruction |
+| `speed` | `1.0` | `0.0-5.0` | Default to `0-3` if the motion language is subtle |
+| `timeScale` | `1.0` | `0.0-2.0` | Use when time control is separate from stylistic speed |
+| `bloomStrength` | `0.3-0.8` | `0.0-2.0` | Clamp tighter for restrained scenes |
+| `bloomThreshold` | `0.6-0.9` | `0.0-1.0` | Avoid exposing values that make everything glow by default |
+| `bloomRadius` | `0.1-0.4` | `0.0-1.0` | Keep narrow when the effect should stay crisp |
+| `contrast` | `0.5-1.0` | `0.0-2.0` | Prefer smaller ranges for physically grounded looks |
+| `fogDensity` | effect-specific | `0.0-0.2` | Go wider only when fog is the hero |
+| `grain` | `0.0-0.08` | `0.0-0.2` | Small ranges preserve readability |
+| `decay` | `0.9-0.99` | `0.0-1.0` | Feedback effects often need tighter practical ranges |
+| `mix` | `0.5` | `0.0-1.0` | Good for history blend and composite controls |
+
 ## Use stable groups
 
 Always include these groups unless the effect is too simple to justify them.

@@ -40,6 +40,12 @@ Use when:
 
 Do not choose this by default. It adds complexity quickly.
 
+Typical examples:
+
+- G-buffer style material, normal, or depth separation
+- deferred or lighting-heavy experiments
+- cases where one pass needs to feed several later passes without repacking everything
+
 ## `selective-mask-chain`
 
 Use when:
@@ -56,3 +62,14 @@ Typical examples:
 ## Rule
 
 Only upgrade the layout when the simpler option cannot express the look cleanly.
+
+## Pass-to-pass data rules
+
+Keep the handoff between passes explicit:
+
+- texture outputs should have stable names and one declared owner pass
+- uniforms should carry cheap scalar controls, not large transient image data
+- use buffers only when the data is structured and reused across passes
+- document which pass produces history, masks, or auxiliary targets before wiring the next pass
+
+If a pass graph cannot be explained as `inputs -> outputs -> next consumer`, the layout is probably too complicated.

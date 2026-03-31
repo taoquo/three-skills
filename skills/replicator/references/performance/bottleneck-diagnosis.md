@@ -55,6 +55,18 @@ Typical fixes:
 - shrink buffer formats or pass count
 - reduce feedback or history usage
 
+Memory and VRAM signs:
+
+- render targets or history buffers dominate allocation count
+- texture resolution changes affect stability as much as frame time
+- the scene fails only on lower-memory devices or after warmup
+
+WebGPU-specific signs:
+
+- storage-buffer or storage-texture traffic scales poorly with entity count
+- multiple large read/write resources are touched every frame
+- the effect gets slower mainly as buffer size grows, even before shading complexity changes
+
 ## `post-chain`
 
 Likely when:
@@ -79,6 +91,12 @@ Typical fixes:
 - reduce scene churn
 - batch or instance
 - simplify event, GUI, or per-frame bookkeeping
+
+Common clues:
+
+- `renderer.info` reports modest GPU work but frame time is still high
+- turning off post or lowering DPR does not help enough
+- startup hitches or per-frame allocations dominate the user-visible slowdown
 
 ## `unknown`
 

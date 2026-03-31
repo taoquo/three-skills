@@ -52,3 +52,12 @@ Use this only when:
 - the team can afford maintaining both paths
 
 If parity will be approximate, say that explicitly.
+
+Cost checklist:
+
+- every behavior change now needs two landing paths or one heavily abstracted shared core
+- test coverage expands from one renderer matrix to two
+- GUI controls drift unless both paths document identical ranges and semantics
+- debugging gets slower because visual regressions may be renderer-specific, shader-specific, or synchronization-specific
+
+Use `dual-path` only when the product value is larger than the maintenance tax.

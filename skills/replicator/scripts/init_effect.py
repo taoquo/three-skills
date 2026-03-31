@@ -12,6 +12,11 @@ import shutil
 import sys
 from pathlib import Path
 
+DEFAULT_RUNTIME_VERSIONS = {
+    "three": "0.180.0",
+    "lil_gui": "0.20",
+}
+
 TEXT_SUFFIXES = {
     ".css",
     ".frag",
@@ -165,6 +170,26 @@ TEMPLATE_BY_KEY = {
 }
 
 
+def load_runtime_versions() -> dict[str, str]:
+    skill_root = Path(__file__).resolve().parent.parent
+    versions_path = skill_root / "assets" / "runtime-versions.json"
+    if not versions_path.exists():
+        return dict(DEFAULT_RUNTIME_VERSIONS)
+
+    data = json.loads(versions_path.read_text())
+    versions = dict(DEFAULT_RUNTIME_VERSIONS)
+    for key in versions:
+        value = data.get(key)
+        if isinstance(value, str) and value.strip():
+            versions[key] = value.strip()
+    return versions
+
+
+RUNTIME_VERSIONS = load_runtime_versions()
+THREE_VERSION = RUNTIME_VERSIONS["three"]
+LIL_GUI_VERSION = RUNTIME_VERSIONS["lil_gui"]
+
+
 def normalize_slug(raw: str) -> str:
     slug = re.sub(r"[^a-z0-9]+", "-", raw.strip().lower())
     slug = re.sub(r"-{2,}", "-", slug).strip("-")
@@ -285,6 +310,8 @@ def write_supporting_files(
         f"- Post pipeline type: `{post_pipeline_type}`",
         f"- Render-target layout: `{render_target_layout}`",
         f"- History requirement: `{history_requirement}`",
+        f"- Three.js version: `{THREE_VERSION}`",
+        f"- lil-gui version: `{LIL_GUI_VERSION}`",
         f"- Profile: `{requested_profile}`",
         "- Target environment: `desktop-first`",
         "- Performance priority: `deferred until look is correct`",
@@ -337,6 +364,8 @@ def write_supporting_files(
         "post_pipeline_type": post_pipeline_type,
         "render_target_layout": render_target_layout,
         "history_requirement": history_requirement,
+        "three_version": THREE_VERSION,
+        "lil_gui_version": LIL_GUI_VERSION,
         "profile": canonical_profile,
         "profile_alias": alias,
         "nearest_rejected_route": nearest_rejected_route,
@@ -376,6 +405,8 @@ def scaffold_effect(
         "__BACKEND__": resolved_backend,
         "__SHADER_LANGUAGE__": resolved_shader,
         "__PROFILE__": canonical_profile,
+        "__THREE_VERSION__": THREE_VERSION,
+        "__LIL_GUI_VERSION__": LIL_GUI_VERSION,
     }
 
     for path in effect_dir.rglob("*"):

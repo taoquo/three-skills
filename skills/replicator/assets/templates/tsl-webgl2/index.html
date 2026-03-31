@@ -44,13 +44,14 @@
         line-height: 1.5;
       }
     </style>
+    <!-- Starter dependency versions are injected by init_effect.py from assets/runtime-versions.json. -->
     <script type="importmap">
       {
         "imports": {
-          "three/webgpu": "https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.webgpu.js",
-          "three/tsl": "https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.tsl.js",
-          "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/",
-          "lil-gui": "https://cdn.jsdelivr.net/npm/lil-gui@0.20/+esm"
+          "three/webgpu": "https://cdn.jsdelivr.net/npm/three@__THREE_VERSION__/build/three.webgpu.js",
+          "three/tsl": "https://cdn.jsdelivr.net/npm/three@__THREE_VERSION__/build/three.tsl.js",
+          "three/addons/": "https://cdn.jsdelivr.net/npm/three@__THREE_VERSION__/examples/jsm/",
+          "lil-gui": "https://cdn.jsdelivr.net/npm/lil-gui@__LIL_GUI_VERSION__/+esm"
         }
       }
     </script>
@@ -184,6 +185,8 @@
       async function init() {
         try {
           setStatus("Initializing WebGL2 fallback renderer...");
+          // Three.js keeps the TSL-capable entry point on WebGPURenderer.
+          // forceWebGL switches that unified API surface onto a WebGL2 backend.
           renderer = new THREE.WebGPURenderer({
             canvas,
             antialias: true,

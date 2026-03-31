@@ -5,7 +5,7 @@ Skills repository for a single reusable Codex-oriented Three.js workflow: `repli
 ## Layout
 
 - `skills/`: reusable skills, one folder per skill
-- `plugins/`: optional heavier plugin packages
+- `plugins/`: reserved for future heavier plugin packages; currently unused
 - `.codex/`: Codex-specific installation notes
 
 ## Available Skills
@@ -38,6 +38,7 @@ The knowledge for those domains now lives under [`skills/replicator/references/`
   - `tsl-webgpu`
   - `tsl-webgl2`
   - `legacy-glsl`
+- Starter dependency versions are pinned in `skills/replicator/assets/runtime-versions.json`.
 - Final demo output should stay as a minimal HTML page with no decorative text outside GUI or explicit error state.
 
 ## Codex Installation

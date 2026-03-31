@@ -2,6 +2,26 @@
 
 Start by classifying the effect before choosing APIs.
 
+```mermaid
+flowchart TD
+  A["Start: classify the effect"] --> B{"One draw or one full-screen pass?"}
+  B -->|Yes| C["Prefer single-pass-material or fullscreen-procedural"]
+  B -->|No| D{"Needs state across frames?"}
+  D -->|Yes| E["Prefer render-target-history first"]
+  D -->|No| F{"Mainly scene rendering plus polish?"}
+  F -->|Yes| G["Prefer scene-plus-post"]
+  D -->|Yes| H{"State is large or randomly accessed?"}
+  H -->|Yes| I["Escalate to storage-buffer or storage-texture"]
+  H -->|No| J["Use feedback-loop or simulation-plus-render"]
+  I --> K{"Needs explicit compute?"}
+  K -->|Yes| L["Prefer compute-plus-render and expect WebGPU"]
+  K -->|No| M["Keep the smallest surface that stays honest"]
+  C --> M
+  G --> M
+  J --> M
+  L --> M
+```
+
 ## 1. Is the effect local to one draw or one full-screen pass?
 
 If yes:

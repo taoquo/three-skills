@@ -10,7 +10,11 @@ import struct
 import sys
 from pathlib import Path
 
-IMAGE_EXTENSIONS = {".png", ".jpg", ".jpeg", ".webp"}
+SUPPORTED_IMAGE_EXTENSIONS = {".png", ".jpg", ".jpeg", ".webp"}
+KNOWN_CAPTURE_EXTENSIONS = (".png", ".jpg", ".jpeg", ".webp", ".avif")
+UNSUPPORTED_FORMAT_HINTS = {
+    ".avif": "AVIF captures are detected but size parsing is not implemented yet. Convert to PNG, JPEG, or WebP if you need automated size checks.",
+}
 DEFAULT_SLOTS = ("01", "02")
 
 
@@ -118,7 +122,7 @@ def collect_capture_slots(captures_dir: Path, default_slots: list[str]) -> list[
     pattern = re.compile(r"^(reference|current)-([a-zA-Z0-9_-]+)\.[^.]+$")
 
     for path in captures_dir.iterdir():
-        if not path.is_file() or path.suffix.lower() not in IMAGE_EXTENSIONS:
+        if not path.is_file() or path.suffix.lower() not in KNOWN_CAPTURE_EXTENSIONS:
             continue
         match = pattern.match(path.name)
         if match:
@@ -128,11 +132,23 @@ def collect_capture_slots(captures_dir: Path, default_slots: list[str]) -> list[
 
 
 def resolve_capture_file(captures_dir: Path, prefix: str, slot: str) -> Path | None:
-    for ext in (".png", ".jpg", ".jpeg", ".webp"):
+    for ext in KNOWN_CAPTURE_EXTENSIONS:
         candidate = captures_dir / f"{prefix}-{slot}{ext}"
         if candidate.exists():
             return candidate
     return None
+
+
+def describe_unsupported_format(path: Path | None) -> str | None:
+    if path is None:
+        return None
+    suffix = path.suffix.lower()
+    if suffix in SUPPORTED_IMAGE_EXTENSIONS:
+        return None
+    return UNSUPPORTED_FORMAT_HINTS.get(
+        suffix,
+        f"{suffix} captures are detected but not parsed for automated size checks.",
+    )
 
 
 def build_manifest(effect_dir: Path, slots: list[str]) -> dict[str, object]:
@@ -165,6 +181,21 @@ def build_manifest(effect_dir: Path, slots: list[str]) -> dict[str, object]:
         for entry in entries
         if entry["reference_exists"] and entry["current_exists"] and not entry["size_match"]
     ]
+    unsupported_formats = []
+
+    for entry in entries:
+        for prefix in ("reference", "current"):
+            path_key = f"{prefix}_path"
+            note = describe_unsupported_format(effect_dir / str(entry[path_key])) if entry[path_key] else None
+            if note:
+                unsupported_formats.append(
+                    {
+                        "slot": entry["slot"],
+                        "role": prefix,
+                        "path": entry[path_key],
+                        "note": note,
+                    }
+                )
 
     return {
         "effect_dir": str(effect_dir),
@@ -174,6 +205,7 @@ def build_manifest(effect_dir: Path, slots: list[str]) -> dict[str, object]:
         "missing_reference": missing_reference,
         "missing_current": missing_current,
         "size_mismatches": size_mismatches,
+        "unsupported_formats": unsupported_formats,
         "entries": entries,
     }
 
@@ -188,6 +220,7 @@ def write_review(effect_dir: Path, manifest: dict[str, object]) -> None:
         f"- Missing reference slots: `{', '.join(manifest['missing_reference']) or 'none'}`",
         f"- Missing current slots: `{', '.join(manifest['missing_current']) or 'none'}`",
         f"- Size mismatches: `{', '.join(manifest['size_mismatches']) or 'none'}`",
+        f"- Unsupported formats: `{len(manifest['unsupported_formats'])}`",
         "",
         "## Pair Coverage",
         "",
@@ -200,6 +233,23 @@ def write_review(effect_dir: Path, manifest: dict[str, object]) -> None:
         cur_label = entry["current_path"] or "missing"
         size_match = "yes" if entry["size_match"] else ("n/a" if not entry["reference_exists"] or not entry["current_exists"] else "no")
         lines.append(f"| `{entry['slot']}` | `{ref_label}` | `{cur_label}` | `{size_match}` | `TODO` |")
+
+    lines.extend(
+        [
+            "",
+            "## Unsupported Format Notes",
+            "",
+        ]
+    )
+
+    unsupported_formats = manifest["unsupported_formats"]
+    if unsupported_formats:
+        for item in unsupported_formats:
+            lines.append(
+                f"- `{item['path']}`: {item['note']}"
+            )
+    else:
+        lines.append("- `none`")
 
     lines.extend(
         [
@@ -236,6 +286,12 @@ def main() -> int:
 
     print(f"[OK] wrote {captures_dir / 'manifest.json'}")
     print(f"[OK] wrote {captures_dir / 'review.md'}")
+
+    unsupported_formats = manifest["unsupported_formats"]
+    if unsupported_formats:
+        print("[WARN] unsupported capture formats were detected:", file=sys.stderr)
+        for item in unsupported_formats:
+            print(f"[WARN] {item['path']}: {item['note']}", file=sys.stderr)
 
     if args.strict and (manifest["missing_reference"] or manifest["missing_current"]):
         print("[ERROR] capture pairs are incomplete", file=sys.stderr)

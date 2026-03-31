@@ -47,3 +47,23 @@ Preferred order:
 Expose only the first few safe steps in the GUI.
 
 Keep more destructive steps internal unless the user is explicitly debugging or benchmarking.
+
+## Adaptive quality
+
+Use runtime adaptation only when:
+
+- the effect is deployed to a wide hardware range
+- a static contract would either look too weak on good hardware or fail too often on weaker hardware
+- the adaptation can move one or two safe levers without changing the visual language too abruptly
+
+Prefer this order for automatic adjustments:
+
+1. internal render scale or DPR
+2. post resolution or iteration count
+3. sample count, step count, or simulation resolution
+
+Guardrails:
+
+- do not oscillate every frame; debounce changes over a short window
+- do not auto-toggle many unrelated switches at once
+- keep the minimum quality floor explicit in the report

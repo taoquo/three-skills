@@ -136,6 +136,9 @@ Stop expanding when:
 - The remaining links are low signal
 - The content is blocked by login or payment
 - The effect is already well explained by the existing tree
+- Two consecutive depth layers add no new technique modules, no new implementation clues, and no new pitfall notes
+- Three consecutive high-signal links fail to change the plan, terminology list, or module boundaries
+- Every critical module already has a principle source, an implementation source, and a pitfall source
 
 If you stop early, say why in `REPORT.md`.
 

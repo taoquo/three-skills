@@ -58,6 +58,14 @@ Canonical archetypes:
 
 If the effect spans multiple archetypes, choose the dominant one and call out the secondary archetype in `REPORT.md`.
 
+If the user provides multiple references, do not average them blindly. Rank them first:
+
+- primary reference: defines the core silhouette, motion language, and composition
+- secondary reference: contributes one or two explicit modules such as post polish, surface treatment, or interaction
+- accent reference: contributes palette, timing, or a narrow finish detail only
+
+If two references conflict, preserve the primary reference and treat the other one as an optional module or a rejected route.
+
 ## Do Not Use The Full Workflow For
 
 - Pure material or lighting exploration with no external reference to match.
@@ -93,6 +101,9 @@ At minimum, record:
 - chosen archetype
 - why it fits
 - nearest rejected archetype
+- primary reference
+- secondary or accent references
+- which traits are non-negotiable from each accepted reference
 - which internal decision domains are expected to matter: implementation surface, post pipeline, performance contract
 
 If the archetype is unclear, write `mixed` and explain what would settle it.
@@ -133,6 +144,13 @@ Use technique names, not vague adjectives. Record the module list in `REPORT.md`
 ### 4. Check TSL fit and research before coding
 
 Treat the user links as the starting point, not the full source of truth.
+
+If there are multiple references, unify them into one effect spec before coding:
+
+- keep one primary silhouette and motion model
+- import only the secondary modules that survive in the same render graph
+- reject combinations that require mutually incompatible pipelines unless the user explicitly wants a hybrid
+- if the references imply two different pipelines, implement the dominant route first and record the secondary route as a follow-up
 
 - Search in this order:
   1. Mainstream or canonical graphics explanations and implementations: SIGGRAPH material, papers, talks, production notes, widely cited repos, or other authoritative references.
@@ -261,6 +279,7 @@ Load only the files that help the current task:
 - [references/platform/interface-decision-tree.md](references/platform/interface-decision-tree.md): use for workload classification and implementation routing.
 - [references/platform/authoring-paths.md](references/platform/authoring-paths.md): use for `TSL`, interop, `WGSL`, and `GLSL` path selection.
 - [references/platform/backend-capability-matrix.md](references/platform/backend-capability-matrix.md): use for renderer and authoring tradeoffs.
+- [references/platform/version-compatibility.md](references/platform/version-compatibility.md): use for current repository version assumptions and upgrade checks.
 - [references/platform/webgpu-resource-patterns.md](references/platform/webgpu-resource-patterns.md): use for choosing the GPU resource model.
 - [references/platform/pipeline-archetypes.md](references/platform/pipeline-archetypes.md): use for pass topology selection.
 - [references/platform/renderer-compatibility.md](references/platform/renderer-compatibility.md): use for browser target and fallback policy.
@@ -270,6 +289,7 @@ Load only the files that help the current task:
 - [references/performance/degradation-playbook.md](references/performance/degradation-playbook.md): use for choosing the quality ladder.
 - [references/performance/profiling-checklist.md](references/performance/profiling-checklist.md): use for the final performance sanity check.
 - [references/postfx/post-chain-selection.md](references/postfx/post-chain-selection.md): use for deciding whether the look belongs in post at all.
+- [references/postfx/code-patterns.md](references/postfx/code-patterns.md): use for concrete WebGL and WebGPU post-chain implementation patterns.
 - [references/postfx/render-target-patterns.md](references/postfx/render-target-patterns.md): use for choosing the render-target layout.
 - [references/postfx/history-feedback.md](references/postfx/history-feedback.md): use for deciding whether history is optional or required.
 - [references/postfx/quality-tiering.md](references/postfx/quality-tiering.md): use for post quality ladders and exposed-safe controls.

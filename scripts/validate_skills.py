@@ -141,6 +141,9 @@ def validate_skill(skill_dir: Path) -> list[str]:
         if not template_root.exists():
             errors.append(f"{skill_dir.name}: missing assets/templates/ directory")
         elif skill_dir.name == "replicator":
+            runtime_versions = skill_dir / "assets" / "runtime-versions.json"
+            if not runtime_versions.exists():
+                errors.append(f"{skill_dir.name}: missing assets/runtime-versions.json")
             expected_templates = ("tsl-webgpu", "tsl-webgl2", "legacy-glsl")
             for template_name in expected_templates:
                 template_dir = template_root / template_name

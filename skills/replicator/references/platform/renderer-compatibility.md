@@ -33,6 +33,17 @@ Use when:
 - the effect still lands cleanly on `WebGL2`
 - the team wants one stable implementation path
 
+## Mobile WebGPU note
+
+Treat mobile WebGPU as a special requirement, not as an automatic extension of `desktop-webgpu`.
+
+If mobile WebGPU matters:
+
+- validate thermal behavior, memory pressure, and startup latency separately from desktop
+- assume more aggressive fallback or degradation will be needed
+- keep a simple `webgl2-first` or reduced WebGPU path available unless the deployment target is tightly controlled
+- record the exact browsers and devices that were actually checked
+
 ## Rule
 
 Do not promise silent fallback.

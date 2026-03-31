@@ -82,6 +82,20 @@ Rule:
 - still pick one dominant archetype for scaffolding
 - explicitly name the secondary archetype in `REPORT.md`
 
+Typical mixed combinations:
+
+- `fullscreen-raymarch` + `scene-post`: a procedural hero image that still needs a scene-driven polish stack
+- `instanced-particles` + `feedback-trails`: particles define the motion, history defines the finish
+- `material-study` + `scene-post`: the material is the hero, but bloom or atmosphere materially changes the final read
+- `scene-post` + `feedback-trails`: the scene composition matters, but temporal persistence is part of the signature look
+
+Split strategy:
+
+- choose the archetype that determines the first runnable scaffold
+- keep the secondary archetype as an explicit module or upgrade path
+- if the two routes imply different pass topologies, implement the simpler honest topology first
+- if one route is only polish, keep it secondary and do not let it rewrite the base pipeline
+
 ## Quick Rejections
 
 If the task is only:

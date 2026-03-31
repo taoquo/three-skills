@@ -1,0 +1,20 @@
+name: Validate
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Validate skill structure
+        run: python3 scripts/validate_skills.py
+      - name: Smoke test replicator scaffolder
+        run: python3 scripts/smoke_test_replicator.py
+      - name: Validate checked-in fixtures
+        run: python3 scripts/validate_replicator_fixtures.py

@@ -47,13 +47,15 @@ def main() -> int:
             summary_path = effect_dir / "research" / "summary.md"
             sources_path = effect_dir / "research" / "sources.json"
             checklist_path = effect_dir / "captures" / "checklist.md"
+            index_path = effect_dir / "index.html"
 
-            for path in (report_path, summary_path, sources_path, checklist_path):
+            for path in (report_path, summary_path, sources_path, checklist_path, index_path):
                 if not path.exists():
                     raise AssertionError(f"missing expected file: {path}")
 
             summary_text = summary_path.read_text()
             report_text = report_path.read_text()
+            index_text = index_path.read_text()
             sources = json.loads(sources_path.read_text())
 
             expected = module.PROFILE_PRESETS[profile]
@@ -62,6 +64,8 @@ def main() -> int:
             assert_contains(summary_text, "## Suggested Route", str(summary_path))
             assert_contains(summary_text, "## Suggested Modules", str(summary_path))
             assert_contains(summary_text, "## Suggested Quality Ladder", str(summary_path))
+            assert_contains(summary_text, f"- Three.js version: `{module.THREE_VERSION}`", str(summary_path))
+            assert_contains(summary_text, f"- lil-gui version: `{module.LIL_GUI_VERSION}`", str(summary_path))
 
             assert sources["profile"] == profile
             assert sources["effect_archetype"] == expected["effect_archetype"]
@@ -70,6 +74,13 @@ def main() -> int:
             assert sources["post_pipeline_type"] == expected["post_pipeline_type"]
             assert sources["render_target_layout"] == expected["render_target_layout"]
             assert sources["history_requirement"] == expected["history_requirement"]
+            assert sources["three_version"] == module.THREE_VERSION
+            assert sources["lil_gui_version"] == module.LIL_GUI_VERSION
+
+            if "__THREE_VERSION__" in index_text or "__LIL_GUI_VERSION__" in index_text:
+                raise AssertionError(f"runtime version token was not replaced in {index_path}")
+            assert_contains(index_text, f"three@{module.THREE_VERSION}", str(index_path))
+            assert_contains(index_text, f"lil-gui@{module.LIL_GUI_VERSION}", str(index_path))
 
             assert_contains(report_text, "## Archetype Route", str(report_path))
             assert_contains(report_text, "## Search Log", str(report_path))
