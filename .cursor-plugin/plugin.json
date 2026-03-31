@@ -1,0 +1,14 @@
+{
+  "name": "three-skills",
+  "displayName": "Three Skills",
+  "description": "Three.js skills library centered on the replicator workflow for reference-driven effect recreation, renderer routing, post-processing decisions, and performance planning",
+  "version": "3.1.0",
+  "author": {
+    "name": "taoquo"
+  },
+  "homepage": "https://github.com/taoquo/three-skills",
+  "repository": "https://github.com/taoquo/three-skills",
+  "license": "MIT",
+  "keywords": ["skills", "threejs", "webgpu", "webgl2", "tsl", "shader", "graphics", "replicator"],
+  "skills": "./skills/"
+}

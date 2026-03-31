@@ -1,6 +1,6 @@
-# Three.js Replicator Skill
+# Three Skills
 
-Skills repository for a single reusable Codex-oriented Three.js workflow: `replicator`. It packages reference-driven effect recreation together with internal implementation-surface, post-pipeline, and performance-contract decision frameworks for `TSL`, `WebGPU`, and `WebGL2`.
+Skills repository for a single reusable Three.js workflow skill: `replicator`. The repository ships host metadata and install notes for Codex, Claude Code, Cursor, and OpenCode, while keeping the actual skill source under `skills/`.
 
 ## Layout
 
@@ -8,7 +8,11 @@ Skills repository for a single reusable Codex-oriented Three.js workflow: `repli
 - `effects/`: public example effects generated with the replicator workflow
 - `test/`: checked-in replicator fixtures used by validation scripts
 - `plugins/`: reserved for future heavier plugin packages; currently unused
-- `.codex/`: Codex-specific installation notes
+- `.codex/`: Codex installation notes
+- `.claude/`: Claude Code local install notes plus local mirror entries that point at canonical skills
+- `.claude-plugin/`: Claude Code plugin metadata
+- `.cursor-plugin/`: Cursor plugin metadata and install notes
+- `.opencode/`: OpenCode installation notes
 
 ## Available Skills
 
@@ -45,17 +49,48 @@ The knowledge for those domains now lives under [`skills/replicator/references/`
 - Starter dependency versions are pinned in `skills/replicator/assets/runtime-versions.json`.
 - Final demo output should stay as a minimal HTML page with no decorative text outside GUI or explicit error state.
 
-## Codex Installation
+## Installation
 
-Clone the repo and symlink the `skills/` directory into a location Codex discovers:
+### Claude Code
 
 ```bash
-git clone <this-repo> ~/.codex/three-skills
+claude plugin marketplace add https://github.com/taoquo/three-skills
+claude plugin install three-skills
+```
+
+For checkout-local workflows, the repository also exposes `.claude/skills/replicator` as a mirror entry that points at the canonical `skills/replicator`.
+
+See [`.claude/INSTALL.md`](./.claude/INSTALL.md) for local checkout usage and maintainer notes.
+
+### Cursor
+
+```bash
+git clone https://github.com/taoquo/three-skills.git ~/.cursor/three-skills
+```
+
+Point Cursor's skills path at `~/.cursor/three-skills/skills/`.
+
+See [`.cursor-plugin/INSTALL.md`](./.cursor-plugin/INSTALL.md) for the full setup notes.
+
+### Codex
+
+```bash
+git clone https://github.com/taoquo/three-skills.git ~/.codex/three-skills
 mkdir -p ~/.agents/skills
 ln -s ~/.codex/three-skills/skills ~/.agents/skills/three-skills
 ```
 
-See [`.codex/INSTALL.md`](./.codex/INSTALL.md) for a shorter explanation of the single-skill install model.
+See [`.codex/INSTALL.md`](./.codex/INSTALL.md) for Windows notes and verification steps.
+
+### OpenCode
+
+```bash
+git clone https://github.com/taoquo/three-skills.git ~/.three-skills
+mkdir -p ~/.config/opencode/skills
+ln -s ~/.three-skills/skills/* ~/.config/opencode/skills/
+```
+
+See [`.opencode/INSTALL.md`](./.opencode/INSTALL.md) for verification, updates, and Windows notes.
 
 ## Example Effect
 
@@ -82,6 +117,8 @@ Run the validator before publishing changes:
 ```bash
 python3 scripts/validate_skills.py
 ```
+
+This validator now checks both skill structure and the repository-level host support files under `.codex/`, `.claude/`, `.claude-plugin/`, `.cursor-plugin/`, and `.opencode/`, including the `.claude/skills/<skill>` mirror symlinks.
 
 For `replicator`, also run the scaffolder smoke test:
 

@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+import json
 import re
 import sys
 from pathlib import Path
@@ -10,6 +11,28 @@ from pathlib import Path
 MAX_NAME_LENGTH = 64
 REQUIRED_TOP_LEVEL_FIELDS = ("name", "description", "license")
 REQUIRED_METADATA_FIELDS = ("version", "category", "render_backends", "shader_language")
+REQUIRED_HOST_MARKDOWN = (
+    "README.md",
+    ".claude/INSTALL.md",
+    ".codex/INSTALL.md",
+    ".cursor-plugin/INSTALL.md",
+    ".opencode/INSTALL.md",
+)
+REQUIRED_HOST_JSON_FIELDS = {
+    ".claude-plugin/plugin.json": ("name", "description", "version", "author", "homepage", "repository", "license"),
+    ".claude-plugin/marketplace.json": ("name", "description", "owner", "plugins"),
+    ".cursor-plugin/plugin.json": (
+        "name",
+        "displayName",
+        "description",
+        "version",
+        "author",
+        "homepage",
+        "repository",
+        "license",
+        "skills",
+    ),
+}
 
 
 def parse_bool(value: object, default: bool = False) -> bool:
@@ -88,6 +111,76 @@ def validate_markdown_links(markdown_path: Path) -> list[str]:
         resolved = (markdown_path.parent / clean_target).resolve()
         if not resolved.exists():
             errors.append(f"{markdown_path.relative_to(markdown_path.parents[2])}: missing linked path {target}")
+    return errors
+
+
+def validate_host_support(repo_root: Path) -> list[str]:
+    errors: list[str] = []
+
+    for relative_path in REQUIRED_HOST_MARKDOWN:
+        path = repo_root / relative_path
+        if not path.exists():
+            errors.append(f"{relative_path}: missing file")
+            continue
+        errors.extend(validate_markdown_links(path))
+
+    for relative_path, required_fields in REQUIRED_HOST_JSON_FIELDS.items():
+        path = repo_root / relative_path
+        if not path.exists():
+            errors.append(f"{relative_path}: missing file")
+            continue
+
+        try:
+            data = json.loads(path.read_text())
+        except json.JSONDecodeError as exc:
+            errors.append(f"{relative_path}: invalid JSON ({exc})")
+            continue
+
+        for field in required_fields:
+            if field not in data or not data[field]:
+                errors.append(f"{relative_path}: missing field {field}")
+
+        if relative_path == ".claude-plugin/marketplace.json":
+            plugins = data.get("plugins")
+            if not isinstance(plugins, list) or not plugins:
+                errors.append(f"{relative_path}: plugins must be a non-empty list")
+            else:
+                plugin = plugins[0]
+                if not isinstance(plugin, dict):
+                    errors.append(f"{relative_path}: first plugin entry must be an object")
+                else:
+                    for field in ("name", "description", "version", "source", "author"):
+                        if field not in plugin or not plugin[field]:
+                            errors.append(f"{relative_path}: first plugin entry missing field {field}")
+
+        if relative_path == ".cursor-plugin/plugin.json":
+            skills_path = data.get("skills")
+            if skills_path != "./skills/":
+                errors.append(f"{relative_path}: skills must be set to ./skills/")
+
+    return errors
+
+
+def validate_claude_mirrors(repo_root: Path, skill_dirs: list[Path]) -> list[str]:
+    errors: list[str] = []
+    claude_skills_root = repo_root / ".claude" / "skills"
+
+    if not claude_skills_root.exists():
+        return [".claude/skills: missing directory"]
+
+    for skill_dir in skill_dirs:
+        mirror_path = claude_skills_root / skill_dir.name
+        if not mirror_path.exists():
+            errors.append(f".claude/skills/{skill_dir.name}: missing mirror entry")
+            continue
+
+        if not mirror_path.is_symlink():
+            errors.append(f".claude/skills/{skill_dir.name}: mirror entry must be a symlink")
+            continue
+
+        if mirror_path.resolve() != skill_dir.resolve():
+            errors.append(f".claude/skills/{skill_dir.name}: mirror entry must point to skills/{skill_dir.name}")
+
     return errors
 
 
@@ -222,6 +315,8 @@ def main() -> int:
     for skill_dir in skill_dirs:
         errors.extend(validate_skill(skill_dir))
     errors.extend(validate_readme(repo_root, skill_dirs))
+    errors.extend(validate_host_support(repo_root))
+    errors.extend(validate_claude_mirrors(repo_root, skill_dirs))
 
     if errors:
         for error in errors:
