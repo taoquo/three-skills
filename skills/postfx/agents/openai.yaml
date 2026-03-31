@@ -1,0 +1,4 @@
+interface:
+  display_name: "PostFX"
+  short_description: "Design post-processing chains, feedback buffers, and render-target layouts"
+  default_prompt: "Use $postfx to choose the right post pipeline type, render-target layout, pass order, history requirement, and quality tiers for this Three.js effect."

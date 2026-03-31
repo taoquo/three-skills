@@ -5,3 +5,4 @@ __pycache__/
 .gstack/
 .opencode/
 test/
+docs/

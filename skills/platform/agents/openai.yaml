@@ -1,0 +1,4 @@
+interface:
+  display_name: "Platform"
+  short_description: "Choose the right Three.js renderer, shader path, and GPU interface model"
+  default_prompt: "Use $platform to choose the right Three.js implementation surface: authoring path, renderer, resource model, pass topology, compatibility contract, and fallback."

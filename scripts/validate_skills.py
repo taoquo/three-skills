@@ -12,6 +12,18 @@ REQUIRED_TOP_LEVEL_FIELDS = ("name", "description", "license")
 REQUIRED_METADATA_FIELDS = ("version", "category", "render_backends", "shader_language")
 
 
+def parse_bool(value: object, default: bool = False) -> bool:
+    if isinstance(value, bool):
+        return value
+    if isinstance(value, str):
+        normalized = value.strip().lower()
+        if normalized in {"true", "yes", "1"}:
+            return True
+        if normalized in {"false", "no", "0"}:
+            return False
+    return default
+
+
 def parse_frontmatter(text: str) -> dict[str, object]:
     data: dict[str, object] = {}
     current_key: str | None = None
@@ -119,15 +131,25 @@ def validate_skill(skill_dir: Path) -> list[str]:
     if not (skill_dir / "references").exists():
         errors.append(f"{skill_dir.name}: missing references/ directory")
 
-    template_root = skill_dir / "assets" / "templates"
-    if not template_root.exists():
-        errors.append(f"{skill_dir.name}: missing assets/templates/ directory")
-    elif skill_dir.name == "replicator":
-        expected_templates = ("tsl-webgpu", "tsl-webgl2", "legacy-glsl")
-        for template_name in expected_templates:
-            template_dir = template_root / template_name
-            if not template_dir.exists():
-                errors.append(f"{skill_dir.name}: missing template {template_name}")
+    openai_yaml = skill_dir / "agents" / "openai.yaml"
+    if not openai_yaml.exists():
+        errors.append(f"{skill_dir.name}: missing agents/openai.yaml")
+
+    owns_templates = parse_bool(data.get("metadata.owns_templates"))
+    if owns_templates:
+        template_root = skill_dir / "assets" / "templates"
+        if not template_root.exists():
+            errors.append(f"{skill_dir.name}: missing assets/templates/ directory")
+        elif skill_dir.name == "replicator":
+            expected_templates = ("tsl-webgpu", "tsl-webgl2", "legacy-glsl")
+            for template_name in expected_templates:
+                template_dir = template_root / template_name
+                if not template_dir.exists():
+                    errors.append(f"{skill_dir.name}: missing template {template_name}")
+
+    owns_scaffolder = parse_bool(data.get("metadata.owns_scaffolder"))
+    if owns_scaffolder and not (skill_dir / "scripts").exists():
+        errors.append(f"{skill_dir.name}: missing scripts/ directory")
 
     errors.extend(validate_markdown_links(skill_md))
     for doc in skill_dir.rglob("*.md"):

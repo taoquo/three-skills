@@ -25,7 +25,139 @@ TEXT_SUFFIXES = {
 }
 BACKENDS = {"webgpu", "webgl2", "auto"}
 SHADER_MODES = {"tsl", "legacy", "auto"}
-PROFILES = {"basic", "post", "particles", "material"}
+PROFILE_PRESETS = {
+    "material-study": {
+        "effect_archetype": "material-study",
+        "resource_model": "uniforms",
+        "pass_topology": "single-pass-material",
+        "post_pipeline_type": "none",
+        "render_target_layout": "backbuffer-only",
+        "history_requirement": "none",
+        "target_device_class": "laptop-balanced",
+        "performance_contract": "balanced",
+        "dominant_bottleneck": "unknown",
+        "first_pass": "Lock the hero material on a simple mesh before adding post or scene polish.",
+        "nearest_rejected_route": "scene-post",
+        "suggested_modules": [
+            "surface response",
+            "lighting response",
+            "palette and contrast",
+            "micro detail",
+        ],
+        "quality_ladder": [
+            "lower DPR",
+            "reduce secondary polish",
+            "reduce fine noise detail",
+        ],
+    },
+    "scene-post": {
+        "effect_archetype": "scene-post",
+        "resource_model": "uniforms",
+        "pass_topology": "scene-plus-post",
+        "post_pipeline_type": "scene-polish",
+        "render_target_layout": "single-intermediate",
+        "history_requirement": "none",
+        "target_device_class": "laptop-balanced",
+        "performance_contract": "balanced",
+        "dominant_bottleneck": "post-chain",
+        "first_pass": "Make the base scene read correctly before tuning bloom, grade, or atmosphere polish.",
+        "nearest_rejected_route": "material-study",
+        "suggested_modules": [
+            "scene composition",
+            "surface and lighting",
+            "atmosphere depth",
+            "post polish",
+        ],
+        "quality_ladder": [
+            "lower post resolution",
+            "shorten secondary post passes",
+            "reduce bloom radius or intensity",
+        ],
+    },
+    "fullscreen-raymarch": {
+        "effect_archetype": "fullscreen-raymarch",
+        "resource_model": "uniforms",
+        "pass_topology": "fullscreen-procedural",
+        "post_pipeline_type": "fullscreen-stack",
+        "render_target_layout": "single-intermediate",
+        "history_requirement": "optional",
+        "target_device_class": "desktop-mid",
+        "performance_contract": "balanced",
+        "dominant_bottleneck": "ray-steps",
+        "first_pass": "Get silhouette, camera framing, and motion rhythm right before adding expensive polish loops.",
+        "nearest_rejected_route": "feedback-trails",
+        "suggested_modules": [
+            "shape generation",
+            "raymarch lighting",
+            "atmosphere and fog",
+            "screen-space polish",
+        ],
+        "quality_ladder": [
+            "lower DPR",
+            "reduce max steps",
+            "reduce shadow or AO loops",
+            "trim secondary post polish",
+        ],
+    },
+    "instanced-particles": {
+        "effect_archetype": "instanced-particles",
+        "resource_model": "instanced-attributes",
+        "pass_topology": "scene-plus-post",
+        "post_pipeline_type": "scene-polish",
+        "render_target_layout": "single-intermediate",
+        "history_requirement": "optional",
+        "target_device_class": "desktop-mid",
+        "performance_contract": "balanced",
+        "dominant_bottleneck": "particle-count",
+        "first_pass": "Match field motion, density, and composition before tuning secondary glow or grade.",
+        "nearest_rejected_route": "feedback-trails",
+        "suggested_modules": [
+            "spawn and distribution",
+            "motion field",
+            "particle shading",
+            "post polish",
+        ],
+        "quality_ladder": [
+            "reduce count or spawn rate",
+            "reduce simulation resolution",
+            "trim post quality",
+        ],
+    },
+    "feedback-trails": {
+        "effect_archetype": "feedback-trails",
+        "resource_model": "render-target-history",
+        "pass_topology": "feedback-loop",
+        "post_pipeline_type": "feedback-post",
+        "render_target_layout": "ping-pong-history",
+        "history_requirement": "required",
+        "target_device_class": "desktop-mid",
+        "performance_contract": "balanced",
+        "dominant_bottleneck": "bandwidth",
+        "first_pass": "Stabilize the history update and decay behavior before layering extra blur, glow, or color polish.",
+        "nearest_rejected_route": "scene-post",
+        "suggested_modules": [
+            "history update",
+            "feedback decay",
+            "composite pass",
+            "post finish",
+        ],
+        "quality_ladder": [
+            "lower feedback resolution",
+            "reduce blur radius",
+            "reduce persistence length",
+            "trim secondary post polish",
+        ],
+    },
+}
+PROFILE_ALIASES = {
+    "basic": "scene-post",
+    "post": "scene-post",
+    "particles": "instanced-particles",
+    "material": "material-study",
+    "raymarch": "fullscreen-raymarch",
+    "feedback": "feedback-trails",
+}
+PROFILES = tuple(sorted(set(PROFILE_PRESETS) | set(PROFILE_ALIASES)))
 TEMPLATE_BY_KEY = {
     ("tsl", "webgpu"): "tsl-webgpu",
     ("tsl", "webgl2"): "tsl-webgl2",
@@ -43,6 +175,15 @@ def normalize_slug(raw: str) -> str:
 
 def title_from_slug(slug: str) -> str:
     return " ".join(part.capitalize() for part in slug.split("-"))
+
+
+def resolve_profile(profile: str) -> tuple[str, dict[str, object], str | None]:
+    canonical_profile = PROFILE_ALIASES.get(profile, profile)
+    preset = PROFILE_PRESETS.get(canonical_profile)
+    if preset is None:
+        raise ValueError(f"unknown profile: {profile}")
+    alias = profile if profile != canonical_profile else None
+    return canonical_profile, preset, alias
 
 
 def replace_tokens(path: Path, replacements: dict[str, str]) -> None:
@@ -76,7 +217,7 @@ def write_supporting_files(
     title: str,
     shader: str,
     backend: str,
-    profile: str,
+    requested_profile: str,
 ) -> None:
     captures_dir = effect_dir / "captures"
     research_dir = effect_dir / "research"
@@ -84,31 +225,123 @@ def write_supporting_files(
     research_dir.mkdir(exist_ok=True)
     (captures_dir / ".gitkeep").write_text("")
 
-    summary = f"""# {title} Research Summary
+    canonical_profile, preset, alias = resolve_profile(requested_profile)
+    effect_archetype = str(preset["effect_archetype"])
+    resource_model = str(preset["resource_model"])
+    pass_topology = str(preset["pass_topology"])
+    post_pipeline_type = str(preset["post_pipeline_type"])
+    render_target_layout = str(preset["render_target_layout"])
+    history_requirement = str(preset["history_requirement"])
+    target_device_class = str(preset["target_device_class"])
+    performance_contract = str(preset["performance_contract"])
+    dominant_bottleneck = str(preset["dominant_bottleneck"])
+    first_pass = str(preset["first_pass"])
+    nearest_rejected_route = str(preset["nearest_rejected_route"])
+    suggested_modules = [str(item) for item in preset["suggested_modules"]]
+    quality_ladder = [str(item) for item in preset["quality_ladder"]]
 
-- Effect slug: `{slug}`
-- Shader authoring language: `{shader}`
-- Runtime backend: `{backend}`
-- Profile: `{profile}`
-- Target environment: `desktop-first`
-- Performance priority: `deferred until look is correct`
-- Status: `todo`
+    authoring_path = "pure-tsl" if shader == "tsl" else "raw-glsl"
+    runtime_renderer = "webgpu-renderer" if backend == "webgpu" else "webgl-renderer"
+    compatibility_contract = (
+        "desktop-webgpu-plus-webgl2-fallback" if backend == "webgpu" else "webgl2-first"
+    )
 
-## Notes
+    capture_checklist = """# Capture Checklist
 
-- Search canonical and mainstream graphics sources first, then engine references, then the Three.js landing path.
-- Validate the final renderer and TSL decisions against the official Three.js docs before sign-off.
-- Add the link tree, search terms, and implementation takeaways here.
-- Mirror the final backend choice and fallback path in `../REPORT.md`.
+- Reference still 01: `captures/reference-01.png`
+- Current still 01: `captures/current-01.png`
+- Reference still 02: `captures/reference-02.png`
+- Current still 02: `captures/current-02.png`
+
+## Fidelity Rubric
+
+| Category | Score (0-2) | Gap | Notes |
+| --- | --- | --- | --- |
+| Silhouette | `TODO` | `TODO` | `TODO` |
+| Motion | `TODO` | `TODO` | `TODO` |
+| Density | `TODO` | `TODO` | `TODO` |
+| Palette | `TODO` | `TODO` | `TODO` |
+| Finish | `TODO` | `TODO` | `TODO` |
+
+- Total fidelity score: `TODO/10`
+- Acceptance target: `8/10`
 """
-    (research_dir / "summary.md").write_text(summary)
+    (captures_dir / "checklist.md").write_text(capture_checklist)
+
+    summary_lines = [
+        f"# {title} Research Summary",
+        "",
+        f"- Effect slug: `{slug}`",
+        f"- Effect archetype: `{effect_archetype}`",
+        f"- Starter profile: `{canonical_profile}`",
+        f"- Authoring path: `{authoring_path}`",
+        f"- Runtime renderer: `{runtime_renderer}`",
+        f"- Resource model: `{resource_model}`",
+        f"- Pass topology: `{pass_topology}`",
+        f"- Compatibility contract: `{compatibility_contract}`",
+        f"- Target device class: `{target_device_class}`",
+        f"- Performance contract: `{performance_contract}`",
+        f"- Dominant bottleneck: `{dominant_bottleneck}`",
+        f"- Post pipeline type: `{post_pipeline_type}`",
+        f"- Render-target layout: `{render_target_layout}`",
+        f"- History requirement: `{history_requirement}`",
+        f"- Profile: `{requested_profile}`",
+        "- Target environment: `desktop-first`",
+        "- Performance priority: `deferred until look is correct`",
+        "- Status: `todo`",
+        "",
+        "## Notes",
+        "",
+        "- Search canonical and mainstream graphics sources first, then engine references, then the Three.js landing path.",
+        "- Validate the final implementation surface against the official Three.js docs before sign-off.",
+        "- Add the link tree, search terms, and implementation takeaways here.",
+        "- Mirror the final implementation-surface decision, post pipeline decision, performance contract, and fallback path in `../REPORT.md`.",
+        "",
+        "## Suggested Route",
+        "",
+        f"- First pass: {first_pass}",
+        f"- Nearest rejected route: `{nearest_rejected_route}`",
+    ]
+    if alias:
+        summary_lines.append(f"- Alias used: `{alias}` -> `{canonical_profile}`")
+
+    summary_lines.extend(
+        [
+            "",
+            "## Suggested Modules",
+            "",
+            *[f"- {module}" for module in suggested_modules],
+            "",
+            "## Suggested Quality Ladder",
+            "",
+            *[f"- {step}" for step in quality_ladder],
+            "",
+        ]
+    )
+    (research_dir / "summary.md").write_text("\n".join(summary_lines))
 
     sources = {
         "effect_slug": slug,
         "effect_title": title,
-        "shader_language": shader,
-        "backend": backend,
-        "profile": profile,
+        "effect_archetype": effect_archetype,
+        "requested_profile": requested_profile,
+        "canonical_profile": canonical_profile,
+        "authoring_path": authoring_path,
+        "runtime_renderer": runtime_renderer,
+        "resource_model": resource_model,
+        "pass_topology": pass_topology,
+        "compatibility_contract": compatibility_contract,
+        "target_device_class": target_device_class,
+        "performance_contract": performance_contract,
+        "dominant_bottleneck": dominant_bottleneck,
+        "post_pipeline_type": post_pipeline_type,
+        "render_target_layout": render_target_layout,
+        "history_requirement": history_requirement,
+        "profile": canonical_profile,
+        "profile_alias": alias,
+        "nearest_rejected_route": nearest_rejected_route,
+        "suggested_modules": suggested_modules,
+        "quality_ladder": quality_ladder,
         "target_environment": "desktop-first",
         "performance_priority": "deferred until look is correct",
         "sources": [],
@@ -125,6 +358,7 @@ def scaffold_effect(
     profile: str,
 ) -> Path:
     skill_root = Path(__file__).resolve().parent.parent
+    canonical_profile, _, _ = resolve_profile(profile)
     resolved_shader, resolved_backend, template_name = resolve_generation_mode(shader, backend)
     template_dir = skill_root / "assets" / "templates" / template_name
     report_template = skill_root / "assets" / "report-template.md"
@@ -141,7 +375,7 @@ def scaffold_effect(
         "__EFFECT_TITLE__": title,
         "__BACKEND__": resolved_backend,
         "__SHADER_LANGUAGE__": resolved_shader,
-        "__PROFILE__": profile,
+        "__PROFILE__": canonical_profile,
     }
 
     for path in effect_dir.rglob("*"):
@@ -182,7 +416,7 @@ def parse_args() -> argparse.Namespace:
         "--profile",
         default="basic",
         choices=sorted(PROFILES),
-        help="Starter profile label to record in the generated research files.",
+        help="Starter archetype profile or backward-compatible alias to record in the generated research files.",
     )
     parser.add_argument(
         "--output",

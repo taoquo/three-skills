@@ -1,0 +1,4 @@
+interface:
+  display_name: "Performance"
+  short_description: "Diagnose bottlenecks and define degradation ladders for Three.js work"
+  default_prompt: "Use $performance to choose the target device class, performance contract, dominant bottleneck, and degradation ladder for this Three.js effect."

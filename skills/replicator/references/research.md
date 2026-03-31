@@ -2,13 +2,26 @@
 
 ## Table of Contents
 
-1. Build the source set
-2. Parse each source type
-3. Expand the link tree
-4. Build the terminology and module list
-5. Run English-first search
-6. Enforce the coding gate
-7. Emit the research artifacts
+1. Choose the archetype route
+2. Build the source set
+3. Parse each source type
+4. Expand the link tree
+5. Build the terminology and module list
+6. Run English-first search
+7. Enforce the coding gate
+8. Emit the research artifacts
+
+## Choose the archetype route
+
+Before deep research, pick the closest archetype from [archetypes.md](archetypes.md).
+
+Record:
+
+- chosen archetype
+- nearest rejected archetype
+- why the chosen route fits better
+
+This keeps research focused and prevents collecting unrelated techniques.
 
 ## Build the source set
 
@@ -234,6 +247,20 @@ Always include these artifacts in the report.
 ### Search log
 
 List the queries that actually changed your understanding or implementation plan.
+
+### Evidence vs inference
+
+For every important claim, mark whether it is:
+
+- directly evidenced by a source
+- inferred from multiple sources
+- still uncertain
+
+Use this table:
+
+| Claim | Status | Evidence |
+| --- | --- | --- |
+| `TODO` | `evidenced/inferred/uncertain` | `source or reason` |
 
 ### Research summary
 
