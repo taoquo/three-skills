@@ -1,4 +1,4 @@
 interface:
-  display_name: "Replicator"
-  short_description: "Recreate linked graphics effects in Three.js with structured user-option decisions and delegated research"
-  default_prompt: "Use $replicator to analyze these references, escalate material renderer or scope tradeoffs with AskUserOption, delegate bounded research tasks to subagents, choose the implementation surface, post pipeline, and performance contract, and build a faithful Three.js remake with REPORT.md."
+  display_name: "Three.js Replicator"
+  short_description: "Recreate Three.js effects from URLs, keywords, image inputs, and mixed references with structured routing and research"
+  default_prompt: "Use $replicator (Three.js Replicator) to analyze multimodal references such as URLs, keywords, image URIs, screenshots, or local images; normalize them into a primary/secondary/accent source set, escalate only material route tradeoffs with AskUserOption, delegate bounded research tasks to subagents, choose the implementation surface, post pipeline, and performance contract, and build a faithful Three.js remake with REPORT.md."

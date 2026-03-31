@@ -25,11 +25,11 @@
 | --- | --- | --- | --- | --- |
 | `TODO` | `TODO` | `TODO` | `TODO` | `TODO` |
 
-## Source Set
+## Input Set
 
-| URL | Type | Contribution |
-| --- | --- | --- |
-| `TODO` | `TODO` | `TODO` |
+| Input | Type | Role | Contribution |
+| --- | --- | --- | --- |
+| `TODO` | `url/keyword/image-uri/local-image/screenshot/video/code` | `primary/secondary/accent/derived` | `TODO` |
 
 ## Archetype Route
 
@@ -42,7 +42,7 @@
 ## Link Tree
 
 ```text
-[0] TODO - overall reference
+[0] TODO - chosen primary external reference
   [1] TODO - technique explanation
     [2] TODO - implementation detail
       [3] TODO - pitfall or optimization note

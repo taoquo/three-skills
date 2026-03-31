@@ -1,11 +1,11 @@
 # Three Skills
 
-Skills repository for a single reusable Three.js workflow skill: `replicator`. The repository ships host metadata and install notes for Codex, Claude Code, Cursor, and OpenCode, while keeping the actual skill source under `skills/`.
+Skills repository for a single reusable Three.js workflow skill: `replicator`, displayed as `Three.js Replicator`. The repository ships host metadata and install notes for Codex, Claude Code, Cursor, and OpenCode, while keeping the actual skill source under `skills/`.
 
 ## Layout
 
 - `skills/`: reusable skills, one folder per skill
-- `effects/`: public example effects generated with the replicator workflow
+- `effects/`: public example effects generated with the Three.js Replicator workflow
 - `test/`: checked-in replicator fixtures used by validation scripts
 - `plugins/`: reserved for future heavier plugin packages; currently unused
 - `.codex/`: Codex installation notes
@@ -18,11 +18,11 @@ Skills repository for a single reusable Three.js workflow skill: `replicator`. T
 
 | Skill | Description |
 | --- | --- |
-| `replicator` | Analyze graphics references and recreate the effect in Three.js with an archetype-first, TSL-first workflow, internal implementation-surface selection, post-pipeline design, performance-contract planning, research notes, a runnable demo, GUI controls, and a required `REPORT.md`. |
+| `replicator` | Analyze multimodal graphics references such as URLs, keywords, image URIs, screenshots, or mixed inputs and recreate the effect in Three.js with an archetype-first, TSL-first workflow, internal implementation-surface selection, post-pipeline design, performance-contract planning, research notes, a runnable demo, GUI controls, and a required `REPORT.md`. |
 
 ## Direction
 
-This repository now exposes one public skill: `replicator`.
+This repository now exposes one public skill: `replicator` (`Three.js Replicator`).
 
 Inside `replicator`, the workflow still makes three explicit decision classes:
 
@@ -32,8 +32,10 @@ Inside `replicator`, the workflow still makes three explicit decision classes:
 
 The knowledge for those domains now lives under [`skills/replicator/references/`](skills/replicator/references/).
 
-## Replicator v3 Highlights
+## Three.js Replicator v3.2 Highlights
 
+- Multimodal input intake: start from a URL, keyword, image URI, screenshot, local image path, or a mixed reference set.
+- Non-breaking naming refresh: keep the canonical skill id as `replicator` while presenting it as `Three.js Replicator`.
 - Archetype-first routing: choose `material-study`, `scene-post`, `fullscreen-raymarch`, `instanced-particles`, or `feedback-trails` before implementation.
 - Structured user-option escalation: ask the user to choose only when renderer, compatibility, fidelity, or scope tradeoffs would materially change the route.
 - Research delegation: bounded source parsing, link-tree expansion, and pitfall scans can be split across subagents while final routing stays local.

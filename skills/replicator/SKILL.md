@@ -1,9 +1,9 @@
 ---
 name: replicator
 license: MIT
-description: Analyze one or more graphics references and recreate the effect in Three.js. Use when the user shares a demo, article, video, Shadertoy, CodePen, GitHub repo, social thread, or screenshot and wants: a visual breakdown, a faithful or improved Three.js remake, research on likely rendering techniques, a runnable demo, tuning controls, or a REPORT.md that records sources, decisions, and revisions.
+description: Analyze multimodal graphics references and recreate the effect in Three.js. Use when the user shares a URL, demo, article, video, Shadertoy, CodePen, GitHub repo, social thread, screenshot, image URI, local image path, or a keyword/topic prompt and wants: a visual breakdown, a faithful or improved Three.js remake, research on likely rendering techniques, a runnable demo, tuning controls, or a REPORT.md that records sources, decisions, and revisions.
 metadata:
-  version: "3.1.0"
+  version: "3.2.0"
   category: threejs
   render_backends:
     - webgpu
@@ -14,13 +14,15 @@ metadata:
   owns_scaffolder: "true"
 ---
 
-# Replicator
+# Three.js Replicator
 
 ## Overview
 
 Recreate effects with a visual-first workflow: route the archetype, research the effect, choose the implementation surface, set the post and performance contracts, implement, verify, and document. Default priority is visual fidelity, then controllability, then performance unless the user explicitly changes that order.
 
-`replicator` is a complete Three.js effect workflow. It includes three internal decision modules:
+`replicator` remains the canonical skill id for compatibility. The human-facing name is `Three.js Replicator` to reflect that the workflow can start from URLs, keywords, image URIs, screenshots, local image paths, or mixed reference sets.
+
+The `replicator` skill is a complete Three.js effect workflow. It includes three internal decision modules:
 
 - implementation surface decision
 - post pipeline decision
@@ -40,6 +42,31 @@ Default environment assumptions for this skill:
 - Target desktop or laptop browsers first.
 - Ignore aggressive performance optimization unless the user gives a hard device, FPS, or power constraint.
 - Prefer the strongest visually convincing solution that still lands cleanly in current Three.js.
+
+## Accept Multimodal Inputs
+
+Treat all of the following as valid entry points:
+
+- URLs to demos, posts, repos, videos, articles, or code sandboxes.
+- Keywords or topic prompts such as a style, effect name, or rendering technique.
+- Image URIs, screenshots, or local image paths.
+- Mixed input sets that combine any of the above.
+
+Normalize the intake before route selection:
+
+- `primary`: the main reference that defines silhouette, motion language, and composition
+- `secondary`: an explicit module donor such as post polish, surface treatment, or interaction
+- `accent`: palette, timing, or a narrow finish cue only
+- `derived`: a reference discovered during research from a keyword or image-first start
+
+For keyword-only or image-only starts:
+
+- extract 3 to 8 English-first search phrases from the visual or textual cues
+- gather 2 to 5 high-signal external references before choosing the route
+- promote one result to the primary reference and record why it won
+- use `AskUserOption` only if the remaining ambiguity would materially change the pipeline
+
+Do not reject the task merely because the user did not provide a URL.
 
 ## Escalate Material Choices With AskUserOption
 
@@ -120,7 +147,7 @@ Produce all of the following for each effect:
 - An implementation-surface decision covering authoring path, runtime renderer, resource model, pass topology, compatibility contract, and fallback path.
 - A performance decision covering target device class, performance contract, dominant bottleneck, degradation ladder, and exposed controls.
 - A post-processing decision covering post pipeline type, render-target layout, pass order, history requirement, and quality tiers when post is part of the look.
-- A research package with a link tree, extracted external links, comment takeaways, search terms, and a coverage table.
+- A research package with an input set, normalized source roles, a link tree, extracted external links, comment takeaways, search terms, and a coverage table.
 - A runnable Three.js demo under `effects/<effect-slug>/`.
 - A GUI with stable group names and the key tuning controls exposed.
 - A `REPORT.md` that stays current after every material change.
@@ -181,13 +208,14 @@ Use technique names, not vague adjectives. Record the module list in `REPORT.md`
 
 ### 4. Check TSL fit and research before coding
 
-Treat the user links as the starting point, not the full source of truth.
+Treat the user's references or search cues as the starting point, not the full source of truth.
 
 Use subagents for bounded research and evidence-gathering work when that work is parallelizable.
 
 Good subagent tasks:
 
 - parse one provided source and extract the core idea, parameters, outbound links, and likely pass structure
+- turn one keyword-only or image-only input into search phrases, candidate references, and likely technique labels
 - expand one branch of the link tree
 - scan comments, issues, or discussions for pitfalls and workarounds
 - survey engine-specific references for one module
@@ -224,7 +252,8 @@ If there are multiple references, unify them into one effect spec before coding:
   1. Mainstream or canonical graphics explanations and implementations: SIGGRAPH material, papers, talks, production notes, widely cited repos, or other authoritative references.
   2. Cross-engine rendering references: Unreal Engine, Unity, custom renderers, shader breakdowns, or engine-specific material graphs that clarify the visual method.
   3. Three.js landing guidance: decide how to reproduce the effect in the current `WebGPU` and TSL-oriented Three.js stack.
-- Parse every provided link and extract the core idea, likely pipeline, important parameters, outbound links, and implementation hints.
+- Parse every directly inspectable input and extract the core idea, likely pipeline, important parameters, and implementation hints.
+- For keywords, screenshots, image URIs, or local images, derive the external link tree before treating any single result as authoritative.
 - Pull high-signal details from code blocks, captions, issues, discussions, and comments when available.
 - Expand the research tree up to depth 3 unless the trail runs out, becomes repetitive, or is blocked by login or dead links.
 - Prefer English search queries for technique discovery and pitfall hunting, then translate the findings into a Three.js implementation.

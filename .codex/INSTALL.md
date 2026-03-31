@@ -34,7 +34,7 @@ You should see a symlink or junction that points at the repository `skills/` dir
 
 ## Available Skill
 
-- `replicator` — reference-driven Three.js effect recreation with archetype routing, implementation-surface decisions, post-pipeline design, and performance planning
+- `replicator` (`Three.js Replicator`) — multimodal reference-driven Three.js effect recreation from URLs, keywords, image inputs, and mixed source sets, with archetype routing, implementation-surface decisions, post-pipeline design, and performance planning
 
 ## Updating
 
