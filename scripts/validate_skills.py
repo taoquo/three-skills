@@ -166,9 +166,38 @@ def validate_readme(repo_root: Path, skill_dirs: list[Path]) -> list[str]:
         return ["README.md: missing file"]
 
     text = readme.read_text()
-    for skill_dir in skill_dirs:
-        if f"`{skill_dir.name}`" not in text:
-            errors.append(f"README.md: missing skill listing for {skill_dir.name}")
+    lines = text.splitlines()
+    available_skill_names: list[str] = []
+    in_available_skills = False
+
+    for line in lines:
+        if line.startswith("## "):
+            if in_available_skills:
+                break
+            in_available_skills = line == "## Available Skills"
+            continue
+
+        if not in_available_skills:
+            continue
+
+        match = re.match(r"^\|\s*`([a-z0-9-]+)`\s*\|", line.strip())
+        if match:
+            available_skill_names.append(match.group(1))
+
+    if not available_skill_names:
+        errors.append("README.md: missing or invalid Available Skills table")
+        return errors
+
+    expected_names = sorted(skill_dir.name for skill_dir in skill_dirs)
+    listed_names = sorted(set(available_skill_names))
+
+    for skill_name in expected_names:
+        if skill_name not in listed_names:
+            errors.append(f"README.md: missing skill listing for {skill_name}")
+
+    for skill_name in listed_names:
+        if skill_name not in expected_names:
+            errors.append(f"README.md: lists unknown skill {skill_name}")
 
     return errors
 

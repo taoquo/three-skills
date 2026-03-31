@@ -295,7 +295,7 @@ def write_supporting_files(
         "- Search canonical and mainstream graphics sources first, then engine references, then the Three.js landing path.",
         "- Validate the final implementation surface against the official Three.js docs before sign-off.",
         "- Add the link tree, search terms, and implementation takeaways here.",
-        "- Mirror the final implementation-surface decision, post pipeline decision, performance contract, and fallback path in `../REPORT.md`.",
+        "- Mirror the final internal implementation-surface decision, post-pipeline decision, performance contract, and fallback path in `../REPORT.md`.",
         "",
         "## Suggested Route",
         "",

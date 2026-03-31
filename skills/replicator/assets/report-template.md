@@ -31,7 +31,7 @@
 | --- | --- | --- |
 | Chosen archetype | `material-study/scene-post/fullscreen-raymarch/instanced-particles/feedback-trails/mixed` | `Why this route fits the effect` |
 | Nearest rejected route | `TODO` | `Why it was not selected` |
-| Supporting skills | `platform/postfx/performance` | `Which ones materially shaped the plan` |
+| Internal decision domains | `implementation surface/post pipeline/performance contract` | `Which ones materially shaped the plan` |
 
 ## Link Tree
 

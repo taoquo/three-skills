@@ -8,4 +8,6 @@ mkdir -p ~/.agents/skills
 ln -s ~/.codex/three-skills/skills ~/.agents/skills/three-skills
 ```
 
-After restarting Codex, the skills in `skills/` should be discoverable by explicit name, for example `$replicator`.
+After restarting Codex, the only discoverable skill in this repository should be `$replicator`.
+
+The platform, post-processing, and performance decision frameworks are bundled inside `replicator` and are no longer separate public skills.

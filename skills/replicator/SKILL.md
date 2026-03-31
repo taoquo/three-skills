@@ -20,7 +20,11 @@ metadata:
 
 Recreate effects with a visual-first workflow: route the archetype, research the effect, choose the implementation surface, set the post and performance contracts, implement, verify, and document. Default priority is visual fidelity, then controllability, then performance unless the user explicitly changes that order.
 
-`replicator` is the orchestration layer in this repository. It should pull in `platform`, `postfx`, and `performance` as needed instead of re-explaining their domains.
+`replicator` is a complete Three.js effect workflow. It includes three internal decision modules:
+
+- implementation surface decision
+- post pipeline decision
+- performance contract decision
 
 Default authoring strategy:
 
@@ -54,12 +58,12 @@ Canonical archetypes:
 
 If the effect spans multiple archetypes, choose the dominant one and call out the secondary archetype in `REPORT.md`.
 
-## Do Not Use This Skill For
+## Do Not Use The Full Workflow For
 
-- Pure material or lighting exploration with no external reference to match. Use `platform` plus a material-focused workflow instead.
-- Isolated renderer or compatibility decisions. Use `platform`.
-- Pure performance diagnosis or degradation planning. Use `performance`.
-- Pure post-chain design or feedback-buffer routing with no reference-driven remake. Use `postfx`.
+- Pure material or lighting exploration with no external reference to match.
+- Isolated renderer or compatibility decisions with no reference-driven remake.
+- Pure performance diagnosis or degradation planning.
+- Pure post-chain design or feedback-buffer routing with no reference-driven remake.
 
 ## Deliver Required Outputs
 
@@ -89,7 +93,7 @@ At minimum, record:
 - chosen archetype
 - why it fits
 - nearest rejected archetype
-- which supporting skills are expected to matter: `platform`, `postfx`, `performance`
+- which internal decision domains are expected to matter: implementation surface, post pipeline, performance contract
 
 If the archetype is unclear, write `mixed` and explain what would settle it.
 
@@ -169,7 +173,7 @@ State all of these in the report:
 - Rejected backend options
 - Fallback path if the preferred backend or authoring path stalls
 
-When `platform` is available, use it as the source of truth for this decision. Read [../platform/references/interface-decision-tree.md](../platform/references/interface-decision-tree.md), [../platform/references/authoring-paths.md](../platform/references/authoring-paths.md), [../platform/references/backend-capability-matrix.md](../platform/references/backend-capability-matrix.md), [../platform/references/webgpu-resource-patterns.md](../platform/references/webgpu-resource-patterns.md), [../platform/references/pipeline-archetypes.md](../platform/references/pipeline-archetypes.md), [../platform/references/renderer-compatibility.md](../platform/references/renderer-compatibility.md), and [../platform/references/official-threejs-webgpu.md](../platform/references/official-threejs-webgpu.md) based on the chosen route.
+Use the internal implementation-surface references as the source of truth for this decision. Read [references/platform/interface-decision-tree.md](references/platform/interface-decision-tree.md), [references/platform/authoring-paths.md](references/platform/authoring-paths.md), [references/platform/backend-capability-matrix.md](references/platform/backend-capability-matrix.md), [references/platform/webgpu-resource-patterns.md](references/platform/webgpu-resource-patterns.md), [references/platform/pipeline-archetypes.md](references/platform/pipeline-archetypes.md), [references/platform/renderer-compatibility.md](references/platform/renderer-compatibility.md), and [references/platform/official-threejs-webgpu.md](references/platform/official-threejs-webgpu.md) based on the chosen route.
 
 Use these scene archetypes:
 
@@ -188,7 +192,7 @@ If the look depends on post, decide these explicitly:
 - history requirement
 - quality tiers
 
-When `postfx` is available, use it as the source of truth for this decision. Read [../postfx/references/post-chain-selection.md](../postfx/references/post-chain-selection.md), [../postfx/references/render-target-patterns.md](../postfx/references/render-target-patterns.md), [../postfx/references/history-feedback.md](../postfx/references/history-feedback.md), [../postfx/references/quality-tiering.md](../postfx/references/quality-tiering.md), and [../postfx/references/official-three-postfx.md](../postfx/references/official-three-postfx.md) based on the chosen route.
+Use the internal post-pipeline references as the source of truth for this decision. Read [references/postfx/post-chain-selection.md](references/postfx/post-chain-selection.md), [references/postfx/render-target-patterns.md](references/postfx/render-target-patterns.md), [references/postfx/history-feedback.md](references/postfx/history-feedback.md), [references/postfx/quality-tiering.md](references/postfx/quality-tiering.md), and [references/postfx/official-three-postfx.md](references/postfx/official-three-postfx.md) based on the chosen route.
 
 ### 7. Scaffold the effect folder
 
@@ -254,22 +258,22 @@ Load only the files that help the current task:
 - [references/visual-quality.md](references/visual-quality.md): use for effect-spec writing and visual self-checks.
 - [references/fidelity-rubric.md](references/fidelity-rubric.md): use for visual acceptance scoring and capture review.
 - `scripts/capture_audit.py`: use to generate `captures/manifest.json` and `captures/review.md` from saved reference/current capture pairs.
-- [../platform/references/interface-decision-tree.md](../platform/references/interface-decision-tree.md): use for workload classification and implementation routing.
-- [../platform/references/authoring-paths.md](../platform/references/authoring-paths.md): use for `TSL`, interop, `WGSL`, and `GLSL` path selection.
-- [../platform/references/backend-capability-matrix.md](../platform/references/backend-capability-matrix.md): use for renderer and authoring tradeoffs.
-- [../platform/references/webgpu-resource-patterns.md](../platform/references/webgpu-resource-patterns.md): use for choosing the GPU resource model.
-- [../platform/references/pipeline-archetypes.md](../platform/references/pipeline-archetypes.md): use for pass topology selection.
-- [../platform/references/renderer-compatibility.md](../platform/references/renderer-compatibility.md): use for browser target and fallback policy.
-- [../platform/references/official-threejs-webgpu.md](../platform/references/official-threejs-webgpu.md): use to sanity-check the final code against current official Three.js guidance.
-- [../performance/references/device-targeting.md](../performance/references/device-targeting.md): use for default device assumptions and target device classes.
-- [../performance/references/bottleneck-diagnosis.md](../performance/references/bottleneck-diagnosis.md): use for naming the dominant bottleneck.
-- [../performance/references/degradation-playbook.md](../performance/references/degradation-playbook.md): use for choosing the quality ladder.
-- [../performance/references/profiling-checklist.md](../performance/references/profiling-checklist.md): use for the final performance sanity check.
-- [../postfx/references/post-chain-selection.md](../postfx/references/post-chain-selection.md): use for deciding whether the look belongs in post at all.
-- [../postfx/references/render-target-patterns.md](../postfx/references/render-target-patterns.md): use for choosing the render-target layout.
-- [../postfx/references/history-feedback.md](../postfx/references/history-feedback.md): use for deciding whether history is optional or required.
-- [../postfx/references/quality-tiering.md](../postfx/references/quality-tiering.md): use for post quality ladders and exposed-safe controls.
-- [../postfx/references/official-three-postfx.md](../postfx/references/official-three-postfx.md): use to sanity-check the final post approach against official Three.js guidance.
+- [references/platform/interface-decision-tree.md](references/platform/interface-decision-tree.md): use for workload classification and implementation routing.
+- [references/platform/authoring-paths.md](references/platform/authoring-paths.md): use for `TSL`, interop, `WGSL`, and `GLSL` path selection.
+- [references/platform/backend-capability-matrix.md](references/platform/backend-capability-matrix.md): use for renderer and authoring tradeoffs.
+- [references/platform/webgpu-resource-patterns.md](references/platform/webgpu-resource-patterns.md): use for choosing the GPU resource model.
+- [references/platform/pipeline-archetypes.md](references/platform/pipeline-archetypes.md): use for pass topology selection.
+- [references/platform/renderer-compatibility.md](references/platform/renderer-compatibility.md): use for browser target and fallback policy.
+- [references/platform/official-threejs-webgpu.md](references/platform/official-threejs-webgpu.md): use to sanity-check the final code against current official Three.js guidance.
+- [references/performance/device-targeting.md](references/performance/device-targeting.md): use for default device assumptions and target device classes.
+- [references/performance/bottleneck-diagnosis.md](references/performance/bottleneck-diagnosis.md): use for naming the dominant bottleneck.
+- [references/performance/degradation-playbook.md](references/performance/degradation-playbook.md): use for choosing the quality ladder.
+- [references/performance/profiling-checklist.md](references/performance/profiling-checklist.md): use for the final performance sanity check.
+- [references/postfx/post-chain-selection.md](references/postfx/post-chain-selection.md): use for deciding whether the look belongs in post at all.
+- [references/postfx/render-target-patterns.md](references/postfx/render-target-patterns.md): use for choosing the render-target layout.
+- [references/postfx/history-feedback.md](references/postfx/history-feedback.md): use for deciding whether history is optional or required.
+- [references/postfx/quality-tiering.md](references/postfx/quality-tiering.md): use for post quality ladders and exposed-safe controls.
+- [references/postfx/official-three-postfx.md](references/postfx/official-three-postfx.md): use to sanity-check the final post approach against official Three.js guidance.
 - [references/gui.md](references/gui.md): use for GUI grouping and parameter selection.
 - `scripts/init_effect.py`: use to scaffold `effects/<effect-slug>/` from the included template.
 - `assets/templates/`: use as the baseline starter matrix when a zero-build setup is appropriate.

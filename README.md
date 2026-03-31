@@ -1,6 +1,6 @@
-# Three Skills
+# Three.js Replicator Skill
 
-Skills repository for reusable Codex-oriented Three.js workflows. The current flagship skill is `replicator`, and the repository is being expanded into a focused Three.js skill collection with explicit platform guidance for `TSL`, `WebGPU`, and `WebGL2`.
+Skills repository for a single reusable Codex-oriented Three.js workflow: `replicator`. It packages reference-driven effect recreation together with internal implementation-surface, post-pipeline, and performance-contract decision frameworks for `TSL`, `WebGPU`, and `WebGL2`.
 
 ## Layout
 
@@ -12,23 +12,19 @@ Skills repository for reusable Codex-oriented Three.js workflows. The current fl
 
 | Skill | Description |
 | --- | --- |
-| `replicator` | Analyze graphics references and recreate the effect in Three.js with a TSL-first workflow, backend selection, research notes, a runnable demo, GUI controls, and a required `REPORT.md`. |
-| `platform` | Choose the right Three.js implementation surface for `TSL`, `WebGPU`, `WebGL2`, raw shaders, resource models, pass topology, and compatibility contracts before coding. |
-| `performance` | Diagnose Three.js bottlenecks, choose a performance contract, target device class, and degradation ladder, and decide how to preserve the look when frame budget gets tight. |
-| `postfx` | Design Three.js post-processing chains, render-target layouts, history or feedback pipelines, effect ordering, and quality tiers without overcomplicating the render graph. |
+| `replicator` | Analyze graphics references and recreate the effect in Three.js with an archetype-first, TSL-first workflow, internal implementation-surface selection, post-pipeline design, performance-contract planning, research notes, a runnable demo, GUI controls, and a required `REPORT.md`. |
 
 ## Direction
 
-This repository is moving from a single flagship skill toward a small set of focused Three.js skills.
+This repository now exposes one public skill: `replicator`.
 
-Near-term target:
+Inside `replicator`, the workflow still makes three explicit decision classes:
 
-- `replicator`: reference-driven effect recreation
-- `platform`: renderer, authoring-path, and interface decision rules
-- `performance`: bottleneck diagnosis and degradation strategy
-- `postfx`: post chain composition, history buffers, and render-target policy
+- implementation surface: authoring path, renderer, resource model, pass topology, and compatibility contract
+- post pipeline: post-chain type, render-target layout, pass order, and history requirement
+- performance contract: target device class, dominant bottleneck, and degradation ladder
 
-The active architecture plan is documented in [docs/threejs-skill-architecture.md](./docs/threejs-skill-architecture.md).
+The knowledge for those domains now lives under [`skills/replicator/references/`](skills/replicator/references/).
 
 ## Replicator v3 Highlights
 
@@ -54,7 +50,7 @@ mkdir -p ~/.agents/skills
 ln -s ~/.codex/three-skills/skills ~/.agents/skills/three-skills
 ```
 
-See [`.codex/INSTALL.md`](./.codex/INSTALL.md) for a shorter explanation.
+See [`.codex/INSTALL.md`](./.codex/INSTALL.md) for a shorter explanation of the single-skill install model.
 
 ## Validation
 

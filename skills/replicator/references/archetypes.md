@@ -12,9 +12,9 @@ Use when:
 
 Default route:
 
-- `platform`: `single-pass-material`
-- `postfx`: `none` or `scene-polish`
-- `performance`: usually `balanced`
+- implementation surface: `single-pass-material`
+- post route: `none` or `scene-polish`
+- performance contract: usually `balanced`
 
 ## `scene-post`
 
@@ -26,9 +26,9 @@ Use when:
 
 Default route:
 
-- `platform`: `scene-plus-post`
-- `postfx`: `scene-polish` or `selective-post`
-- `performance`: watch `post-chain` and `fill-rate`
+- implementation surface: `scene-plus-post`
+- post route: `scene-polish` or `selective-post`
+- likely bottleneck: `post-chain` or `fill-rate`
 
 ## `fullscreen-raymarch`
 
@@ -40,9 +40,9 @@ Use when:
 
 Default route:
 
-- `platform`: `fullscreen-procedural`
-- `postfx`: `fullscreen-stack` only if it materially helps
-- `performance`: watch `ray-steps` and `fill-rate`
+- implementation surface: `fullscreen-procedural`
+- post route: `fullscreen-stack` only if it materially helps
+- likely bottleneck: `ray-steps` or `fill-rate`
 
 ## `instanced-particles`
 
@@ -53,9 +53,9 @@ Use when:
 
 Default route:
 
-- `platform`: `scene-plus-post` or `simulation-plus-render`
-- `postfx`: `scene-polish`
-- `performance`: watch `particle-count`
+- implementation surface: `scene-plus-post` or `simulation-plus-render`
+- post route: `scene-polish`
+- likely bottleneck: `particle-count`
 
 ## `feedback-trails`
 
@@ -66,9 +66,9 @@ Use when:
 
 Default route:
 
-- `platform`: `feedback-loop`
-- `postfx`: `feedback-post`
-- `performance`: watch `bandwidth` and `post-chain`
+- implementation surface: `feedback-loop`
+- post route: `feedback-post`
+- likely bottleneck: `bandwidth` or `post-chain`
 
 ## `mixed`
 
@@ -86,8 +86,8 @@ Rule:
 
 If the task is only:
 
-- renderer selection -> use `platform`
-- post-chain design -> use `postfx`
-- performance tuning -> use `performance`
+- renderer selection -> use the implementation-surface decision module
+- post-chain design -> use the post-pipeline decision module
+- performance tuning -> use the performance-contract decision module
 
-then `replicator` is not the right entry point.
+then the full reference-replication workflow is probably not the right starting point.
