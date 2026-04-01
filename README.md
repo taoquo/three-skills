@@ -53,8 +53,6 @@ Use `perf-doctor` for explicit performance diagnosis. It is designed around curr
 
 #### `perf-doctor` Input Contract
 
-English:
-
 - Minimum input:
   - page, route, scene, or component with the issue
   - symptom description
@@ -69,23 +67,6 @@ English:
   - post stack hints such as `EffectComposer`, `postprocessing`, `@react-three/postprocessing`, or `RenderPipeline`
   - measurements such as `renderer.info`, frame times, flame charts, or pass timings
   - visual constraints such as "keep shadows" or "do not blur"
-
-中文：
-
-- 最小输入：
-  - 出问题的页面、路由、场景或组件
-  - 症状描述
-  - 复现步骤
-  - 大致目标设备类型
-- 发现策略：
-  - 不要求用户预先判断自己使用的是 `WebGLRenderer`、`WebGPURenderer`、R3F 或哪条后处理链路
-  - `perf-doctor` 应先从仓库、代码或运行页面中自行识别 runtime route
-  - 只有当某个缺失采样会实质影响结论时，才向用户补要数据
-- 可选加速信息：
-  - 渲染器线索，例如 `WebGLRenderer`、`WebGPURenderer`、`@react-three/fiber`
-  - 后处理线索，例如 `EffectComposer`、`postprocessing`、`@react-three/postprocessing`、`RenderPipeline`
-  - 测量数据，例如 `renderer.info`、帧时间、flame chart、pass timings
-  - 视觉约束，例如“必须保留阴影”或“不能变糊”
 
 ### `shader-port`
 
