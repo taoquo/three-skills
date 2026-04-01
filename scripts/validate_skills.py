@@ -13,10 +13,21 @@ REQUIRED_TOP_LEVEL_FIELDS = ("name", "description", "license")
 REQUIRED_METADATA_FIELDS = ("version", "category", "render_backends", "shader_language")
 REQUIRED_HOST_MARKDOWN = (
     "README.md",
+    "CONTRIBUTING.md",
+    "SECURITY.md",
+    "CHANGELOG.md",
     ".claude/INSTALL.md",
     ".codex/INSTALL.md",
     ".cursor-plugin/INSTALL.md",
     ".opencode/INSTALL.md",
+    ".github/pull_request_template.md",
+)
+REQUIRED_TOP_LEVEL_FILES = (
+    "LICENSE",
+    ".github/CODEOWNERS",
+    ".github/ISSUE_TEMPLATE/bug_report.yml",
+    ".github/ISSUE_TEMPLATE/feature_request.yml",
+    ".github/ISSUE_TEMPLATE/config.yml",
 )
 REQUIRED_HOST_JSON_FIELDS = {
     ".claude-plugin/plugin.json": ("name", "description", "version", "author", "homepage", "repository", "license"),
@@ -116,6 +127,11 @@ def validate_markdown_links(markdown_path: Path) -> list[str]:
 
 def validate_host_support(repo_root: Path) -> list[str]:
     errors: list[str] = []
+
+    for relative_path in REQUIRED_TOP_LEVEL_FILES:
+        path = repo_root / relative_path
+        if not path.exists():
+            errors.append(f"{relative_path}: missing file")
 
     for relative_path in REQUIRED_HOST_MARKDOWN:
         path = repo_root / relative_path
@@ -298,6 +314,56 @@ def validate_readme(repo_root: Path, skill_dirs: list[Path]) -> list[str]:
     return errors
 
 
+def validate_version_consistency(repo_root: Path, skill_dirs: list[Path]) -> list[str]:
+    errors: list[str] = []
+    versions: dict[str, str] = {}
+
+    for skill_dir in skill_dirs:
+        skill_md = skill_dir / "SKILL.md"
+        frontmatter = extract_frontmatter(skill_md.read_text())
+        if frontmatter is None:
+            continue
+        data = parse_frontmatter(frontmatter)
+        version = data.get("metadata.version")
+        if isinstance(version, str) and version:
+            versions[f"skills/{skill_dir.name}/SKILL.md"] = version
+
+    json_sources = {
+        ".claude-plugin/plugin.json": "version",
+        ".cursor-plugin/plugin.json": "version",
+    }
+
+    for relative_path, field in json_sources.items():
+        path = repo_root / relative_path
+        if not path.exists():
+            continue
+        data = json.loads(path.read_text())
+        version = data.get(field)
+        if isinstance(version, str) and version:
+            versions[relative_path] = version
+
+    marketplace_path = repo_root / ".claude-plugin" / "marketplace.json"
+    if marketplace_path.exists():
+        data = json.loads(marketplace_path.read_text())
+        plugins = data.get("plugins")
+        if isinstance(plugins, list) and plugins:
+            plugin = plugins[0]
+            if isinstance(plugin, dict):
+                version = plugin.get("version")
+                if isinstance(version, str) and version:
+                    versions[".claude-plugin/marketplace.json"] = version
+
+    if not versions:
+        return errors
+
+    unique_versions = sorted(set(versions.values()))
+    if len(unique_versions) > 1:
+        joined = ", ".join(f"{path}={version}" for path, version in sorted(versions.items()))
+        errors.append(f"version mismatch across public metadata: {joined}")
+
+    return errors
+
+
 def main() -> int:
     repo_root = Path(__file__).resolve().parent.parent
     skills_root = repo_root / "skills"
@@ -317,6 +383,7 @@ def main() -> int:
     errors.extend(validate_readme(repo_root, skill_dirs))
     errors.extend(validate_host_support(repo_root))
     errors.extend(validate_claude_mirrors(repo_root, skill_dirs))
+    errors.extend(validate_version_consistency(repo_root, skill_dirs))
 
     if errors:
         for error in errors:

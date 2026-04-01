@@ -1,0 +1,73 @@
+{
+  "effect_slug": "volumetric-lighting-webgpu",
+  "effect_title": "Volumetric Lighting (Froxel-based)",
+  "effect_archetype": "scene-post",
+  "canonical_profile": "scene-post",
+  "authoring_path": "pure-tsl",
+  "runtime_renderer": "webgpu-renderer",
+  "resource_model": "uniforms",
+  "pass_topology": "scene-plus-post",
+  "compatibility_contract": "desktop-webgpu-plus-webgl2-fallback",
+  "target_device_class": "desktop-mid",
+  "performance_contract": "balanced",
+  "dominant_bottleneck": "post-chain",
+  "post_pipeline_type": "selective-post",
+  "render_target_layout": "single-intermediate",
+  "history_requirement": "none",
+  "nearest_rejected_route": "fullscreen-raymarch",
+  "target_environment": "desktop-first",
+  "performance_priority": "deferred until look is correct",
+  "accepted_source_types": [
+    "url",
+    "keyword",
+    "image-uri",
+    "local-image-path",
+    "screenshot",
+    "video",
+    "code",
+    "derived-link"
+  ],
+  "source_roles": [
+    "primary",
+    "secondary",
+    "accent",
+    "derived"
+  ],
+  "sources": [
+    {
+      "type": "url",
+      "value": "https://discourse.threejs.org/t/volumetric-lighting-in-webgpu/87959",
+      "label": "Three.js forum discussion",
+      "role": "primary",
+      "contribution": "Primary reference, froxel technique rationale, pass structure, and tradeoff discussion"
+    },
+    {
+      "type": "url",
+      "value": "https://www.youtube.com/watch?v=SW30QX1wxTY",
+      "label": "Hillaire 2020 talk",
+      "role": "secondary",
+      "contribution": "Sky and atmosphere rendering background"
+    },
+    {
+      "type": "url",
+      "value": "https://research.nvidia.com/labs/rtr/approximate-mie/publications/approximate-mie.pdf",
+      "label": "Approximate Mie PDF",
+      "role": "secondary",
+      "contribution": "Mie scattering approximation reference"
+    },
+    {
+      "type": "url",
+      "value": "https://threejs.org/examples/webgpu_volume_lighting.html",
+      "label": "Three.js example",
+      "role": "secondary",
+      "contribution": "Baseline Three.js volumetric implementation used for MVP landing"
+    },
+    {
+      "type": "url",
+      "value": "https://github.com/mrdoob/three.js/pull/30530",
+      "label": "Three.js pull request",
+      "role": "secondary",
+      "contribution": "Three.js implementation details and current landing constraints"
+    }
+  ]
+}

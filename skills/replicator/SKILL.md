@@ -3,7 +3,7 @@ name: replicator
 license: MIT
 description: Analyze multimodal graphics references and recreate the effect in Three.js. Use when the user shares a URL, demo, article, video, Shadertoy, CodePen, GitHub repo, social thread, screenshot, image URI, local image path, or a keyword/topic prompt and wants: a visual breakdown, a faithful or improved Three.js remake, research on likely rendering techniques, a runnable demo, tuning controls, or a REPORT.md that records sources, decisions, and revisions.
 metadata:
-  version: "3.2.0"
+  version: "4.6.0"
   category: threejs
   render_backends:
     - webgpu

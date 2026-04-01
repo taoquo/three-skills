@@ -1,0 +1,41 @@
+{
+  "effect_slug": "volumetric-lighting-webgpu",
+  "captures_subdir": "captures",
+  "expected_slots": [
+    "01",
+    "02"
+  ],
+  "complete_pairs": 0,
+  "missing_reference": [
+    "01",
+    "02"
+  ],
+  "missing_current": [
+    "01",
+    "02"
+  ],
+  "size_mismatches": [],
+  "unsupported_formats": [],
+  "entries": [
+    {
+      "slot": "01",
+      "reference_path": null,
+      "current_path": null,
+      "reference_exists": false,
+      "current_exists": false,
+      "reference_size": null,
+      "current_size": null,
+      "size_match": false
+    },
+    {
+      "slot": "02",
+      "reference_path": null,
+      "current_path": null,
+      "reference_exists": false,
+      "current_exists": false,
+      "reference_size": null,
+      "current_size": null,
+      "size_match": false
+    }
+  ]
+}

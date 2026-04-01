@@ -5,5 +5,3 @@ __pycache__/
 .gstack/
 .opencode/*
 !.opencode/INSTALL.md
-test/
-docs/

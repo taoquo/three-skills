@@ -32,7 +32,7 @@ Inside `replicator`, the workflow still makes three explicit decision classes:
 
 The knowledge for those domains now lives under [`skills/replicator/references/`](skills/replicator/references/).
 
-## Three.js Replicator v3.2 Highlights
+## Three.js Replicator v4.6 Highlights
 
 - Multimodal input intake: start from a URL, keyword, image URI, screenshot, local image path, or a mixed reference set.
 - Non-breaking naming refresh: keep the canonical skill id as `replicator` while presenting it as `Three.js Replicator`.
@@ -50,6 +50,14 @@ The knowledge for those domains now lives under [`skills/replicator/references/`
   - `legacy-glsl`
 - Starter dependency versions are pinned in `skills/replicator/assets/runtime-versions.json`.
 - Final demo output should stay as a minimal HTML page with no decorative text outside GUI or explicit error state.
+
+## Repository Standards
+
+- License: [MIT](./LICENSE)
+- Contribution guide: [CONTRIBUTING.md](./CONTRIBUTING.md)
+- Security policy: [SECURITY.md](./SECURITY.md)
+- Release history: [CHANGELOG.md](./CHANGELOG.md)
+- Public releases should use `vX.Y.Z` tags and keep repo metadata on the same version.
 
 ## Installation
 
@@ -139,3 +147,9 @@ When an effect has captures under `captures/`, refresh the pair manifest and rev
 ```bash
 python3 skills/replicator/scripts/capture_audit.py test/volumetric-lighting-webgpu
 ```
+
+## Contributing
+
+Open an issue or pull request using the repository templates under `.github/`.
+
+Before sending changes, follow [CONTRIBUTING.md](./CONTRIBUTING.md) and run the full validation set above.
