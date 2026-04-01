@@ -10,7 +10,7 @@ from pathlib import Path
 
 MAX_NAME_LENGTH = 64
 REQUIRED_TOP_LEVEL_FIELDS = ("name", "description", "license")
-REQUIRED_METADATA_FIELDS = ("version", "category", "render_backends", "shader_language")
+REQUIRED_METADATA_FIELDS = ("category", "render_backends", "shader_language")
 REQUIRED_HOST_MARKDOWN = (
     "README.md",
     "CONTRIBUTING.md",
@@ -335,19 +335,9 @@ def validate_readme(repo_root: Path, skill_dirs: list[Path]) -> list[str]:
     return errors
 
 
-def validate_version_consistency(repo_root: Path, skill_dirs: list[Path]) -> list[str]:
+def validate_version_consistency(repo_root: Path) -> list[str]:
     errors: list[str] = []
     versions: dict[str, str] = {}
-
-    for skill_dir in skill_dirs:
-        skill_md = skill_dir / "SKILL.md"
-        frontmatter = extract_frontmatter(skill_md.read_text())
-        if frontmatter is None:
-            continue
-        data = parse_frontmatter(frontmatter)
-        version = data.get("metadata.version")
-        if isinstance(version, str) and version:
-            versions[f"skills/{skill_dir.name}/SKILL.md"] = version
 
     json_sources = {
         ".claude-plugin/plugin.json": "version",
@@ -404,7 +394,7 @@ def main() -> int:
     errors.extend(validate_readme(repo_root, skill_dirs))
     errors.extend(validate_host_support(repo_root))
     errors.extend(validate_claude_mirrors(repo_root, skill_dirs))
-    errors.extend(validate_version_consistency(repo_root, skill_dirs))
+    errors.extend(validate_version_consistency(repo_root))
 
     if errors:
         for error in errors:

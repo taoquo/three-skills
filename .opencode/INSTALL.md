@@ -28,7 +28,7 @@ Restart OpenCode after installation.
 
 ## Verify
 
-Ask OpenCode to list available skills. This repository should expose `replicator` and present it as `Three.js Replicator`.
+Ask OpenCode to list available skills. This repository should expose `material-lab`, `perf-doctor`, `replicator`, and `shader-port`.
 
 ## Updating
 

@@ -37,6 +37,7 @@ find ~/.cursor/three-skills/skills -maxdepth 2 -name SKILL.md
 ```
 
 You should see `skills/replicator/SKILL.md`.
+You should also see `skills/material-lab/SKILL.md`, `skills/perf-doctor/SKILL.md`, and `skills/shader-port/SKILL.md`.
 
 ## Updating
 

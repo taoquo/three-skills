@@ -32,9 +32,12 @@ ls -la ~/.agents/skills/three-skills
 
 You should see a symlink or junction that points at the repository `skills/` directory.
 
-## Available Skill
+## Available Skills
 
+- `material-lab` (`Three.js Material Lab`) — isolated material, lighting, and surface-treatment studies
+- `perf-doctor` (`Three.js Performance Doctor`) — performance diagnosis, bottleneck classification, and degradation planning
 - `replicator` (`Three.js Replicator`) — multimodal reference-driven Three.js effect recreation from URLs, keywords, image inputs, and mixed source sets, with archetype routing, implementation-surface decisions, post-pipeline design, and performance planning
+- `shader-port` (`Three.js Shader Port`) — Shadertoy/GLSL/WGSL shader translation into maintainable Three.js paths
 
 ## Updating
 

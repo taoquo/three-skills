@@ -1,13 +1,13 @@
 {
   "name": "three-skills",
-  "description": "Three.js skills library centered on Three.js Replicator for multimodal reference-driven effect recreation and runtime decision-making",
+  "description": "Three.js skills library for effect replication, material studies, performance diagnosis, and shader porting",
   "owner": {
     "name": "taoquo"
   },
   "plugins": [
     {
       "name": "three-skills",
-      "description": "Three.js skills library centered on Three.js Replicator, a multimodal reference-driven workflow for effect recreation, renderer routing, post-processing decisions, and performance planning",
+      "description": "Three.js skills library for effect replication, material studies, performance diagnosis, and shader porting across WebGPU and WebGL2",
       "version": "4.6.0",
       "source": "./",
       "author": {

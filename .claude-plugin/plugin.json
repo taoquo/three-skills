@@ -1,6 +1,6 @@
 {
   "name": "three-skills",
-  "description": "Three.js skills library centered on Three.js Replicator, a multimodal reference-driven workflow for effect recreation, renderer routing, post-processing decisions, and performance planning",
+  "description": "Three.js skills library for effect replication, material studies, performance diagnosis, and shader porting across WebGPU and WebGL2",
   "version": "4.6.0",
   "author": {
     "name": "taoquo"
@@ -8,5 +8,5 @@
   "homepage": "https://github.com/taoquo/three-skills",
   "repository": "https://github.com/taoquo/three-skills",
   "license": "MIT",
-  "keywords": ["skills", "threejs", "webgpu", "webgl2", "tsl", "shader", "graphics", "replicator", "multimodal", "image", "reference"]
+  "keywords": ["skills", "threejs", "webgpu", "webgl2", "tsl", "shader", "graphics", "replicator", "materials", "performance", "porting", "reference"]
 }
