@@ -19,15 +19,15 @@
 - History requirement: `none`
 - Fallback path: Keep the current post-process volumetric approach for WebGL2 or constrained WebGPU environments, with reduced quality and no compute-style froxel pre-integration.
 
-## Source Set
+## Input Set
 
-| URL | Type | Contribution |
-| --- | --- | --- |
-| `https://discourse.threejs.org/t/volumetric-lighting-in-webgpu/87959` | discussion | Primary reference, froxel technique rationale, pass structure, and tradeoff discussion |
-| `https://www.youtube.com/watch?v=SW30QX1wxTY` | talk | Hillaire 2020 sky and atmosphere rendering background |
-| `https://research.nvidia.com/labs/rtr/approximate-mie/publications/approximate-mie.pdf` | paper | Mie scattering approximation reference |
-| `https://threejs.org/examples/webgpu_volume_lighting.html` | example | Baseline Three.js volumetric implementation used for MVP landing |
-| `https://github.com/mrdoob/three.js/pull/30530` | pull request | Three.js implementation details and current landing constraints |
+| Input | Type | Role | Contribution |
+| --- | --- | --- | --- |
+| `https://discourse.threejs.org/t/volumetric-lighting-in-webgpu/87959` | `url` | `primary` | Primary reference, froxel technique rationale, pass structure, and tradeoff discussion |
+| `https://www.youtube.com/watch?v=SW30QX1wxTY` | `url` | `secondary` | Hillaire 2020 sky and atmosphere rendering background |
+| `https://research.nvidia.com/labs/rtr/approximate-mie/publications/approximate-mie.pdf` | `url` | `secondary` | Mie scattering approximation reference |
+| `https://threejs.org/examples/webgpu_volume_lighting.html` | `url` | `secondary` | Baseline Three.js volumetric implementation used for MVP landing |
+| `https://github.com/mrdoob/three.js/pull/30530` | `url` | `secondary` | Three.js implementation details and current landing constraints |
 
 ## Archetype Route
 
@@ -191,8 +191,8 @@
 | Pass order | `scene -> volumetric -> denoise -> composite -> tone map` | Good enough for the baseline. |
 | History requirement | `none` | Current MVP does not depend on temporal persistence. |
 | Quality tiers | `reduce volumetric resolution -> disable denoise -> reduce ray steps -> reduce shadow quality` | Ordered by least visible damage first. |
-| Exposed post controls | `denoiseStrength`, `denoise`, `resolution`, `exposure` | Safe for interactive tuning. |
-| Hidden post controls | `pass layout changes`, `composite mode rewrites` | Too destructive for normal GUI use. |
+| Exposed post controls | `denoise`, `resolution`, `exposure` | Safe for interactive tuning. |
+| Hidden post controls | `blur sigma`, `pass layout changes`, `composite mode rewrites` | Too destructive for normal GUI use. |
 
 ## Performance Decision
 
@@ -202,7 +202,7 @@
 | Performance contract | `balanced` | Preserve the look while keeping obvious degradation levers available. |
 | Dominant bottleneck | `post-chain` | Current MVP cost is dominated by the separate volumetric pass, denoise, and composite work. |
 | Degradation ladder | `lower volumetric resolution -> reduce ray steps -> disable denoise -> reduce shadow map size` | Keeps the core scene and light shafts readable longer. |
-| Exposed controls | `dpr`, `steps`, `resolution`, `denoise`, `denoiseStrength`, `exposure` | Useful without destroying the look immediately. |
+| Exposed controls | `dpr`, `steps`, `resolution`, `denoise`, `exposure` | Useful without destroying the look immediately. |
 | Hidden controls | `phase-function rewrites`, `pass removal`, `renderer path changes` | Better kept out of the normal GUI. |
 
 ## GUI
@@ -210,7 +210,7 @@
 | Group | Controls |
 | --- | --- |
 | `Renderer` | `dpr`, `exposure`, `paused`, `autoRotate` |
-| `Post` | `resolution`, `denoise`, `denoiseStrength` |
+| `Post` | `resolution`, `denoise` |
 | `Style` | `smokeAmount`, `fogIntensity`, `background` |
 | `Animation` | `speed`, `lightIntensity`, `spotIntensity` |
 | `Raymarch` | `steps` |
@@ -286,3 +286,4 @@
 | `2026-03-29` | Implemented MVP using post-process volumetric lighting | Based on the official Three.js example and adapted for this fixture |
 | `2026-03-29` | Updated implementation plan | Documented the froxel upgrade path |
 | `2026-03-31` | Upgraded report format | Added archetype route, evidence tracking, and visual acceptance scoring |
+| `2026-04-01` | Reconnected the real render pipeline and aligned the public example with the checked-in fixture | Removed the dead placeholder pipeline path and kept only working post controls |

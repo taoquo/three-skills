@@ -76,6 +76,18 @@ def main() -> int:
             assert sources["history_requirement"] == expected["history_requirement"]
             assert sources["three_version"] == module.THREE_VERSION
             assert sources["lil_gui_version"] == module.LIL_GUI_VERSION
+            assert sources["accepted_source_types"] == [
+                "url",
+                "keyword",
+                "image-uri",
+                "local-image-path",
+                "screenshot",
+                "video",
+                "code",
+                "derived-link",
+            ]
+            assert sources["source_roles"] == ["primary", "secondary", "accent", "derived"]
+            assert sources["sources"] == []
 
             if "__THREE_VERSION__" in index_text or "__LIL_GUI_VERSION__" in index_text:
                 raise AssertionError(f"runtime version token was not replaced in {index_path}")

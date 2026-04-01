@@ -1,6 +1,6 @@
 {
-  "effect_dir": "/Users/shuke/WorkSpace/01Code/04Git2/three-skills/effects/volumetric-lighting-webgpu",
-  "captures_dir": "/Users/shuke/WorkSpace/01Code/04Git2/three-skills/effects/volumetric-lighting-webgpu/captures",
+  "effect_slug": "volumetric-lighting-webgpu",
+  "captures_subdir": "captures",
   "expected_slots": [
     "01",
     "02"

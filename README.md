@@ -128,7 +128,7 @@ For `replicator`, also run the scaffolder smoke test:
 python3 scripts/smoke_test_replicator.py
 ```
 
-And validate checked-in replicator fixtures under `test/`:
+And validate checked-in replicator fixtures plus public example parity:
 
 ```bash
 python3 scripts/validate_replicator_fixtures.py

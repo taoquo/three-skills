@@ -1,5 +1,5 @@
 import * as THREE from 'three/webgpu';
-import { vec3, Fn, time, texture3D, screenUV, uniform, screenCoordinate, pass, color, uv, mix, sin } from 'three/tsl';
+import { vec3, Fn, time, texture3D, screenUV, uniform, screenCoordinate, pass } from 'three/tsl';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { ImprovedNoise } from 'three/addons/math/ImprovedNoise.js';
 import { bayer16 } from 'three/addons/tsl/math/Bayer.js';
@@ -24,7 +24,6 @@ const params = {
   spotIntensity: 100,
   fogIntensity: 1,
   resolution: 0.25,
-  denoiseStrength: 0.6,
   denoise: true,
   steps: 12,
   background: '#050608',
@@ -44,7 +43,13 @@ controls.maxDistance = 40;
 controls.minDistance = 2;
 
 let renderer, volumetricMesh, teapot, pointLight, spotLight, renderPipeline;
-let volumetricLightingIntensity, smokeAmountUniform, denoiseStrengthUniform;
+let volumetricLightingIntensity, smokeAmountUniform, scenePass, volumetricPass, blurredVolumetricPass;
+
+function updateRenderOutput() {
+  if (!renderPipeline || !scenePass || !volumetricPass) return;
+  const volumetricNode = params.denoise && blurredVolumetricPass ? blurredVolumetricPass : volumetricPass;
+  renderPipeline.outputNode = scenePass.add(volumetricNode.mul(volumetricLightingIntensity));
+}
 
 function createTexture3D() {
   let i = 0;
@@ -131,7 +136,6 @@ async function init() {
 
     smokeAmountUniform = uniform(params.smokeAmount);
     volumetricLightingIntensity = uniform(params.fogIntensity);
-    denoiseStrengthUniform = uniform(params.denoiseStrength);
 
     const volumetricMaterial = new THREE.VolumeNodeMaterial();
     volumetricMaterial.steps = params.steps;
@@ -193,30 +197,25 @@ async function init() {
     scene.add(spotLight);
 
     // Post-Processing
-    // Temporary replacement for RenderPipeline - direct rendering
-    renderPipeline = {
-      outputNode: null,
-      render: () => renderer.render(scene, camera)
-    };
+    renderPipeline = new THREE.RenderPipeline(renderer);
     const volumetricLayer = new THREE.Layers();
     volumetricLayer.disableAll();
     volumetricLayer.enable(LAYER_VOLUMETRIC_LIGHTING);
 
     // Scene Pass
-    const scenePass = pass(scene, camera);
+    scenePass = pass(scene, camera);
     const sceneDepth = scenePass.getTextureNode('depth');
     volumetricMaterial.depthNode = sceneDepth.sample(screenUV);
 
     // Volumetric Lighting Pass
-    const volumetricPass = pass(scene, camera, { depthBuffer: false });
+    volumetricPass = pass(scene, camera, { depthBuffer: false });
     volumetricPass.name = 'Volumetric Lighting';
     volumetricPass.setLayers(volumetricLayer);
-    // volumetricPass.setResolutionScale(params.resolution); // Method not available in current version
+    volumetricPass.setResolutionScale(params.resolution);
 
-    // Compose and Denoise
-    const blurredVolumetricPass = gaussianBlur(volumetricPass, denoiseStrengthUniform);
-    const scenePassColor = scenePass.add(blurredVolumetricPass.mul(volumetricLightingIntensity));
-    renderPipeline.outputNode = scenePassColor;
+    // Keep the blur contract simple and stable until the froxel upgrade lands.
+    blurredVolumetricPass = gaussianBlur(volumetricPass, 4);
+    updateRenderOutput();
 
     // GUI
     const gui = new GUI({ title: effectTitle, width: 320 });
@@ -242,21 +241,17 @@ async function init() {
       scene.background.set(value);
     });
 
-    const raymarchFolder = gui.addFolder('Raymarch');
-    raymarchFolder.add(params, 'resolution', 0.1, 1, 0.01).onChange((value) => {
+    const postFolder = gui.addFolder('Post');
+    postFolder.add(params, 'resolution', 0.1, 1, 0.01).onChange((value) => {
       volumetricPass.setResolutionScale(value);
     });
+    postFolder.add(params, 'denoise').onChange(() => {
+      updateRenderOutput();
+    });
+
+    const raymarchFolder = gui.addFolder('Raymarch');
     raymarchFolder.add(params, 'steps', 2, 16, 1).onChange((value) => {
       volumetricMaterial.steps = value;
-    });
-    raymarchFolder.add(params, 'denoiseStrength', 0, 1, 0.01).onChange((value) => {
-      denoiseStrengthUniform.value = value;
-    });
-    raymarchFolder.add(params, 'denoise').onChange((value) => {
-      const volumetric = value ? blurredVolumetricPass : volumetricPass;
-      const scenePassColor = scenePass.add(volumetric.mul(volumetricLightingIntensity));
-    // renderPipeline.outputNode = scenePassColor; // Disabled for now
-      renderPipeline.needsUpdate = true;
     });
 
     const lightingFolder = gui.addFolder('Lighting');

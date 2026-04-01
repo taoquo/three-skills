@@ -198,8 +198,8 @@ def build_manifest(effect_dir: Path, slots: list[str]) -> dict[str, object]:
                 )
 
     return {
-        "effect_dir": str(effect_dir),
-        "captures_dir": str(captures_dir),
+        "effect_slug": effect_dir.name,
+        "captures_subdir": "captures",
         "expected_slots": slots,
         "complete_pairs": complete_pairs,
         "missing_reference": missing_reference,
