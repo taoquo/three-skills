@@ -62,6 +62,15 @@
     <script>
       window.__REPLICATOR_STARTER_BOOTED__ = false;
       window.__REPLICATOR_STARTER_RENDERER_READY__ = false;
+      window.__REPLICATOR_STARTER_LAST_ERROR__ = null;
+      window.__REPLICATOR_STARTER_FRAME_COUNT__ = 0;
+      window.__REPLICATOR_SYNC_RUNTIME__ = () => {
+        document.documentElement.dataset.replicatorBooted = String(window.__REPLICATOR_STARTER_BOOTED__);
+        document.documentElement.dataset.replicatorReady = String(window.__REPLICATOR_STARTER_RENDERER_READY__);
+        document.documentElement.dataset.replicatorFrameCount = String(window.__REPLICATOR_STARTER_FRAME_COUNT__);
+        document.documentElement.dataset.replicatorLastError = window.__REPLICATOR_STARTER_LAST_ERROR__ ?? "";
+      };
+      window.__REPLICATOR_SYNC_RUNTIME__();
       window.setTimeout(() => {
         const status = document.getElementById("status");
         if (!status || window.__REPLICATOR_STARTER_RENDERER_READY__) return;
@@ -80,6 +89,8 @@
       const status = document.getElementById("status");
       if (window.location.protocol === "file:") {
         window.__REPLICATOR_STARTER_BOOTED__ = true;
+        window.__REPLICATOR_STARTER_LAST_ERROR__ = "localhost preview required";
+        window.__REPLICATOR_SYNC_RUNTIME__();
         status.style.display = "block";
         status.style.borderColor = "rgba(248, 113, 113, 0.35)";
         status.textContent =

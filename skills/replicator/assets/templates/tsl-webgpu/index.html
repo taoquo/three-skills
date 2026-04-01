@@ -63,6 +63,15 @@
     <script>
       window.__REPLICATOR_STARTER_BOOTED__ = false;
       window.__REPLICATOR_STARTER_RENDERER_READY__ = false;
+      window.__REPLICATOR_STARTER_LAST_ERROR__ = null;
+      window.__REPLICATOR_STARTER_FRAME_COUNT__ = 0;
+      window.__REPLICATOR_SYNC_RUNTIME__ = () => {
+        document.documentElement.dataset.replicatorBooted = String(window.__REPLICATOR_STARTER_BOOTED__);
+        document.documentElement.dataset.replicatorReady = String(window.__REPLICATOR_STARTER_RENDERER_READY__);
+        document.documentElement.dataset.replicatorFrameCount = String(window.__REPLICATOR_STARTER_FRAME_COUNT__);
+        document.documentElement.dataset.replicatorLastError = window.__REPLICATOR_STARTER_LAST_ERROR__ ?? "";
+      };
+      window.__REPLICATOR_SYNC_RUNTIME__();
       window.setTimeout(() => {
         const status = document.getElementById("status");
         if (!status || window.__REPLICATOR_STARTER_RENDERER_READY__) return;
@@ -82,12 +91,16 @@
       const canvas = document.getElementById("app");
       const status = document.getElementById("status");
       window.__REPLICATOR_STARTER_BOOTED__ = true;
+      window.__REPLICATOR_STARTER_LAST_ERROR__ = null;
+      window.__REPLICATOR_SYNC_RUNTIME__();
 
       if (window.location.protocol === "file:") {
         status.style.display = "block";
         status.style.borderColor = "rgba(248, 113, 113, 0.35)";
         status.textContent =
           "Zero-build demos must be previewed over http://localhost/..., not file://. Run a local HTTP server from the repo root and reopen this path over localhost.";
+        window.__REPLICATOR_STARTER_LAST_ERROR__ = "localhost preview required";
+        window.__REPLICATOR_SYNC_RUNTIME__();
         throw new Error("localhost preview required");
       }
 
@@ -157,6 +170,7 @@
       function clearStatus() {
         status.style.display = "none";
         window.__REPLICATOR_STARTER_RENDERER_READY__ = true;
+        window.__REPLICATOR_SYNC_RUNTIME__();
       }
 
       function withInitTimeout(promise, label, timeoutMs = 4000) {
@@ -185,6 +199,8 @@
 
       function render(now = 0) {
         requestAnimationFrame(render);
+        window.__REPLICATOR_STARTER_FRAME_COUNT__ += 1;
+        window.__REPLICATOR_SYNC_RUNTIME__();
 
         if (!params.paused) {
           const t = now * 0.001 * params.speed;
@@ -210,7 +226,7 @@
           renderer.outputColorSpace = THREE.SRGBColorSpace;
           renderer.toneMapping = THREE.ACESFilmicToneMapping;
           renderer.toneMappingExposure = params.exposure;
-          await withInitTimeout(renderer.init(), "WebGPU renderer init");
+          await withInitTimeout(renderer.init(), "WebGPU renderer init", 12000);
 
           const gui = new GUI({ title: effectTitle, width: 320 });
           const rendererFolder = gui.addFolder("Renderer");
@@ -249,6 +265,8 @@
           render();
         } catch (error) {
           window.__REPLICATOR_STARTER_RENDERER_READY__ = false;
+          window.__REPLICATOR_STARTER_LAST_ERROR__ = error?.message ?? String(error);
+          window.__REPLICATOR_SYNC_RUNTIME__();
           console.error(error);
           setStatus(
             `WebGPU starter failed to initialize. Try the WebGL2 fallback template or a raw shader path if this browser or environment cannot create the required GPU context. ${error.message ?? ""}`.trim(),

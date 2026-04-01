@@ -61,6 +61,15 @@
     <script>
       window.__REPLICATOR_STARTER_BOOTED__ = false;
       window.__REPLICATOR_STARTER_RENDERER_READY__ = false;
+      window.__REPLICATOR_STARTER_LAST_ERROR__ = null;
+      window.__REPLICATOR_STARTER_FRAME_COUNT__ = 0;
+      window.__REPLICATOR_SYNC_RUNTIME__ = () => {
+        document.documentElement.dataset.replicatorBooted = String(window.__REPLICATOR_STARTER_BOOTED__);
+        document.documentElement.dataset.replicatorReady = String(window.__REPLICATOR_STARTER_RENDERER_READY__);
+        document.documentElement.dataset.replicatorFrameCount = String(window.__REPLICATOR_STARTER_FRAME_COUNT__);
+        document.documentElement.dataset.replicatorLastError = window.__REPLICATOR_STARTER_LAST_ERROR__ ?? "";
+      };
+      window.__REPLICATOR_SYNC_RUNTIME__();
       window.setTimeout(() => {
         const status = document.getElementById("status");
         if (!status || window.__REPLICATOR_STARTER_RENDERER_READY__) return;
@@ -77,12 +86,16 @@
       const canvas = document.getElementById("app");
       const status = document.getElementById("status");
       window.__REPLICATOR_STARTER_BOOTED__ = true;
+      window.__REPLICATOR_STARTER_LAST_ERROR__ = null;
+      window.__REPLICATOR_SYNC_RUNTIME__();
 
       if (window.location.protocol === "file:") {
         status.style.display = "block";
         status.style.borderColor = "rgba(248, 113, 113, 0.35)";
         status.textContent =
           "Zero-build demos must be previewed over http://localhost/..., not file://. Run a local HTTP server from the repo root and reopen this path over localhost.";
+        window.__REPLICATOR_STARTER_LAST_ERROR__ = "localhost preview required";
+        window.__REPLICATOR_SYNC_RUNTIME__();
         throw new Error("localhost preview required");
       }
 
@@ -187,6 +200,7 @@
       function clearStatus() {
         status.style.display = "none";
         window.__REPLICATOR_STARTER_RENDERER_READY__ = true;
+        window.__REPLICATOR_SYNC_RUNTIME__();
       }
 
       function resize() {
@@ -202,6 +216,8 @@
 
       function render() {
         requestAnimationFrame(render);
+        window.__REPLICATOR_STARTER_FRAME_COUNT__ += 1;
+        window.__REPLICATOR_SYNC_RUNTIME__();
 
         const dt = clock.getDelta();
         if (!params.paused) {
@@ -265,6 +281,8 @@
           render();
         } catch (error) {
           window.__REPLICATOR_STARTER_RENDERER_READY__ = false;
+          window.__REPLICATOR_STARTER_LAST_ERROR__ = error?.message ?? String(error);
+          window.__REPLICATOR_SYNC_RUNTIME__();
           console.error(error);
           setStatus(
             `Legacy raw shader starter failed to initialize. This usually means the environment could not create a WebGL context. Try a different browser or machine before debugging the effect itself. ${error.message ?? ""}`.trim(),

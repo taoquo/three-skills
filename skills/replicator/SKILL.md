@@ -475,6 +475,7 @@ Before finishing:
 - If the fidelity score is below the acceptance target, record the gap instead of calling the effect done.
 - Record which modules stayed pure TSL and which ones required interop or raw shader fallbacks.
 - Cross-check the final renderer, TSL, post, and node usage against current official Three.js docs and manual pages before you call the implementation done.
+- Cross-check against the exact pinned runtime version in `assets/runtime-versions.json`, not just the latest dev examples. Do not transplant dev-branch API names into an older pinned runtime without verification.
 - Use the honest status labels in the report and user-facing summary instead of vague progress language.
 - Update `REPORT.md` with source notes, choices, open risks, and the latest change log entry.
 

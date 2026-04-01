@@ -4,8 +4,31 @@
 from __future__ import annotations
 
 import json
+import re
+import subprocess
 import sys
 from pathlib import Path
+
+REPO_ROOT = Path(__file__).resolve().parent.parent
+RUNTIME_VERSIONS_PATH = REPO_ROOT / "skills" / "replicator" / "assets" / "runtime-versions.json"
+THREE_RUNTIME_VERSION = ""
+LIL_GUI_RUNTIME_VERSION = ""
+if RUNTIME_VERSIONS_PATH.exists():
+    try:
+        runtime_versions = json.loads(RUNTIME_VERSIONS_PATH.read_text())
+        THREE_RUNTIME_VERSION = str(runtime_versions.get("three", "")).strip()
+        LIL_GUI_RUNTIME_VERSION = str(runtime_versions.get("lil_gui", "")).strip()
+    except json.JSONDecodeError:
+        THREE_RUNTIME_VERSION = ""
+        LIL_GUI_RUNTIME_VERSION = ""
+
+API_COMPAT_RULES = {
+    "0.180": [
+        (r"new\s+THREE\.RenderPipeline\s*\(", "three@0.180.x uses THREE.PostProcessing, not THREE.RenderPipeline"),
+        (r"\.setResolutionScale\s*\(", "three@0.180.x uses .setResolution(...), not .setResolutionScale(...)"),
+        (r"\.getResolutionScale\s*\(", "three@0.180.x uses .getResolution(), not .getResolutionScale()"),
+    ]
+}
 
 REQUIRED_REPORT_SECTIONS = (
     "## Reference Access Gate",
@@ -237,6 +260,123 @@ def validate_capture_manifest(path: Path) -> list[str]:
     return errors
 
 
+def validate_main_js_syntax(path: Path) -> list[str]:
+    try:
+        completed = subprocess.run(
+            ["node", "--check", str(path)],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+    except FileNotFoundError:
+        return [f"{path}: node is required for syntax validation"]
+
+    if completed.returncode == 0:
+        return []
+
+    message = completed.stderr.strip() or completed.stdout.strip() or "unknown syntax error"
+    return [f"{path}: node --check failed ({message})"]
+
+
+def extract_import_map(index_text: str) -> dict[str, str] | None:
+    match = re.search(r'<script\s+type="importmap">\s*(\{.*?\})\s*</script>', index_text, re.S)
+    if not match:
+        return None
+
+    try:
+        payload = json.loads(match.group(1))
+    except json.JSONDecodeError:
+        return None
+
+    imports = payload.get("imports")
+    return imports if isinstance(imports, dict) else None
+
+
+def validate_effect_code_contract(artifact_dir: Path) -> list[str]:
+    errors: list[str] = []
+    index_path = artifact_dir / "index.html"
+    main_js_path = artifact_dir / "main.js"
+
+    if not index_path.exists() or not main_js_path.exists():
+        return errors
+
+    index_text = index_path.read_text()
+    main_js_text = main_js_path.read_text()
+    combined = f"{index_text}\n{main_js_text}"
+
+    if 'id="app"' not in index_text:
+        errors.append(f"{artifact_dir}: index.html must include canvas#app")
+
+    import_map = extract_import_map(index_text)
+    if 'type="importmap"' in index_text and import_map is None:
+        errors.append(f"{artifact_dir}: index.html contains an invalid import map")
+
+    if import_map is not None and "three" not in import_map:
+        errors.append(f"{artifact_dir}: index.html import map must include a base three entry")
+
+    if import_map is not None and THREE_RUNTIME_VERSION:
+        for key in ("three", "three/webgpu", "three/tsl", "three/addons/"):
+            value = import_map.get(key)
+            if value is not None and f"three@{THREE_RUNTIME_VERSION}" not in value:
+                errors.append(f"{artifact_dir}: import map entry {key} must target three@{THREE_RUNTIME_VERSION}")
+
+    if import_map is not None and LIL_GUI_RUNTIME_VERSION:
+        value = import_map.get("lil-gui")
+        if value is not None and f"lil-gui@{LIL_GUI_RUNTIME_VERSION}" not in value:
+            errors.append(f"{artifact_dir}: import map entry lil-gui must target lil-gui@{LIL_GUI_RUNTIME_VERSION}")
+
+    if "./main.js" not in index_text and 'type="module"' not in index_text:
+        errors.append(f"{artifact_dir}: index.html must load main.js or include a module entrypoint")
+
+    if import_map is not None and "./main.js" in index_text and "main.js" not in {path.name for path in artifact_dir.iterdir() if path.is_file()}:
+        errors.append(f"{artifact_dir}: index.html expects ./main.js but the file is missing")
+
+    if "from 'three/webgpu'" in main_js_text or 'from "three/webgpu"' in main_js_text:
+        if import_map is None or "three/webgpu" not in import_map:
+            errors.append(f"{artifact_dir}: main.js imports three/webgpu but index.html does not map it")
+
+    if "from 'three/tsl'" in main_js_text or 'from "three/tsl"' in main_js_text:
+        if import_map is None or "three/tsl" not in import_map:
+            errors.append(f"{artifact_dir}: main.js imports three/tsl but index.html does not map it")
+
+    if "from 'three/addons/" in main_js_text or 'from "three/addons/' in main_js_text:
+        if import_map is None or "three/addons/" not in import_map:
+            errors.append(f"{artifact_dir}: main.js imports three/addons/* but index.html does not map it")
+
+    relative_imports = re.findall(r"""from\s+['"](\.[^'"]+)['"]""", main_js_text)
+    dynamic_relative_imports = re.findall(r"""import\(\s*['"](\.[^'"]+)['"]\s*\)""", main_js_text)
+    for target in set(relative_imports + dynamic_relative_imports):
+        resolved = (main_js_path.parent / target).resolve()
+        if not resolved.exists():
+            errors.append(f"{artifact_dir}: main.js imports missing relative module {target}")
+
+    if "new THREE.WebGPURenderer(" in combined and ".init(" not in combined:
+        errors.append(f"{artifact_dir}: WebGPURenderer usage must call renderer.init()")
+
+    if "forceWebGL" in combined and "new THREE.WebGPURenderer(" not in combined:
+        errors.append(f"{artifact_dir}: forceWebGL must be attached to WebGPURenderer")
+
+    if "new THREE.WebGLRenderer(" in combined and "from 'three/webgpu'" in main_js_text:
+        errors.append(f"{artifact_dir}: WebGLRenderer path should import from three, not three/webgpu")
+
+    if "new THREE.PostProcessing(" in combined and "three/webgpu" not in main_js_text:
+        errors.append(f"{artifact_dir}: THREE.PostProcessing requires the WebGPU entrypoint import")
+
+    if "pass(" in main_js_text and "three/tsl" not in main_js_text:
+        errors.append(f"{artifact_dir}: pass(...) usage must import from three/tsl")
+
+    if "requestAnimationFrame(" not in main_js_text and "setAnimationLoop(" not in main_js_text:
+        errors.append(f"{artifact_dir}: main.js must define an explicit render loop")
+
+    if THREE_RUNTIME_VERSION:
+        rules = API_COMPAT_RULES.get(".".join(THREE_RUNTIME_VERSION.split(".")[:2]), [])
+        for pattern, message in rules:
+            if re.search(pattern, combined):
+                errors.append(f"{artifact_dir}: {message}")
+
+    return errors
+
+
 def validate_artifact(artifact_dir: Path) -> list[str]:
     errors: list[str] = []
 
@@ -259,6 +399,12 @@ def validate_artifact(artifact_dir: Path) -> list[str]:
     manifest_path = artifact_dir / "review-artifacts" / "manifest.json"
     if manifest_path.exists():
         errors.extend(validate_capture_manifest(manifest_path))
+
+    main_js_path = artifact_dir / "main.js"
+    if main_js_path.exists():
+        errors.extend(validate_main_js_syntax(main_js_path))
+
+    errors.extend(validate_effect_code_contract(artifact_dir))
 
     return errors
 

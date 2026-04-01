@@ -12,6 +12,8 @@ const canvas = document.getElementById('app');
 const status = document.getElementById('status');
 const size = new THREE.Vector2();
 window.__REPLICATOR_STARTER_BOOTED__ = true;
+window.__REPLICATOR_STARTER_LAST_ERROR__ = null;
+window.__REPLICATOR_SYNC_RUNTIME__?.();
 
 const params = {
   dpr: Math.min(window.devicePixelRatio, 2),
@@ -42,13 +44,14 @@ controls.enableZoom = true;
 controls.maxDistance = 40;
 controls.minDistance = 2;
 
-let renderer, volumetricMesh, teapot, pointLight, spotLight, renderPipeline;
+let renderer, volumetricMesh, teapot, pointLight, spotLight, postProcessing;
 let volumetricLightingIntensity, smokeAmountUniform, scenePass, volumetricPass, blurredVolumetricPass;
 
 function updateRenderOutput() {
-  if (!renderPipeline || !scenePass || !volumetricPass) return;
+  if (!postProcessing || !scenePass || !volumetricPass) return;
   const volumetricNode = params.denoise && blurredVolumetricPass ? blurredVolumetricPass : volumetricPass;
-  renderPipeline.outputNode = scenePass.add(volumetricNode.mul(volumetricLightingIntensity));
+  postProcessing.outputNode = scenePass.add(volumetricNode.mul(volumetricLightingIntensity));
+  postProcessing.needsUpdate = true;
 }
 
 function createTexture3D() {
@@ -92,6 +95,7 @@ function setStatus(message, isError = false) {
 function clearStatus() {
   status.style.display = 'none';
   window.__REPLICATOR_STARTER_RENDERER_READY__ = true;
+  window.__REPLICATOR_SYNC_RUNTIME__?.();
 }
 
 function withInitTimeout(promise, label, timeoutMs = 4000) {
@@ -128,7 +132,7 @@ async function init() {
     renderer.toneMapping = THREE.NeutralToneMapping;
     renderer.toneMappingExposure = params.exposure;
     renderer.shadowMap.enabled = true;
-    await withInitTimeout(renderer.init(), 'WebGPU renderer init');
+    await withInitTimeout(renderer.init(), 'WebGPU renderer init', 12000);
 
     // Volumetric Fog Area
     const LAYER_VOLUMETRIC_LIGHTING = 10;
@@ -197,7 +201,7 @@ async function init() {
     scene.add(spotLight);
 
     // Post-Processing
-    renderPipeline = new THREE.RenderPipeline(renderer);
+    postProcessing = new THREE.PostProcessing(renderer);
     const volumetricLayer = new THREE.Layers();
     volumetricLayer.disableAll();
     volumetricLayer.enable(LAYER_VOLUMETRIC_LIGHTING);
@@ -211,7 +215,7 @@ async function init() {
     volumetricPass = pass(scene, camera, { depthBuffer: false });
     volumetricPass.name = 'Volumetric Lighting';
     volumetricPass.setLayers(volumetricLayer);
-    volumetricPass.setResolutionScale(params.resolution);
+    volumetricPass.setResolution(params.resolution);
 
     // Keep the blur contract simple and stable until the froxel upgrade lands.
     blurredVolumetricPass = gaussianBlur(volumetricPass, 4);
@@ -243,7 +247,7 @@ async function init() {
 
     const postFolder = gui.addFolder('Post');
     postFolder.add(params, 'resolution', 0.1, 1, 0.01).onChange((value) => {
-      volumetricPass.setResolutionScale(value);
+      volumetricPass.setResolution(value);
     });
     postFolder.add(params, 'denoise').onChange(() => {
       updateRenderOutput();
@@ -271,6 +275,8 @@ async function init() {
     render();
   } catch (error) {
     window.__REPLICATOR_STARTER_RENDERER_READY__ = false;
+    window.__REPLICATOR_STARTER_LAST_ERROR__ = error?.message ?? String(error);
+    window.__REPLICATOR_SYNC_RUNTIME__?.();
     console.error(error);
     setStatus(
       `WebGPU starter failed to initialize. Try the WebGL2 fallback template or a raw shader path if this browser or environment cannot create the required GPU context. ${error.message ?? ''}`.trim(),
@@ -281,7 +287,9 @@ async function init() {
 
 function render(now = 0) {
   requestAnimationFrame(render);
-  if (!renderer || !renderPipeline) return;
+  if (!renderer || !postProcessing) return;
+  window.__REPLICATOR_STARTER_FRAME_COUNT__ += 1;
+  window.__REPLICATOR_SYNC_RUNTIME__?.();
 
   if (!params.paused) {
     const t = now * 0.001 * params.speed;
@@ -295,7 +303,7 @@ function render(now = 0) {
   }
 
   controls.update();
-  renderPipeline.render();
+  postProcessing.render();
 }
 
 init();
