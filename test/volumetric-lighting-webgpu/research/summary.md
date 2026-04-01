@@ -17,13 +17,21 @@
 - Profile: `scene-post`
 - Target environment: `desktop-first`
 - Performance priority: `deferred until look is correct`
-- Status: `mvp-landed`
+- Status: `first-runnable-pass`
+- Mode contract: `approximation-from-limited-evidence`
+- Reference access gate: `passed`
+- Primary visual artifact: `forum thread visuals + official Three.js example + technical references`
+- Classic graphics baseline: `used`
+- First-frame review gate: `passed`
+- Browser validation gate: `pending`
+- Side-by-side review: `pending`
 
 ## Notes
 
 - The shortest convincing path is the current `VolumeNodeMaterial`-based MVP, not the final froxel architecture.
 - The intended long-term route is still froxel-style volume storage and multi-pass light integration.
 - The current fixture is strong enough to validate control surfaces, scene composition, and core atmosphere.
+- The original live demo is inaccessible, so this fixture is intentionally classified as `approximation-from-limited-evidence`.
 
 ## Suggested Route
 

@@ -1,5 +1,13 @@
 # Capture Checklist
 
+## Gate Checks
+
+- Reference access gate: `passed`
+- Mode contract: `approximation-from-limited-evidence`
+- Honest status label before capture: `first-runnable-pass`
+- Browser validation gate: `pending`
+- Side-by-side review complete: `pending`
+
 - Reference still 01: `captures/reference-01.png`
 - Current still 01: `captures/current-01.png`
 - Reference still 02: `captures/reference-02.png`

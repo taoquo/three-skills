@@ -3,7 +3,10 @@
 ## Summary
 
 - Goal: Replicate the volumetric lighting effect described in the Three.js forum post, aiming for froxel-based volumetric lighting with physically grounded scattering, multiple light support, and better edge handling than the stock post-process approach.
-- Status: MVP implemented with a post-process volumetric baseline. Froxel-based upgrade remains planned.
+- Status: `first-runnable-pass`
+- Mode contract: `approximation-from-limited-evidence`
+- Reference access gate: `passed`
+- Primary visual artifact: `Accessible forum thread visuals plus the official Three.js example and cited technical references`
 - Confidence: Medium-high. The research coverage is strong, but the current implementation still lands short of the intended froxel architecture.
 - Effect archetype: `scene-post`
 - Authoring path: `pure-tsl`
@@ -18,6 +21,24 @@
 - Render-target layout: `single-intermediate`
 - History requirement: `none`
 - Fallback path: Keep the current post-process volumetric approach for WebGL2 or constrained WebGPU environments, with reduced quality and no compute-style froxel pre-integration.
+
+## Reference Access Gate
+
+| Field | Value | Notes |
+| --- | --- | --- |
+| Requested delivery mode | `faithful-remake` | The original goal was to match the froxel-style look described in the forum thread as closely as possible. |
+| Accessible primary visual artifact | `forum thread visuals + official Three.js example + cited technical references` | The original `company-named.com` demo is inaccessible, so the task uses a replacement evidence set. |
+| Gate result | `passed` | A multi-source replacement set exists, so implementation can proceed with explicit limits. |
+| Blocking action or downgrade | `downgraded to approximation-from-limited-evidence` | Exact live-demo fidelity is blocked by the missing original primary artifact. |
+
+## Mode Contract
+
+| Field | Choice | Notes |
+| --- | --- | --- |
+| Requested mode | `faithful-remake` | The desired outcome is still close visual and architectural parity. |
+| Active mode | `approximation-from-limited-evidence` | The current implementation follows the accessible replacement evidence instead of an inaccessible original demo. |
+| User approval for downgrade | `not-recorded` | This fixture predates the explicit downgrade handshake now required by the skill. |
+| Honest status label | `first-runnable-pass` | The MVP runs in-browser, but the browser validation and capture-review gates are not fully closed. |
 
 ## Input Set
 
@@ -36,6 +57,28 @@
 | Chosen archetype | `scene-post` | The current browser-facing implementation is a conventional scene with a separate volumetric pass and post-style composition. |
 | Nearest rejected route | `fullscreen-raymarch` | The effect is not a pure full-screen procedural scene; geometry, shadows, and scene composition still matter. |
 | Internal decision domains | `implementation surface/post pipeline/performance contract` | The implementation-surface module defines the WebGPU path, the post-pipeline module shapes the compositing chain, and the performance-contract module keeps the volumetric pass honest. |
+
+## Visual Evidence Table
+
+| Module | Target visual trait | Evidence source | Confidence | Implementation plan |
+| --- | --- | --- | --- | --- |
+| Framing / camera language | Bounded interior scene with readable light shafts around hero geometry | forum thread visuals, official example | `high` | Keep the scene-based route and preserve clear volumetric read around the teapot and floor. |
+| Silhouette / shape language | Hard-edged hero geometry with volumetric cones and layered depth | forum thread visuals | `high` | Preserve scene geometry, shadowing, and readable beam silhouettes before deeper froxel work. |
+| Motion behavior | Mostly stable volume with controllable density evolution instead of aggressive animated noise | forum thread discussion, official example | `medium` | Keep motion restrained in the MVP and defer richer froxel behavior to the upgrade path. |
+| Reflection / refraction behavior | Not a signature trait of the target | none | `unknown` | Do not invent reflective or refractive treatment; leave the scene grounded and simple. |
+| Palette / tonal range | Warm shafts against a cooler background with readable atmospheric depth | forum visuals, official example | `high` | Keep the warm-versus-cool contrast and expose only modest color controls. |
+| Atmosphere / post | Separate volumetric contribution with light denoise and tone mapping | official example, forum notes | `high` | Use a short post chain: volumetric buffer, denoise, then composite. |
+| Interaction cues | GUI-driven density, light intensity, steps, and exposure | current MVP, forum intent | `medium` | Keep the GUI centered on density, lighting, steps, and exposure. |
+| Signature module | Froxel edge handling and participating-media integration quality | forum discussion, production volumetric references | `medium` | Land the debuggable post-process baseline first, then upgrade toward froxel storage and better edge handling. |
+
+## Classic Graphics Baseline
+
+| Field | Choice | Notes |
+| --- | --- | --- |
+| Baseline needed | `yes` | The original live demo is inaccessible, so completion depth needs an external quality bar. |
+| Source classes used | `SIGGRAPH talk`, `paper`, `game-engine volumetric references` | Hillaire, Wronski, NVIDIA Mie, and Frostbite-style public material anchor the expected module depth. |
+| Baseline modules implied | `participating media`, `light integration`, `final gather`, `denoise/composite`, `future froxel storage` | These define the implementation depth, not the exact target look. |
+| Target-look override guard | `forum visuals remain primary` | The classic baseline is used only to judge missing modules and architectural depth. |
 
 ## Link Tree
 
@@ -164,6 +207,16 @@
 | Denoise pass | Gaussian blur | `replaceable` | Low-risk polish step |
 | Froxel upgrade | 3D volume pre-integration / compute-style path | `replaceable` | Target architecture after MVP parity improves |
 
+## First-Frame Review Gate
+
+| Check | Status | Notes |
+| --- | --- | --- |
+| Composition and framing | `pass` | The MVP already preserves the bounded interior scene and readable shaft layout. |
+| Silhouette / form profile | `pass` | Hero geometry and volumetric cones read clearly enough to justify continuing. |
+| Primary material relationship | `pass` | Scene geometry, light shafts, and fog density layer coherently without extra scene dressing. |
+| Primary light and color read | `pass` | Warm shafts against a cooler background are close enough to continue. |
+| Gate decision | `pass` | Stage B polish is justified, but the froxel upgrade remains blocked on architecture work rather than framing. |
+
 ## Technique Routing
 
 | Module | Backend dependency | Required or replaceable | Notes |
@@ -233,6 +286,16 @@
 | First degradation step | `good` | Resolution drop is the safest first move |
 | GUI safety | `good` | Current controls are understandable and bounded |
 
+## Browser Validation Gate
+
+| Check | Status | Notes |
+| --- | --- | --- |
+| Localhost preview URL | `pass` | `http://localhost:4173/effects/volumetric-lighting-webgpu/` is the intended preview contract. |
+| Renderer initialized | `pass` | The checked-in demo reaches the browser-facing render path again. |
+| Runtime errors | `none-observed` | The fixture is currently treated as runnable, not just syntax-checked. |
+| In-browser render confirmed | `pass` | The scene-plus-post MVP renders in-browser. |
+| Current capture saved | `fail` | `captures/` still lacks saved current images, so this gate is not fully closed. |
+
 ## Visual Acceptance
 
 | Category | Score (0-2) | Gap | Notes |
@@ -247,6 +310,24 @@
 - Acceptance target: `8/10`
 - Reference captures: `not stored yet`
 - Current captures: `not stored yet`
+
+## Fidelity Failure Protocol
+
+| Layer | Status | Notes |
+| --- | --- | --- |
+| Reference understanding | `checked` | The forum thread and technical references consistently point to froxel-style volumetric goals. |
+| Route selection | `issue-found` | The current post-process route is intentionally simpler than the target froxel architecture. |
+| Missing critical modules | `issue-found` | Froxel storage, split participating-media integration, and stronger edge handling are still missing. |
+| Parameter tuning | `pending` | More tuning would not close the main gap before the missing modules land. |
+
+## Completion Rule
+
+| Requirement | Status | Notes |
+| --- | --- | --- |
+| Active reference artifact in use | `pass` | The forum thread, official example, and technical references remain the active evidence set. |
+| Current capture exists | `fail` | `captures/current-01.png` and `captures/current-02.png` are still missing. |
+| Side-by-side review completed | `fail` | No reference-vs-current image pairs have been saved yet. |
+| Remaining gaps below threshold or documented | `pass` | The main fidelity gap is explicitly documented as the missing froxel upgrade path. |
 
 ## Compatibility Notes
 

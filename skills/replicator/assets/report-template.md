@@ -3,7 +3,10 @@
 ## Summary
 
 - Goal:
-- Status:
+- Status: `blocked-on-reference/planned/first-runnable-pass/browser-validated/capture-reviewed/fidelity-pending/faithful-remake-complete`
+- Mode contract: `faithful-remake/approximation-from-limited-evidence/inspired-variant`
+- Reference access gate: `passed/blocked/pending`
+- Primary visual artifact:
 - Confidence:
 - Effect archetype:
 - Authoring path:
@@ -18,6 +21,24 @@
 - Render-target layout:
 - History requirement:
 - Fallback path:
+
+## Reference Access Gate
+
+| Field | Value | Notes |
+| --- | --- | --- |
+| Requested delivery mode | `faithful-remake/approximation-from-limited-evidence/inspired-variant` | `What the user asked for or what the task implies` |
+| Accessible primary visual artifact | `TODO` | `direct URL/screenshot/video/local asset/replacement set` |
+| Gate result | `passed/blocked/pending` | `Whether faithful implementation is allowed to start` |
+| Blocking action or downgrade | `TODO` | `Requested stronger reference or explicit downgrade reason` |
+
+## Mode Contract
+
+| Field | Choice | Notes |
+| --- | --- | --- |
+| Requested mode | `faithful-remake/approximation-from-limited-evidence/inspired-variant` | `Original request or inferred product intent` |
+| Active mode | `faithful-remake/approximation-from-limited-evidence/inspired-variant` | `Mode actually used for implementation` |
+| User approval for downgrade | `yes/no/not-needed/not-recorded` | `Required when faithful was requested but the task had to downgrade` |
+| Honest status label | `blocked-on-reference/planned/first-runnable-pass/browser-validated/capture-reviewed/fidelity-pending/faithful-remake-complete` | `Current truthful state of the work` |
 
 ## User Decision Log
 
@@ -38,6 +59,28 @@
 | Chosen archetype | `material-study/scene-post/fullscreen-raymarch/instanced-particles/feedback-trails/mixed` | `Why this route fits the effect` |
 | Nearest rejected route | `TODO` | `Why it was not selected` |
 | Internal decision domains | `implementation surface/post pipeline/performance contract` | `Which ones materially shaped the plan` |
+
+## Visual Evidence Table
+
+| Module | Target visual trait | Evidence source | Confidence | Implementation plan |
+| --- | --- | --- | --- | --- |
+| Framing / camera language | `TODO` | `TODO` | `high/medium/low/unknown` | `TODO` |
+| Silhouette / shape language | `TODO` | `TODO` | `high/medium/low/unknown` | `TODO` |
+| Motion behavior | `TODO` | `TODO` | `high/medium/low/unknown` | `TODO` |
+| Reflection / refraction behavior | `TODO` | `TODO` | `high/medium/low/unknown` | `TODO` |
+| Palette / tonal range | `TODO` | `TODO` | `high/medium/low/unknown` | `TODO` |
+| Atmosphere / post | `TODO` | `TODO` | `high/medium/low/unknown` | `TODO` |
+| Interaction cues | `TODO` | `TODO` | `high/medium/low/unknown` | `TODO` |
+| Signature module | `TODO` | `TODO` | `high/medium/low/unknown` | `TODO` |
+
+## Classic Graphics Baseline
+
+| Field | Choice | Notes |
+| --- | --- | --- |
+| Baseline needed | `yes/no` | `Use only when completion depth is unclear` |
+| Source classes used | `paper/talk/book/game-engine blog/official tech article` | `What informed the baseline` |
+| Baseline modules implied | `TODO` | `What a competent implementation normally includes` |
+| Target-look override guard | `TODO` | `How the baseline was prevented from replacing the target look` |
 
 ## Link Tree
 
@@ -136,6 +179,16 @@
 | --- | --- | --- | --- |
 | `TODO` | `TODO` | `required/replaceable` | `TODO` |
 
+## First-Frame Review Gate
+
+| Check | Status | Notes |
+| --- | --- | --- |
+| Composition and framing | `pass/rework/pending` | `TODO` |
+| Silhouette / form profile | `pass/rework/pending` | `TODO` |
+| Primary material relationship | `pass/rework/pending` | `TODO` |
+| Primary light and color read | `pass/rework/pending` | `TODO` |
+| Gate decision | `pass/rework/pending` | `Why Stage B was allowed or blocked` |
+
 ## Technique Routing
 
 | Module | Backend dependency | Required or replaceable | Notes |
@@ -195,6 +248,16 @@
 | First degradation step | `TODO` | `TODO` |
 | GUI safety | `TODO` | `TODO` |
 
+## Browser Validation Gate
+
+| Check | Status | Notes |
+| --- | --- | --- |
+| Localhost preview URL | `pass/fail/pending` | `http://localhost/...` |
+| Renderer initialized | `pass/fail/pending` | `TODO` |
+| Runtime errors | `none-observed/issue-found/pending` | `TODO` |
+| In-browser render confirmed | `pass/fail/pending` | `TODO` |
+| Current capture saved | `pass/fail/pending` | `TODO` |
+
 ## Visual Acceptance
 
 | Category | Score (0-2) | Gap | Notes |
@@ -209,6 +272,24 @@
 - Acceptance target:
 - Reference captures:
 - Current captures:
+
+## Fidelity Failure Protocol
+
+| Layer | Status | Notes |
+| --- | --- | --- |
+| Reference understanding | `checked/issue-found/pending` | `TODO` |
+| Route selection | `checked/issue-found/pending` | `TODO` |
+| Missing critical modules | `checked/issue-found/pending` | `TODO` |
+| Parameter tuning | `checked/issue-found/pending` | `TODO` |
+
+## Completion Rule
+
+| Requirement | Status | Notes |
+| --- | --- | --- |
+| Active reference artifact in use | `pass/fail/pending` | `TODO` |
+| Current capture exists | `pass/fail/pending` | `TODO` |
+| Side-by-side review completed | `pass/fail/pending` | `TODO` |
+| Remaining gaps below threshold or documented | `pass/fail/pending` | `TODO` |
 
 ## Compatibility Notes
 

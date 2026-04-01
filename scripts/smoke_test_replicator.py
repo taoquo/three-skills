@@ -66,6 +66,11 @@ def main() -> int:
             assert_contains(summary_text, "## Suggested Quality Ladder", str(summary_path))
             assert_contains(summary_text, f"- Three.js version: `{module.THREE_VERSION}`", str(summary_path))
             assert_contains(summary_text, f"- lil-gui version: `{module.LIL_GUI_VERSION}`", str(summary_path))
+            assert_contains(summary_text, "- Status: `planned`", str(summary_path))
+            assert_contains(summary_text, "- Mode contract: `TODO`", str(summary_path))
+            assert_contains(summary_text, "- Reference access gate: `pending`", str(summary_path))
+            assert_contains(summary_text, "- Browser validation gate: `pending`", str(summary_path))
+            assert_contains(summary_text, "- Side-by-side review: `pending`", str(summary_path))
 
             assert sources["profile"] == profile
             assert sources["effect_archetype"] == expected["effect_archetype"]
@@ -76,6 +81,14 @@ def main() -> int:
             assert sources["history_requirement"] == expected["history_requirement"]
             assert sources["three_version"] == module.THREE_VERSION
             assert sources["lil_gui_version"] == module.LIL_GUI_VERSION
+            assert sources["mode_contract"] == "TODO"
+            assert sources["status_label"] == "planned"
+            assert sources["reference_access_gate"] == "pending"
+            assert sources["primary_visual_artifact"] == "TODO"
+            assert sources["classic_graphics_baseline"] == "pending"
+            assert sources["first_frame_gate"] == "pending"
+            assert sources["browser_validation_gate"] == "pending"
+            assert sources["side_by_side_review"] == "pending"
             assert sources["accepted_source_types"] == [
                 "url",
                 "keyword",
@@ -102,10 +115,18 @@ def main() -> int:
             assert_contains(index_text, "http://localhost/...", str(index_path))
 
             assert_contains(report_text, "## Archetype Route", str(report_path))
+            assert_contains(report_text, "## Reference Access Gate", str(report_path))
+            assert_contains(report_text, "## Mode Contract", str(report_path))
+            assert_contains(report_text, "## Visual Evidence Table", str(report_path))
+            assert_contains(report_text, "## Classic Graphics Baseline", str(report_path))
             assert_contains(report_text, "## Search Log", str(report_path))
             assert_contains(report_text, "## Evidence vs Inference", str(report_path))
             assert_contains(report_text, "## Shortest Convincing Path", str(report_path))
+            assert_contains(report_text, "## First-Frame Review Gate", str(report_path))
+            assert_contains(report_text, "## Browser Validation Gate", str(report_path))
             assert_contains(report_text, "## Visual Acceptance", str(report_path))
+            assert_contains(report_text, "## Fidelity Failure Protocol", str(report_path))
+            assert_contains(report_text, "## Completion Rule", str(report_path))
 
     print(f"[OK] smoke-tested replicator scaffolds for {len(canonical_profiles)} canonical profile(s)")
     return 0

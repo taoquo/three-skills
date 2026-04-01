@@ -8,13 +8,21 @@ import sys
 from pathlib import Path
 
 REQUIRED_REPORT_SECTIONS = (
+    "## Reference Access Gate",
+    "## Mode Contract",
     "## Archetype Route",
+    "## Visual Evidence Table",
+    "## Classic Graphics Baseline",
     "## Search Log",
     "## Evidence vs Inference",
     "## Shortest Convincing Path",
+    "## First-Frame Review Gate",
     "## PostFX Decision",
     "## Performance Decision",
+    "## Browser Validation Gate",
     "## Visual Acceptance",
+    "## Fidelity Failure Protocol",
+    "## Completion Rule",
 )
 
 REQUIRED_FILES = (
@@ -47,6 +55,14 @@ REQUIRED_SOURCE_FIELDS = (
     "nearest_rejected_route",
     "target_environment",
     "performance_priority",
+    "mode_contract",
+    "status_label",
+    "reference_access_gate",
+    "primary_visual_artifact",
+    "classic_graphics_baseline",
+    "first_frame_gate",
+    "browser_validation_gate",
+    "side_by_side_review",
     "accepted_source_types",
     "source_roles",
     "sources",

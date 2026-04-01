@@ -18,7 +18,7 @@ metadata:
 
 ## Overview
 
-Recreate effects with a visual-first workflow: route the archetype, research the effect, choose the implementation surface, set the post and performance contracts, implement, verify, and document. Default priority is visual fidelity, then controllability, then performance unless the user explicitly changes that order.
+Recreate effects with an evidence-first visual workflow: lock the reference contract, route the archetype, research the effect, choose the implementation surface, set the post and performance contracts, implement, verify, and document. Default priority is visual fidelity, then controllability, then performance unless the user explicitly changes that order.
 
 `replicator` remains the canonical skill id for compatibility. The human-facing name is `Three.js Replicator` to reflect that the workflow can start from URLs, keywords, image URIs, screenshots, local image paths, or mixed reference sets.
 
@@ -68,6 +68,63 @@ For keyword-only or image-only starts:
 
 Do not reject the task merely because the user did not provide a URL.
 
+## Enforce Evidence Gates
+
+Use these hard rules as the compact execution layer for every reference-driven remake:
+
+1. Reference access gate
+
+- If the task is `faithful-remake`, require at least one accessible primary visual artifact before implementation: directly inspectable URL, screenshot, video or recording, local image or video, or a high-confidence multi-source replacement set.
+- Product copy, SEO summaries, titles, feature lists, and search snippets are not enough for a faithful route.
+- If the gate fails, do not start implementation. Ask for stronger reference material or block the faithful route.
+
+2. Mode contract
+
+- Classify the task as `faithful-remake`, `approximation-from-limited-evidence`, or `inspired-variant` before implementation.
+- If the user asked for faithful but the reference gate failed, do not silently continue as faithful. Request approval to downgrade or stop.
+
+3. Visual evidence table
+
+- Build a table with `Module`, `Target visual trait`, `Evidence source`, `Confidence`, and `Implementation plan` before implementation.
+- Cover framing or camera language, silhouette or shape language, motion behavior, reflection or refraction behavior, palette or tonal range, atmosphere or post, interaction cues, and any signature modules.
+
+4. Classic graphics baseline fallback
+
+- When the target reference is accessible but the expected completion depth is unclear, use canonical graphics and game-industry references only to decide what a competent implementation normally includes.
+- Record separately what came from the target reference versus the classic baseline.
+
+5. No blind filling rule
+
+- If a critical visual module lacks evidence, do not invent concrete sky, sun, terrain, palette, foam, post, or other scene dressing and pretend it came from the reference.
+- Only add placeholder content when approximation or inspired mode is explicit and the report says it is not reference-driven.
+
+6. First-frame review gate
+
+- Stage A locks composition, silhouette, primary material relationships, main form profile, and primary light or color read.
+- Only after Stage A is close enough should Stage B add animation, post, GUI expansion, capture presets, and polish.
+
+7. Browser validation gate
+
+- Do not call a visual effect runnable or validated until it opens over `http://localhost/...`, the renderer initializes, no obvious runtime failure appears, the effect renders in-browser, and at least one current capture is saved.
+
+8. Fidelity failure protocol
+
+- Diagnose fidelity failures in this order: reference understanding, route selection, missing critical modules, then parameter tuning.
+- Do not default to "just tuning" before checking the first three layers.
+
+9. Honest status labels
+
+- Use `blocked-on-reference`, `planned`, `first-runnable-pass`, `browser-validated`, `capture-reviewed`, `fidelity-pending`, and `faithful-remake-complete`.
+- Do not call a remake complete without side-by-side review.
+
+10. Completion rule
+
+- A remake is not complete until an active reference artifact and a current capture both exist, they have been compared side by side, and the remaining gaps are below the acceptance threshold or explicitly documented.
+
+11. Operating principle
+
+- The job is not merely to produce a plausible effect. The job is to stay evidentially aligned with the target.
+
 ## Escalate Material Choices With AskUserOption
 
 Use `AskUserOption` only for decisions that change product intent, compatibility promises, maintenance cost, or acceptance criteria.
@@ -89,7 +146,7 @@ Use this matrix:
 
 | Decision area | Ask when | Structured options | Default stance |
 | --- | --- | --- | --- |
-| Delivery intent | The user shared a reference but did not say whether the goal is exact match, cleaned-up match, or inspired variant | `faithful-remake`, `faithful-plus-cleanup`, `inspired-variant` | Prefer `faithful-remake` unless the user signals creative freedom |
+| Delivery intent | The user shared a reference but did not say whether the goal is exact match, constrained approximation, or inspired variant | `faithful-remake`, `approximation-from-limited-evidence`, `inspired-variant` | Prefer `faithful-remake` unless the reference gate fails or the user signals creative freedom |
 | Renderer and compatibility contract | The effect could land on either `WebGPU` or `WebGL2`, and browser reach or maintenance cost is unclear | `desktop-webgpu`, `webgl2-first`, `desktop-webgpu-plus-webgl2-fallback` | Prefer `desktop-webgpu` for controlled demos and `webgl2-first` for public compatibility-sensitive demos |
 | Authoring path strictness | A legacy shader port or low-level route is plausible, but it is unclear whether the user values maintainability over direct porting | `pure-tsl`, `tsl-plus-interop`, `raw-port` | Prefer `pure-tsl`, then `tsl-plus-interop`, then raw shader fallback |
 | Device and performance target | The user has not stated whether the effect is desktop-only, laptop-balanced, or mobile-safe | `desktop-high`, `laptop-balanced`, `mobile-safe` | Prefer `laptop-balanced` when no hard requirement exists |
@@ -141,28 +198,39 @@ If two references conflict, preserve the primary reference and treat the other o
 
 Produce all of the following for each effect:
 
+- A reference-access decision covering the accessible primary visual artifact, whether the faithful gate passed, and any blocker or downgrade reason.
+- An explicit mode contract and honest status label.
 - A chosen archetype and a short justification for why it fits better than the nearest alternative route.
+- A visual evidence table that covers the critical visual modules and distinguishes evidence from unknowns.
+- A classic-graphics baseline note whenever the completion-depth standard came from canonical graphics or game-industry references rather than the target artifact alone.
 - A user-decision log whenever `AskUserOption` was used, including the question, options shown, selected answer, and impact on the plan.
 - A measurable effect spec covering look, motion, interaction, invariants, and constraints.
 - An implementation-surface decision covering authoring path, runtime renderer, resource model, pass topology, compatibility contract, and fallback path.
 - A performance decision covering target device class, performance contract, dominant bottleneck, degradation ladder, and exposed controls.
 - A post-processing decision covering post pipeline type, render-target layout, pass order, history requirement, and quality tiers when post is part of the look.
 - A research package with an input set, normalized source roles, a link tree, extracted external links, comment takeaways, search terms, and a coverage table.
+- A first-frame review checkpoint that records whether Stage A was close enough to continue.
 - A runnable Three.js demo under `effects/<effect-slug>/`.
 - A GUI with stable group names and the key tuning controls exposed.
+- Browser-validation notes and at least one current capture under `captures/`.
+- A reference-vs-current capture review, fidelity score, and explicit completion or pending gap statement.
 - A `REPORT.md` that stays current after every material change.
 - Optional optimization or degradation strategies that preserve the intended look.
 
 ## Follow This Workflow
 
-### 1. Route the effect archetype before coding
+### 1. Route the reference contract and effect archetype before coding
 
-Pick the archetype before you expand research or choose templates.
+Before you expand research or choose templates, run the reference access gate, assign the mode contract, and then pick the archetype.
 
 Use the routing table in [references/archetypes.md](references/archetypes.md).
 
 At minimum, record:
 
+- accessible primary visual artifact
+- whether the reference access gate passed
+- requested delivery intent and active mode contract
+- current honest status label
 - chosen archetype
 - why it fits
 - nearest rejected archetype
@@ -171,9 +239,11 @@ At minimum, record:
 - which traits are non-negotiable from each accepted reference
 - which internal decision domains are expected to matter: implementation surface, post pipeline, performance contract
 
-If the archetype is unclear, write `mixed` and explain what would settle it. If two materially different routes remain plausible after that analysis, use `AskUserOption` to let the user choose which tradeoff to preserve first.
+If the archetype is unclear, write `mixed` and explain what would settle it. If two materially different routes remain plausible after that analysis, use `AskUserOption` to let the user choose which tradeoff to preserve first. If the faithful route is blocked by missing evidence, say so explicitly and do not hide the downgrade behind the archetype writeup.
 
 ### 2. Model the effect before coding
+
+Create the visual evidence table before implementation and use it to separate evidenced modules from inferred or unknown ones.
 
 Break the target into:
 
@@ -186,6 +256,10 @@ Break the target into:
 - Constraints: target devices, frame-rate goals, interactivity requirements, fallback allowance.
 
 Write the effect spec in measurable terms such as element count, motion frequency, visible scale, buffer count, or whether history feedback is required. Read [references/visual-quality.md](references/visual-quality.md) when the look is ambiguous or difficult to quantify.
+
+If completion depth is unclear but the primary reference is accessible, use the classic graphics baseline fallback to decide which modules a competent implementation normally includes. Use that baseline only for completion depth, never as a substitute for the target look itself.
+
+If a critical module remains unknown, do not present the task as a faithful remake. Do not blind-fill scene dressing or style choices just because they feel plausible.
 
 ### 3. Route the techniques before coding
 
@@ -240,6 +314,8 @@ Keep these tasks local to the main agent:
 - code edits and report synthesis
 
 Do not split the same source branch across multiple subagents unless the branch is large enough to partition cleanly.
+
+If the primary reference is inaccessible and no replacement artifact set exists, stop and request better evidence instead of continuing the faithful route.
 
 If there are multiple references, unify them into one effect spec before coding:
 
@@ -352,10 +428,11 @@ Keep the folder self-contained and easy to run.
 
 Implement in this order:
 
-1. Make an MVP that captures the overall composition and motion.
-2. Align the signature details: palette, density, timing, layering, and interaction feel.
-3. Add the post chain and polish.
-4. Optimize only after the look is close enough.
+1. Stage A, first frame: lock composition, horizon or silhouette, primary material relationships, main form profile, and the primary light and color read.
+2. Review the first frame. If it is clearly off, stop and correct the route before expanding scope.
+3. Stage B, motion and finish: align signature motion, palette, density, timing, layering, and interaction feel.
+4. Add the post chain, capture presets, and polish only after Stage A is close enough.
+5. Optimize only after the look is close enough.
 
 Expose a GUI by default. Keep group names stable:
 
@@ -381,12 +458,16 @@ Before finishing:
 - Call out the dominant bottleneck: fill rate, ray steps, particle count, bandwidth, post chain, or CPU/driver cost.
 - Choose an explicit target device class and performance contract.
 - Add a short degradation ladder for resolution, step count, particle count, simulation resolution, and post quality where relevant.
+- Verify the browser validation gate over `http://localhost/...`: renderer initialized, no obvious runtime failure, in-browser render confirmed, and at least one current capture saved.
 - Save reference and current captures under `captures/` with stable names.
 - Score silhouette, motion, density, palette, and finish using [references/fidelity-rubric.md](references/fidelity-rubric.md).
 - Run `scripts/capture_audit.py` after saving captures so the pair manifest and review summary stay current.
+- Compare reference and current side by side before calling the task complete.
+- If the fidelity score is below the acceptance target, run the fidelity failure protocol in this order: reference understanding, route selection, missing critical modules, then parameter tuning.
 - If the fidelity score is below the acceptance target, record the gap instead of calling the effect done.
 - Record which modules stayed pure TSL and which ones required interop or raw shader fallbacks.
 - Cross-check the final renderer, TSL, post, and node usage against current official Three.js docs and manual pages before you call the implementation done.
+- Use the honest status labels in the report and user-facing summary instead of vague progress language.
 - Update `REPORT.md` with source notes, choices, open risks, and the latest change log entry.
 
 #### Preview and runtime constraints
@@ -442,7 +523,11 @@ Load only the files that help the current task:
 
 State these decisions clearly in the report and the user-facing summary:
 
+- Which primary visual artifact unlocked the task, whether the faithful gate passed, and whether the mode had to be downgraded.
+- Which mode contract and honest status label are active.
 - Which archetype was chosen and why.
+- Which critical modules were evidenced, inferred, or still unknown.
+- Which parts of the plan came from the target reference versus the classic graphics baseline.
 - Which `AskUserOption` prompts were used, which options were shown, and how the answers changed the plan.
 - What the effect is made of.
 - Which techniques are required versus replaceable.
@@ -450,7 +535,10 @@ State these decisions clearly in the report and the user-facing summary:
 - Which renderer, resource model, pass topology, and compatibility contract were chosen and why.
 - Which target device class, performance contract, and degradation ladder were chosen and why.
 - Which post pipeline type, render-target layout, history requirement, and pass order were chosen and why.
+- Whether the first-frame review gate passed and what remained blocked after that checkpoint.
+- Whether the browser validation gate passed.
 - Which captures were used for acceptance and what the fidelity score was.
+- Whether reference and current were reviewed side by side, and what prevents `faithful-remake-complete` if the status is still pending.
 - Which sources influenced the final plan.
 - Which research branches were delegated to subagents and what they contributed.
 - Which risks remain unresolved.

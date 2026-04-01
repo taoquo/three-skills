@@ -169,6 +169,14 @@ TEMPLATE_BY_KEY = {
     ("tsl", "webgl2"): "tsl-webgl2",
     ("legacy", "webgl2"): "legacy-glsl",
 }
+DEFAULT_MODE_CONTRACT = "TODO"
+DEFAULT_REFERENCE_ACCESS_GATE = "pending"
+DEFAULT_PRIMARY_VISUAL_ARTIFACT = "TODO"
+DEFAULT_CLASSIC_GRAPHICS_BASELINE = "pending"
+DEFAULT_FIRST_FRAME_GATE = "pending"
+DEFAULT_BROWSER_VALIDATION_GATE = "pending"
+DEFAULT_SIDE_BY_SIDE_REVIEW = "pending"
+DEFAULT_STATUS_LABEL = "planned"
 
 
 def load_runtime_versions() -> dict[str, str]:
@@ -274,6 +282,14 @@ def write_supporting_files(
 
     capture_checklist = """# Capture Checklist
 
+## Gate Checks
+
+- Reference access gate: `TODO`
+- Mode contract: `TODO`
+- Honest status label before capture: `TODO`
+- Browser validation gate: `TODO`
+- Side-by-side review complete: `TODO`
+
 - Reference still 01: `captures/reference-01.png`
 - Current still 01: `captures/current-01.png`
 - Reference still 02: `captures/reference-02.png`
@@ -316,11 +332,20 @@ def write_supporting_files(
         f"- Profile: `{requested_profile}`",
         "- Target environment: `desktop-first`",
         "- Performance priority: `deferred until look is correct`",
-        "- Status: `todo`",
+        f"- Status: `{DEFAULT_STATUS_LABEL}`",
+        f"- Mode contract: `{DEFAULT_MODE_CONTRACT}`",
+        f"- Reference access gate: `{DEFAULT_REFERENCE_ACCESS_GATE}`",
+        f"- Primary visual artifact: `{DEFAULT_PRIMARY_VISUAL_ARTIFACT}`",
+        f"- Classic graphics baseline: `{DEFAULT_CLASSIC_GRAPHICS_BASELINE}`",
+        f"- First-frame review gate: `{DEFAULT_FIRST_FRAME_GATE}`",
+        f"- Browser validation gate: `{DEFAULT_BROWSER_VALIDATION_GATE}`",
+        f"- Side-by-side review: `{DEFAULT_SIDE_BY_SIDE_REVIEW}`",
         "",
         "## Notes",
         "",
         "- Search canonical and mainstream graphics sources first, then engine references, then the Three.js landing path.",
+        "- Do not start a faithful remake until an accessible primary visual artifact is locked.",
+        "- If the reference gate fails, request stronger evidence or explicitly downgrade the mode contract.",
         "- Use AskUserOption for unresolved product-level tradeoffs such as renderer contract, fidelity target, or compatibility scope.",
         "- Delegate bounded research work such as source parsing, link-tree expansion, and pitfall scans to subagents when it speeds up coverage.",
         "- Validate the final implementation surface against the official Three.js docs before sign-off.",
@@ -332,6 +357,7 @@ def write_supporting_files(
         "- Accepted source kinds: `url`, `keyword`, `image-uri`, `local-image-path`, `screenshot`, `video`, `code`, `derived-link`.",
         "- Normalize each source into one role: `primary`, `secondary`, `accent`, or `derived`.",
         "- For keyword-only or image-only starts, record the English search phrases that produced the chosen primary reference.",
+        "- Treat product copy, titles, and SEO summaries as insufficient evidence for a faithful route.",
         "",
         "## Suggested Route",
         "",
@@ -382,6 +408,14 @@ def write_supporting_files(
         "quality_ladder": quality_ladder,
         "target_environment": "desktop-first",
         "performance_priority": "deferred until look is correct",
+        "mode_contract": DEFAULT_MODE_CONTRACT,
+        "status_label": DEFAULT_STATUS_LABEL,
+        "reference_access_gate": DEFAULT_REFERENCE_ACCESS_GATE,
+        "primary_visual_artifact": DEFAULT_PRIMARY_VISUAL_ARTIFACT,
+        "classic_graphics_baseline": DEFAULT_CLASSIC_GRAPHICS_BASELINE,
+        "first_frame_gate": DEFAULT_FIRST_FRAME_GATE,
+        "browser_validation_gate": DEFAULT_BROWSER_VALIDATION_GATE,
+        "side_by_side_review": DEFAULT_SIDE_BY_SIDE_REVIEW,
         "user_decision_log": [],
         "delegated_research": [],
         "accepted_source_types": [
