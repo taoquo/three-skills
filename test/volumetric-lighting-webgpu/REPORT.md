@@ -3,10 +3,12 @@
 ## Summary
 
 - Goal: Replicate the volumetric lighting effect described in the Three.js forum post, aiming for froxel-based volumetric lighting with physically grounded scattering, multiple light support, and better edge handling than the stock post-process approach.
-- Status: `first-runnable-pass`
+- Status: `browser-validated`
 - Mode contract: `approximation-from-limited-evidence`
 - Reference access gate: `passed`
 - Primary visual artifact: `Accessible forum thread visuals plus the official Three.js example and cited technical references`
+- Review artifact gate: `pending`
+- Review artifact type: `not-recorded`
 - Confidence: Medium-high. The research coverage is strong, but the current implementation still lands short of the intended froxel architecture.
 - Effect archetype: `scene-post`
 - Authoring path: `pure-tsl`
@@ -38,7 +40,7 @@
 | Requested mode | `faithful-remake` | The desired outcome is still close visual and architectural parity. |
 | Active mode | `approximation-from-limited-evidence` | The current implementation follows the accessible replacement evidence instead of an inaccessible original demo. |
 | User approval for downgrade | `not-recorded` | This fixture predates the explicit downgrade handshake now required by the skill. |
-| Honest status label | `first-runnable-pass` | The MVP runs in-browser, but the browser validation and capture-review gates are not fully closed. |
+| Honest status label | `browser-validated` | The MVP is validated in-browser, but the review-artifact gate is still open. |
 
 ## Input Set
 
@@ -282,7 +284,7 @@
 | Check | Status | Notes |
 | --- | --- | --- |
 | Device contract | `partial` | Desktop-mid is reasonable, but no measured low-end data yet |
-| Bottleneck confidence | `medium` | Current code shape suggests post-chain cost, but no formal capture yet |
+| Bottleneck confidence | `medium` | Current code shape suggests post-chain cost, but no formal review artifact has been recorded yet |
 | First degradation step | `good` | Resolution drop is the safest first move |
 | GUI safety | `good` | Current controls are understandable and bounded |
 
@@ -294,7 +296,16 @@
 | Renderer initialized | `pass` | The checked-in demo reaches the browser-facing render path again. |
 | Runtime errors | `none-observed` | The fixture is currently treated as runnable, not just syntax-checked. |
 | In-browser render confirmed | `pass` | The scene-plus-post MVP renders in-browser. |
-| Current capture saved | `fail` | `captures/` still lacks saved current images, so this gate is not fully closed. |
+
+## Review Artifact Gate
+
+| Check | Status | Notes |
+| --- | --- | --- |
+| Review artifact type | `not-needed-yet` | This fixture has not recorded stills, clips, or notes beyond the report itself. |
+| Reference artifact recorded | `pending` | The reference set is available as URLs, but no local review files have been stored yet. |
+| Current artifact recorded | `pending` | No stills, clips, or keyframe files have been saved under `review-artifacts/` yet. |
+| Comparison method appropriate | `pending` | The final review should likely use a short motion artifact or keyframe set, not only stills. |
+| Comparison notes written | `pending` | The remaining froxel gap is documented, but no task-specific artifact review notes exist yet. |
 
 ## Visual Acceptance
 
@@ -308,8 +319,8 @@
 
 - Total fidelity score: `7/10`
 - Acceptance target: `8/10`
-- Reference captures: `not stored yet`
-- Current captures: `not stored yet`
+- Reference artifacts: `not stored yet`
+- Current artifacts: `not stored yet`
 
 ## Fidelity Failure Protocol
 
@@ -325,8 +336,8 @@
 | Requirement | Status | Notes |
 | --- | --- | --- |
 | Active reference artifact in use | `pass` | The forum thread, official example, and technical references remain the active evidence set. |
-| Current capture exists | `fail` | `captures/current-01.png` and `captures/current-02.png` are still missing. |
-| Side-by-side review completed | `fail` | No reference-vs-current image pairs have been saved yet. |
+| Task-appropriate current review artifact exists | `fail` | No stills, clips, keyframes, or concise review notes have been saved yet. |
+| Comparison review completed with the right medium | `fail` | No task-appropriate artifact comparison has been recorded yet. |
 | Remaining gaps below threshold or documented | `pass` | The main fidelity gap is explicitly documented as the missing froxel upgrade path. |
 
 ## Compatibility Notes

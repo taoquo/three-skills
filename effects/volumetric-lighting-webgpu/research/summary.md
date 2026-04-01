@@ -17,14 +17,15 @@
 - Profile: `scene-post`
 - Target environment: `desktop-first`
 - Performance priority: `deferred until look is correct`
-- Status: `first-runnable-pass`
+- Status: `browser-validated`
 - Mode contract: `approximation-from-limited-evidence`
 - Reference access gate: `passed`
 - Primary visual artifact: `forum thread visuals + official Three.js example + technical references`
 - Classic graphics baseline: `used`
 - First-frame review gate: `passed`
-- Browser validation gate: `pending`
-- Side-by-side review: `pending`
+- Browser validation gate: `passed`
+- Review artifact gate: `pending`
+- Review artifact type: `not-recorded`
 
 ## Notes
 

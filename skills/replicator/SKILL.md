@@ -101,27 +101,34 @@ Use these hard rules as the compact execution layer for every reference-driven r
 6. First-frame review gate
 
 - Stage A locks composition, silhouette, primary material relationships, main form profile, and primary light or color read.
-- Only after Stage A is close enough should Stage B add animation, post, GUI expansion, capture presets, and polish.
+- Only after Stage A is close enough should Stage B add animation, post, GUI expansion, review artifacts, and polish.
 
 7. Browser validation gate
 
-- Do not call a visual effect runnable or validated until it opens over `http://localhost/...`, the renderer initializes, no obvious runtime failure appears, the effect renders in-browser, and at least one current capture is saved.
+- Do not call a visual effect runnable or validated until it opens over `http://localhost/...`, the renderer initializes, no obvious runtime failure appears, and the effect renders in-browser.
 
-8. Fidelity failure protocol
+8. Review artifact gate
+
+- Do not force still-image comparison for every 3D scene.
+- Record at least one task-appropriate review artifact before calling fidelity reviewed or complete.
+- Good review artifacts include still pairs for framing-driven tasks, short clips or GIFs for motion-driven tasks, keyframe sequences for camera-driven tasks, and concise interaction notes when input behavior is central.
+- Use stills to judge silhouette, palette, finish, and composition. Do not pretend a still image proves motion or interaction fidelity.
+
+9. Fidelity failure protocol
 
 - Diagnose fidelity failures in this order: reference understanding, route selection, missing critical modules, then parameter tuning.
 - Do not default to "just tuning" before checking the first three layers.
 
-9. Honest status labels
+10. Honest status labels
 
-- Use `blocked-on-reference`, `planned`, `first-runnable-pass`, `browser-validated`, `capture-reviewed`, `fidelity-pending`, and `faithful-remake-complete`.
-- Do not call a remake complete without side-by-side review.
+- Use `blocked-on-reference`, `planned`, `first-runnable-pass`, `browser-validated`, `evidence-reviewed`, `fidelity-pending`, and `faithful-remake-complete`.
+- Do not call a remake complete without a task-appropriate comparison review.
 
-10. Completion rule
+11. Completion rule
 
-- A remake is not complete until an active reference artifact and a current capture both exist, they have been compared side by side, and the remaining gaps are below the acceptance threshold or explicitly documented.
+- A remake is not complete until an active reference artifact and at least one task-appropriate current review artifact or review note exist, they have been compared using the right medium for the effect, and the remaining gaps are below the acceptance threshold or explicitly documented.
 
-11. Operating principle
+12. Operating principle
 
 - The job is not merely to produce a plausible effect. The job is to stay evidentially aligned with the target.
 
@@ -212,8 +219,9 @@ Produce all of the following for each effect:
 - A first-frame review checkpoint that records whether Stage A was close enough to continue.
 - A runnable Three.js demo under `effects/<effect-slug>/`.
 - A GUI with stable group names and the key tuning controls exposed.
-- Browser-validation notes and at least one current capture under `captures/`.
-- A reference-vs-current capture review, fidelity score, and explicit completion or pending gap statement.
+- Browser-validation notes.
+- A review-artifact note that states what medium was used for fidelity review and why it fits the task.
+- A reference-vs-current comparison review, fidelity score, and explicit completion or pending gap statement.
 - A `REPORT.md` that stays current after every material change.
 - Optional optimization or degradation strategies that preserve the intended look.
 
@@ -431,7 +439,7 @@ Implement in this order:
 1. Stage A, first frame: lock composition, horizon or silhouette, primary material relationships, main form profile, and the primary light and color read.
 2. Review the first frame. If it is clearly off, stop and correct the route before expanding scope.
 3. Stage B, motion and finish: align signature motion, palette, density, timing, layering, and interaction feel.
-4. Add the post chain, capture presets, and polish only after Stage A is close enough.
+4. Add the post chain, review artifacts, and polish only after Stage A is close enough.
 5. Optimize only after the look is close enough.
 
 Expose a GUI by default. Keep group names stable:
@@ -458,11 +466,11 @@ Before finishing:
 - Call out the dominant bottleneck: fill rate, ray steps, particle count, bandwidth, post chain, or CPU/driver cost.
 - Choose an explicit target device class and performance contract.
 - Add a short degradation ladder for resolution, step count, particle count, simulation resolution, and post quality where relevant.
-- Verify the browser validation gate over `http://localhost/...`: renderer initialized, no obvious runtime failure, in-browser render confirmed, and at least one current capture saved.
-- Save reference and current captures under `captures/` with stable names.
+- Verify the browser validation gate over `http://localhost/...`: renderer initialized, no obvious runtime failure, and in-browser render confirmed.
+- Save task-appropriate review artifacts under `review-artifacts/` with stable names when file-based evidence helps the task. Use stills for framing-heavy checks, clips or GIFs for motion-heavy checks, and notes when interaction behavior is the main open question.
 - Score silhouette, motion, density, palette, and finish using [references/fidelity-rubric.md](references/fidelity-rubric.md).
-- Run `scripts/capture_audit.py` after saving captures so the pair manifest and review summary stay current.
-- Compare reference and current side by side before calling the task complete.
+- Run `scripts/capture_audit.py` after saving file-based review artifacts so the manifest and review summary stay current.
+- Compare reference and current using the right review medium before calling the task complete.
 - If the fidelity score is below the acceptance target, run the fidelity failure protocol in this order: reference understanding, route selection, missing critical modules, then parameter tuning.
 - If the fidelity score is below the acceptance target, record the gap instead of calling the effect done.
 - Record which modules stayed pure TSL and which ones required interop or raw shader fallbacks.
@@ -494,8 +502,8 @@ Load only the files that help the current task:
 - [references/archetypes.md](references/archetypes.md): use for the initial archetype route and starter-profile choice.
 - [references/research.md](references/research.md): use for source parsing, link-tree expansion, English search planning, and the research coverage gate.
 - [references/visual-quality.md](references/visual-quality.md): use for effect-spec writing and visual self-checks.
-- [references/fidelity-rubric.md](references/fidelity-rubric.md): use for visual acceptance scoring and capture review.
-- `scripts/capture_audit.py`: use to generate `captures/manifest.json` and `captures/review.md` from saved reference/current capture pairs.
+- [references/fidelity-rubric.md](references/fidelity-rubric.md): use for visual acceptance scoring and artifact selection.
+- `scripts/capture_audit.py`: use to generate `review-artifacts/manifest.json` and `review-artifacts/review.md` from saved file-based review artifacts when that evidence is useful.
 - [references/platform/interface-decision-tree.md](references/platform/interface-decision-tree.md): use for workload classification and implementation routing.
 - [references/platform/authoring-paths.md](references/platform/authoring-paths.md): use for `TSL`, interop, `WGSL`, and `GLSL` path selection.
 - [references/platform/backend-capability-matrix.md](references/platform/backend-capability-matrix.md): use for renderer and authoring tradeoffs.
@@ -537,8 +545,9 @@ State these decisions clearly in the report and the user-facing summary:
 - Which post pipeline type, render-target layout, history requirement, and pass order were chosen and why.
 - Whether the first-frame review gate passed and what remained blocked after that checkpoint.
 - Whether the browser validation gate passed.
-- Which captures were used for acceptance and what the fidelity score was.
-- Whether reference and current were reviewed side by side, and what prevents `faithful-remake-complete` if the status is still pending.
+- Which review artifact type was used for acceptance and why it was appropriate.
+- What evidence was used for the fidelity score.
+- Whether reference and current were reviewed with a task-appropriate comparison method, and what prevents `faithful-remake-complete` if the status is still pending.
 - Which sources influenced the final plan.
 - Which research branches were delegated to subagents and what they contributed.
 - Which risks remain unresolved.

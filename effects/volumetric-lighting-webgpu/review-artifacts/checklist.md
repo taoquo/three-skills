@@ -1,17 +1,16 @@
-# Capture Checklist
+# Review Artifact Checklist
 
 ## Gate Checks
 
 - Reference access gate: `passed`
 - Mode contract: `approximation-from-limited-evidence`
-- Honest status label before capture: `first-runnable-pass`
-- Browser validation gate: `pending`
-- Side-by-side review complete: `pending`
+- Honest status label before review: `browser-validated`
+- Browser validation gate: `passed`
+- Review artifact gate: `pending`
 
-- Reference still 01: `captures/reference-01.png`
-- Current still 01: `captures/current-01.png`
-- Reference still 02: `captures/reference-02.png`
-- Current still 02: `captures/current-02.png`
+- Use still pairs only if framing or finish are the main open questions.
+- Prefer a short clip or keyframe set once motion fidelity becomes the main review target.
+- No file-based review artifacts are stored for this fixture yet.
 
 ## Fidelity Rubric
 

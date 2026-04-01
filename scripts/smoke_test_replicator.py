@@ -46,7 +46,7 @@ def main() -> int:
             report_path = effect_dir / "REPORT.md"
             summary_path = effect_dir / "research" / "summary.md"
             sources_path = effect_dir / "research" / "sources.json"
-            checklist_path = effect_dir / "captures" / "checklist.md"
+            checklist_path = effect_dir / "review-artifacts" / "checklist.md"
             index_path = effect_dir / "index.html"
 
             for path in (report_path, summary_path, sources_path, checklist_path, index_path):
@@ -70,7 +70,8 @@ def main() -> int:
             assert_contains(summary_text, "- Mode contract: `TODO`", str(summary_path))
             assert_contains(summary_text, "- Reference access gate: `pending`", str(summary_path))
             assert_contains(summary_text, "- Browser validation gate: `pending`", str(summary_path))
-            assert_contains(summary_text, "- Side-by-side review: `pending`", str(summary_path))
+            assert_contains(summary_text, "- Review artifact gate: `pending`", str(summary_path))
+            assert_contains(summary_text, "- Review artifact type: `TODO`", str(summary_path))
 
             assert sources["profile"] == profile
             assert sources["effect_archetype"] == expected["effect_archetype"]
@@ -88,7 +89,8 @@ def main() -> int:
             assert sources["classic_graphics_baseline"] == "pending"
             assert sources["first_frame_gate"] == "pending"
             assert sources["browser_validation_gate"] == "pending"
-            assert sources["side_by_side_review"] == "pending"
+            assert sources["review_artifact_gate"] == "pending"
+            assert sources["review_artifact_type"] == "TODO"
             assert sources["accepted_source_types"] == [
                 "url",
                 "keyword",
@@ -124,6 +126,7 @@ def main() -> int:
             assert_contains(report_text, "## Shortest Convincing Path", str(report_path))
             assert_contains(report_text, "## First-Frame Review Gate", str(report_path))
             assert_contains(report_text, "## Browser Validation Gate", str(report_path))
+            assert_contains(report_text, "## Review Artifact Gate", str(report_path))
             assert_contains(report_text, "## Visual Acceptance", str(report_path))
             assert_contains(report_text, "## Fidelity Failure Protocol", str(report_path))
             assert_contains(report_text, "## Completion Rule", str(report_path))

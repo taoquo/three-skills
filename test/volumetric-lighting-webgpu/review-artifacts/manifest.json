@@ -1,0 +1,12 @@
+{
+  "effect_slug": "volumetric-lighting-webgpu",
+  "artifacts_subdir": "review-artifacts",
+  "expected_ids": [],
+  "complete_pairs": 0,
+  "missing_reference": [],
+  "missing_current": [],
+  "kind_mismatches": [],
+  "image_dimension_mismatches": [],
+  "unparsed_formats": [],
+  "entries": []
+}

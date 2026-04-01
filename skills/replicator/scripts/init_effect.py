@@ -175,8 +175,10 @@ DEFAULT_PRIMARY_VISUAL_ARTIFACT = "TODO"
 DEFAULT_CLASSIC_GRAPHICS_BASELINE = "pending"
 DEFAULT_FIRST_FRAME_GATE = "pending"
 DEFAULT_BROWSER_VALIDATION_GATE = "pending"
-DEFAULT_SIDE_BY_SIDE_REVIEW = "pending"
+DEFAULT_REVIEW_ARTIFACT_GATE = "pending"
+DEFAULT_REVIEW_ARTIFACT_TYPE = "TODO"
 DEFAULT_STATUS_LABEL = "planned"
+REVIEW_ARTIFACTS_DIRNAME = "review-artifacts"
 
 
 def load_runtime_versions() -> dict[str, str]:
@@ -253,11 +255,11 @@ def write_supporting_files(
     backend: str,
     requested_profile: str,
 ) -> None:
-    captures_dir = effect_dir / "captures"
+    review_artifacts_dir = effect_dir / REVIEW_ARTIFACTS_DIRNAME
     research_dir = effect_dir / "research"
-    captures_dir.mkdir(exist_ok=True)
+    review_artifacts_dir.mkdir(exist_ok=True)
     research_dir.mkdir(exist_ok=True)
-    (captures_dir / ".gitkeep").write_text("")
+    (review_artifacts_dir / ".gitkeep").write_text("")
 
     canonical_profile, preset, alias = resolve_profile(requested_profile)
     effect_archetype = str(preset["effect_archetype"])
@@ -280,20 +282,21 @@ def write_supporting_files(
         "desktop-webgpu-plus-webgl2-fallback" if backend == "webgpu" else "webgl2-first"
     )
 
-    capture_checklist = """# Capture Checklist
+    capture_checklist = """# Review Artifact Checklist
 
 ## Gate Checks
 
 - Reference access gate: `TODO`
 - Mode contract: `TODO`
-- Honest status label before capture: `TODO`
+- Honest status label before review: `TODO`
 - Browser validation gate: `TODO`
-- Side-by-side review complete: `TODO`
+- Review artifact gate: `TODO`
 
-- Reference still 01: `captures/reference-01.png`
-- Current still 01: `captures/current-01.png`
-- Reference still 02: `captures/reference-02.png`
-- Current still 02: `captures/current-02.png`
+- Use still pairs only when framing, silhouette, palette, or finish are the main questions.
+- Use a short clip, GIF, or keyframe set when motion or camera behavior matters more than a single frame.
+- Add a short note when interaction fidelity is central and files alone are not enough.
+- Example still pair: `review-artifacts/reference-01.png` and `review-artifacts/current-01.png`
+- Example motion pair: `review-artifacts/reference-motion.webm` and `review-artifacts/current-motion.webm`
 
 ## Fidelity Rubric
 
@@ -308,7 +311,7 @@ def write_supporting_files(
 - Total fidelity score: `TODO/10`
 - Acceptance target: `8/10`
 """
-    (captures_dir / "checklist.md").write_text(capture_checklist)
+    (review_artifacts_dir / "checklist.md").write_text(capture_checklist)
 
     summary_lines = [
         f"# {title} Research Summary",
@@ -339,13 +342,16 @@ def write_supporting_files(
         f"- Classic graphics baseline: `{DEFAULT_CLASSIC_GRAPHICS_BASELINE}`",
         f"- First-frame review gate: `{DEFAULT_FIRST_FRAME_GATE}`",
         f"- Browser validation gate: `{DEFAULT_BROWSER_VALIDATION_GATE}`",
-        f"- Side-by-side review: `{DEFAULT_SIDE_BY_SIDE_REVIEW}`",
+        f"- Review artifact gate: `{DEFAULT_REVIEW_ARTIFACT_GATE}`",
+        f"- Review artifact type: `{DEFAULT_REVIEW_ARTIFACT_TYPE}`",
         "",
         "## Notes",
         "",
         "- Search canonical and mainstream graphics sources first, then engine references, then the Three.js landing path.",
         "- Do not start a faithful remake until an accessible primary visual artifact is locked.",
         "- If the reference gate fails, request stronger evidence or explicitly downgrade the mode contract.",
+        "- Do not force still-image comparison for motion-heavy or interaction-heavy 3D scenes.",
+        "- Pick the review artifact medium that actually represents the effect: stills, clips, GIFs, keyframes, or concise notes.",
         "- Use AskUserOption for unresolved product-level tradeoffs such as renderer contract, fidelity target, or compatibility scope.",
         "- Delegate bounded research work such as source parsing, link-tree expansion, and pitfall scans to subagents when it speeds up coverage.",
         "- Validate the final implementation surface against the official Three.js docs before sign-off.",
@@ -415,7 +421,8 @@ def write_supporting_files(
         "classic_graphics_baseline": DEFAULT_CLASSIC_GRAPHICS_BASELINE,
         "first_frame_gate": DEFAULT_FIRST_FRAME_GATE,
         "browser_validation_gate": DEFAULT_BROWSER_VALIDATION_GATE,
-        "side_by_side_review": DEFAULT_SIDE_BY_SIDE_REVIEW,
+        "review_artifact_gate": DEFAULT_REVIEW_ARTIFACT_GATE,
+        "review_artifact_type": DEFAULT_REVIEW_ARTIFACT_TYPE,
         "user_decision_log": [],
         "delegated_research": [],
         "accepted_source_types": [

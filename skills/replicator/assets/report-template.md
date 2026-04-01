@@ -3,10 +3,12 @@
 ## Summary
 
 - Goal:
-- Status: `blocked-on-reference/planned/first-runnable-pass/browser-validated/capture-reviewed/fidelity-pending/faithful-remake-complete`
+- Status: `blocked-on-reference/planned/first-runnable-pass/browser-validated/evidence-reviewed/fidelity-pending/faithful-remake-complete`
 - Mode contract: `faithful-remake/approximation-from-limited-evidence/inspired-variant`
 - Reference access gate: `passed/blocked/pending`
 - Primary visual artifact:
+- Review artifact gate: `passed/pending/not-needed`
+- Review artifact type:
 - Confidence:
 - Effect archetype:
 - Authoring path:
@@ -38,7 +40,7 @@
 | Requested mode | `faithful-remake/approximation-from-limited-evidence/inspired-variant` | `Original request or inferred product intent` |
 | Active mode | `faithful-remake/approximation-from-limited-evidence/inspired-variant` | `Mode actually used for implementation` |
 | User approval for downgrade | `yes/no/not-needed/not-recorded` | `Required when faithful was requested but the task had to downgrade` |
-| Honest status label | `blocked-on-reference/planned/first-runnable-pass/browser-validated/capture-reviewed/fidelity-pending/faithful-remake-complete` | `Current truthful state of the work` |
+| Honest status label | `blocked-on-reference/planned/first-runnable-pass/browser-validated/evidence-reviewed/fidelity-pending/faithful-remake-complete` | `Current truthful state of the work` |
 
 ## User Decision Log
 
@@ -256,7 +258,16 @@
 | Renderer initialized | `pass/fail/pending` | `TODO` |
 | Runtime errors | `none-observed/issue-found/pending` | `TODO` |
 | In-browser render confirmed | `pass/fail/pending` | `TODO` |
-| Current capture saved | `pass/fail/pending` | `TODO` |
+
+## Review Artifact Gate
+
+| Check | Status | Notes |
+| --- | --- | --- |
+| Review artifact type | `stills/clip/gif/keyframes/notes/mixed/not-needed` | `Choose the medium that actually represents the effect` |
+| Reference artifact recorded | `pass/fail/pending/not-needed` | `TODO` |
+| Current artifact recorded | `pass/fail/pending/not-needed` | `TODO` |
+| Comparison method appropriate | `pass/fail/pending` | `Why this artifact type matches the archetype` |
+| Comparison notes written | `pass/fail/pending` | `TODO` |
 
 ## Visual Acceptance
 
@@ -270,8 +281,8 @@
 
 - Total fidelity score:
 - Acceptance target:
-- Reference captures:
-- Current captures:
+- Reference artifacts:
+- Current artifacts:
 
 ## Fidelity Failure Protocol
 
@@ -287,8 +298,8 @@
 | Requirement | Status | Notes |
 | --- | --- | --- |
 | Active reference artifact in use | `pass/fail/pending` | `TODO` |
-| Current capture exists | `pass/fail/pending` | `TODO` |
-| Side-by-side review completed | `pass/fail/pending` | `TODO` |
+| Task-appropriate current review artifact exists | `pass/fail/pending/not-needed` | `TODO` |
+| Comparison review completed with the right medium | `pass/fail/pending` | `TODO` |
 | Remaining gaps below threshold or documented | `pass/fail/pending` | `TODO` |
 
 ## Compatibility Notes

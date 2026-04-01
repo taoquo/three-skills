@@ -142,7 +142,7 @@ And validate checked-in replicator fixtures plus public example parity:
 python3 scripts/validate_replicator_fixtures.py
 ```
 
-When an effect has captures under `captures/`, refresh the pair manifest and review summary:
+When an effect has file-based review artifacts under `review-artifacts/`, refresh the manifest and review summary:
 
 ```bash
 python3 skills/replicator/scripts/capture_audit.py test/volumetric-lighting-webgpu

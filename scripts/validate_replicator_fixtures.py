@@ -20,6 +20,7 @@ REQUIRED_REPORT_SECTIONS = (
     "## PostFX Decision",
     "## Performance Decision",
     "## Browser Validation Gate",
+    "## Review Artifact Gate",
     "## Visual Acceptance",
     "## Fidelity Failure Protocol",
     "## Completion Rule",
@@ -31,9 +32,7 @@ REQUIRED_FILES = (
     "main.js",
     "research/summary.md",
     "research/sources.json",
-    "captures/checklist.md",
-    "captures/manifest.json",
-    "captures/review.md",
+    "review-artifacts/checklist.md",
 )
 
 REQUIRED_SOURCE_FIELDS = (
@@ -62,7 +61,8 @@ REQUIRED_SOURCE_FIELDS = (
     "classic_graphics_baseline",
     "first_frame_gate",
     "browser_validation_gate",
-    "side_by_side_review",
+    "review_artifact_gate",
+    "review_artifact_type",
     "accepted_source_types",
     "source_roles",
     "sources",
@@ -71,36 +71,38 @@ REQUIRED_SOURCE_FIELDS = (
 REQUIRED_SOURCE_ENTRY_FIELDS = ("type", "value", "label", "role", "contribution")
 REQUIRED_MANIFEST_FIELDS = (
     "effect_slug",
-    "captures_subdir",
-    "expected_slots",
+    "artifacts_subdir",
+    "expected_ids",
     "complete_pairs",
     "missing_reference",
     "missing_current",
-    "size_mismatches",
-    "unsupported_formats",
+    "kind_mismatches",
+    "image_dimension_mismatches",
+    "unparsed_formats",
     "entries",
 )
 REQUIRED_MANIFEST_ENTRY_FIELDS = (
-    "slot",
+    "artifact_id",
     "reference_path",
     "current_path",
     "reference_exists",
     "current_exists",
+    "reference_kind",
+    "current_kind",
+    "kind_match",
     "reference_size",
     "current_size",
-    "size_match",
+    "image_dimension_match",
 )
 PAIRED_TEXT_FILES = (
     "REPORT.md",
     "index.html",
     "main.js",
     "research/summary.md",
-    "captures/checklist.md",
-    "captures/review.md",
+    "review-artifacts/checklist.md",
 )
 PAIRED_JSON_FILES = (
     "research/sources.json",
-    "captures/manifest.json",
 )
 
 
@@ -176,15 +178,23 @@ def validate_capture_manifest(path: Path) -> list[str]:
         if field not in manifest:
             errors.append(f"{path}: missing field {field}")
 
-    if manifest.get("captures_subdir") != "captures":
-        errors.append(f"{path}: captures_subdir must be set to captures")
+    if manifest.get("artifacts_subdir") != "review-artifacts":
+        errors.append(f"{path}: artifacts_subdir must be set to review-artifacts")
 
     for field in ("effect_slug",):
         value = manifest.get(field)
         if not isinstance(value, str) or not value.strip():
             errors.append(f"{path}: field {field} must be a non-empty string")
 
-    for field in ("expected_slots", "missing_reference", "missing_current", "size_mismatches", "unsupported_formats", "entries"):
+    for field in (
+        "expected_ids",
+        "missing_reference",
+        "missing_current",
+        "kind_mismatches",
+        "image_dimension_mismatches",
+        "unparsed_formats",
+        "entries",
+    ):
         value = manifest.get(field)
         if not isinstance(value, list):
             errors.append(f"{path}: field {field} must be a list")
@@ -207,15 +217,19 @@ def validate_capture_manifest(path: Path) -> list[str]:
             if field not in entry_map:
                 errors.append(f"{path}: entries[{index}] missing field {field}")
 
-        if not isinstance(entry_map.get("slot"), str) or not entry_map["slot"]:
-            errors.append(f"{path}: entries[{index}].slot must be a non-empty string")
+        if not isinstance(entry_map.get("artifact_id"), str) or not entry_map["artifact_id"]:
+            errors.append(f"{path}: entries[{index}].artifact_id must be a non-empty string")
 
-        for field in ("reference_exists", "current_exists", "size_match"):
+        for field in ("reference_exists", "current_exists", "kind_match"):
             value = entry_map.get(field)
             if not isinstance(value, bool):
                 errors.append(f"{path}: entries[{index}].{field} must be a boolean")
 
-        for field in ("reference_path", "current_path"):
+        dimension_match = entry_map.get("image_dimension_match")
+        if dimension_match is not None and not isinstance(dimension_match, bool):
+            errors.append(f"{path}: entries[{index}].image_dimension_match must be a boolean or null")
+
+        for field in ("reference_path", "current_path", "reference_kind", "current_kind"):
             value = entry_map.get(field)
             if value is not None and not isinstance(value, str):
                 errors.append(f"{path}: entries[{index}].{field} must be a string or null")
@@ -242,7 +256,7 @@ def validate_artifact(artifact_dir: Path) -> list[str]:
     if sources_path.exists():
         errors.extend(validate_sources_json(sources_path))
 
-    manifest_path = artifact_dir / "captures" / "manifest.json"
+    manifest_path = artifact_dir / "review-artifacts" / "manifest.json"
     if manifest_path.exists():
         errors.extend(validate_capture_manifest(manifest_path))
 

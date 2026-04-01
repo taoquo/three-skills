@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate a manifest and lightweight review summary for replicator captures."""
+"""Generate a manifest and lightweight review summary for replicator review artifacts."""
 
 from __future__ import annotations
 
@@ -11,30 +11,43 @@ import sys
 from pathlib import Path
 
 SUPPORTED_IMAGE_EXTENSIONS = {".png", ".jpg", ".jpeg", ".webp"}
-KNOWN_CAPTURE_EXTENSIONS = (".png", ".jpg", ".jpeg", ".webp", ".avif")
-UNSUPPORTED_FORMAT_HINTS = {
-    ".avif": "AVIF captures are detected but size parsing is not implemented yet. Convert to PNG, JPEG, or WebP if you need automated size checks.",
+ANIMATED_IMAGE_EXTENSIONS = {".gif"}
+VIDEO_EXTENSIONS = {".mp4", ".webm", ".mov"}
+KNOWN_ARTIFACT_EXTENSIONS = tuple(
+    sorted(SUPPORTED_IMAGE_EXTENSIONS | ANIMATED_IMAGE_EXTENSIONS | VIDEO_EXTENSIONS | {".avif"})
+)
+UNPARSED_FORMAT_HINTS = {
+    ".avif": "AVIF review artifacts are detected but image-size parsing is not implemented yet.",
+    ".gif": "GIF review artifacts are detected but frame metadata parsing is not implemented yet.",
+    ".mp4": "Video review artifacts are recorded for presence only; duration metadata is not parsed.",
+    ".webm": "Video review artifacts are recorded for presence only; duration metadata is not parsed.",
+    ".mov": "Video review artifacts are recorded for presence only; duration metadata is not parsed.",
 }
-DEFAULT_SLOTS = ("01", "02")
+REVIEW_ARTIFACTS_DIRNAME = "review-artifacts"
 
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="Audit captures/reference-*.png and captures/current-*.png for a replicator effect.",
+        description="Audit file-based review artifacts stored under review-artifacts/ for a replicator effect.",
     )
     parser.add_argument(
         "effect_dir",
-        help="Effect directory that contains captures/, for example effects/my-effect or test/my-fixture.",
+        help="Effect directory that contains review-artifacts/, for example effects/my-effect or test/my-fixture.",
+    )
+    parser.add_argument(
+        "--ids",
+        default="",
+        help="Comma-separated artifact ids to expect. Leave empty to infer ids from files on disk.",
     )
     parser.add_argument(
         "--slots",
-        default=",".join(DEFAULT_SLOTS),
-        help="Comma-separated slot ids to expect by default. Defaults to 01,02.",
+        dest="ids",
+        help="Backward-compatible alias for --ids.",
     )
     parser.add_argument(
         "--strict",
         action="store_true",
-        help="Exit non-zero if any expected pair is missing.",
+        help="Exit non-zero if any expected reference/current artifact pair is missing.",
     )
     return parser.parse_args()
 
@@ -117,80 +130,109 @@ def read_image_size(path: Path) -> tuple[int, int] | None:
     return None
 
 
-def collect_capture_slots(captures_dir: Path, default_slots: list[str]) -> list[str]:
-    slots = set(default_slots)
+def collect_artifact_ids(review_artifacts_dir: Path, default_ids: list[str]) -> list[str]:
+    artifact_ids = set(default_ids)
     pattern = re.compile(r"^(reference|current)-([a-zA-Z0-9_-]+)\.[^.]+$")
 
-    for path in captures_dir.iterdir():
-        if not path.is_file() or path.suffix.lower() not in KNOWN_CAPTURE_EXTENSIONS:
+    for path in review_artifacts_dir.iterdir():
+        if not path.is_file() or path.suffix.lower() not in KNOWN_ARTIFACT_EXTENSIONS:
             continue
         match = pattern.match(path.name)
         if match:
-            slots.add(match.group(2))
+            artifact_ids.add(match.group(2))
 
-    return sorted(slots)
+    return sorted(artifact_ids)
 
 
-def resolve_capture_file(captures_dir: Path, prefix: str, slot: str) -> Path | None:
-    for ext in KNOWN_CAPTURE_EXTENSIONS:
-        candidate = captures_dir / f"{prefix}-{slot}{ext}"
+def resolve_artifact_file(review_artifacts_dir: Path, prefix: str, artifact_id: str) -> Path | None:
+    for ext in KNOWN_ARTIFACT_EXTENSIONS:
+        candidate = review_artifacts_dir / f"{prefix}-{artifact_id}{ext}"
         if candidate.exists():
             return candidate
     return None
 
 
-def describe_unsupported_format(path: Path | None) -> str | None:
+def classify_artifact_kind(path: Path | None) -> str | None:
+    if path is None:
+        return None
+    suffix = path.suffix.lower()
+    if suffix in SUPPORTED_IMAGE_EXTENSIONS or suffix == ".avif":
+        return "still-image"
+    if suffix in ANIMATED_IMAGE_EXTENSIONS:
+        return "animated-image"
+    if suffix in VIDEO_EXTENSIONS:
+        return "video"
+    return "unknown"
+
+
+def describe_unparsed_format(path: Path | None) -> str | None:
     if path is None:
         return None
     suffix = path.suffix.lower()
     if suffix in SUPPORTED_IMAGE_EXTENSIONS:
         return None
-    return UNSUPPORTED_FORMAT_HINTS.get(
+    return UNPARSED_FORMAT_HINTS.get(
         suffix,
-        f"{suffix} captures are detected but not parsed for automated size checks.",
+        f"{suffix} review artifacts are detected but not parsed for automated metadata checks.",
     )
 
 
-def build_manifest(effect_dir: Path, slots: list[str]) -> dict[str, object]:
-    captures_dir = effect_dir / "captures"
+def build_manifest(effect_dir: Path, artifact_ids: list[str]) -> dict[str, object]:
+    review_artifacts_dir = effect_dir / REVIEW_ARTIFACTS_DIRNAME
     entries: list[dict[str, object]] = []
 
-    for slot in slots:
-        reference_path = resolve_capture_file(captures_dir, "reference", slot)
-        current_path = resolve_capture_file(captures_dir, "current", slot)
+    for artifact_id in artifact_ids:
+        reference_path = resolve_artifact_file(review_artifacts_dir, "reference", artifact_id)
+        current_path = resolve_artifact_file(review_artifacts_dir, "current", artifact_id)
         reference_size = read_image_size(reference_path) if reference_path else None
         current_size = read_image_size(current_path) if current_path else None
+        reference_kind = classify_artifact_kind(reference_path)
+        current_kind = classify_artifact_kind(current_path)
 
         entry = {
-            "slot": slot,
+            "artifact_id": artifact_id,
             "reference_path": str(reference_path.relative_to(effect_dir)) if reference_path else None,
             "current_path": str(current_path.relative_to(effect_dir)) if current_path else None,
             "reference_exists": reference_path is not None,
             "current_exists": current_path is not None,
+            "reference_kind": reference_kind,
+            "current_kind": current_kind,
+            "kind_match": bool(reference_kind and current_kind and reference_kind == current_kind),
             "reference_size": list(reference_size) if reference_size else None,
             "current_size": list(current_size) if current_size else None,
-            "size_match": bool(reference_size and current_size and reference_size == current_size),
+            "image_dimension_match": (
+                bool(reference_size and current_size and reference_size == current_size)
+                if reference_size or current_size
+                else None
+            ),
         }
         entries.append(entry)
 
     complete_pairs = sum(1 for entry in entries if entry["reference_exists"] and entry["current_exists"])
-    missing_reference = [entry["slot"] for entry in entries if not entry["reference_exists"]]
-    missing_current = [entry["slot"] for entry in entries if not entry["current_exists"]]
-    size_mismatches = [
-        entry["slot"]
+    missing_reference = [entry["artifact_id"] for entry in entries if not entry["reference_exists"]]
+    missing_current = [entry["artifact_id"] for entry in entries if not entry["current_exists"]]
+    kind_mismatches = [
+        entry["artifact_id"]
         for entry in entries
-        if entry["reference_exists"] and entry["current_exists"] and not entry["size_match"]
+        if entry["reference_exists"] and entry["current_exists"] and not entry["kind_match"]
     ]
-    unsupported_formats = []
+    image_dimension_mismatches = [
+        entry["artifact_id"]
+        for entry in entries
+        if entry["reference_exists"]
+        and entry["current_exists"]
+        and entry["image_dimension_match"] is False
+    ]
+    unparsed_formats = []
 
     for entry in entries:
         for prefix in ("reference", "current"):
             path_key = f"{prefix}_path"
-            note = describe_unsupported_format(effect_dir / str(entry[path_key])) if entry[path_key] else None
+            note = describe_unparsed_format(effect_dir / str(entry[path_key])) if entry[path_key] else None
             if note:
-                unsupported_formats.append(
+                unparsed_formats.append(
                     {
-                        "slot": entry["slot"],
+                        "artifact_id": entry["artifact_id"],
                         "role": prefix,
                         "path": entry[path_key],
                         "note": note,
@@ -199,52 +241,61 @@ def build_manifest(effect_dir: Path, slots: list[str]) -> dict[str, object]:
 
     return {
         "effect_slug": effect_dir.name,
-        "captures_subdir": "captures",
-        "expected_slots": slots,
+        "artifacts_subdir": REVIEW_ARTIFACTS_DIRNAME,
+        "expected_ids": artifact_ids,
         "complete_pairs": complete_pairs,
         "missing_reference": missing_reference,
         "missing_current": missing_current,
-        "size_mismatches": size_mismatches,
-        "unsupported_formats": unsupported_formats,
+        "kind_mismatches": kind_mismatches,
+        "image_dimension_mismatches": image_dimension_mismatches,
+        "unparsed_formats": unparsed_formats,
         "entries": entries,
     }
 
 
 def write_review(effect_dir: Path, manifest: dict[str, object]) -> None:
-    captures_dir = effect_dir / "captures"
+    review_artifacts_dir = effect_dir / REVIEW_ARTIFACTS_DIRNAME
     entries = manifest["entries"]
     lines = [
-        "# Capture Review",
+        "# Review Artifact Audit",
         "",
         f"- Complete pairs: `{manifest['complete_pairs']}`",
-        f"- Missing reference slots: `{', '.join(manifest['missing_reference']) or 'none'}`",
-        f"- Missing current slots: `{', '.join(manifest['missing_current']) or 'none'}`",
-        f"- Size mismatches: `{', '.join(manifest['size_mismatches']) or 'none'}`",
-        f"- Unsupported formats: `{len(manifest['unsupported_formats'])}`",
+        f"- Missing reference artifact ids: `{', '.join(manifest['missing_reference']) or 'none'}`",
+        f"- Missing current artifact ids: `{', '.join(manifest['missing_current']) or 'none'}`",
+        f"- Kind mismatches: `{', '.join(manifest['kind_mismatches']) or 'none'}`",
+        f"- Image dimension mismatches: `{', '.join(manifest['image_dimension_mismatches']) or 'none'}`",
+        f"- Unparsed formats: `{len(manifest['unparsed_formats'])}`",
         "",
         "## Pair Coverage",
         "",
-        "| Slot | Reference | Current | Size Match | Notes |",
-        "| --- | --- | --- | --- | --- |",
+        "| Artifact ID | Reference | Current | Kind Match | Image Size Match | Notes |",
+        "| --- | --- | --- | --- | --- | --- |",
     ]
 
     for entry in entries:
         ref_label = entry["reference_path"] or "missing"
         cur_label = entry["current_path"] or "missing"
-        size_match = "yes" if entry["size_match"] else ("n/a" if not entry["reference_exists"] or not entry["current_exists"] else "no")
-        lines.append(f"| `{entry['slot']}` | `{ref_label}` | `{cur_label}` | `{size_match}` | `TODO` |")
+        kind_match = "yes" if entry["kind_match"] else ("n/a" if not entry["reference_exists"] or not entry["current_exists"] else "no")
+        dimension_match = (
+            "yes"
+            if entry["image_dimension_match"] is True
+            else ("no" if entry["image_dimension_match"] is False else "n/a")
+        )
+        lines.append(
+            f"| `{entry['artifact_id']}` | `{ref_label}` | `{cur_label}` | `{kind_match}` | `{dimension_match}` | `TODO` |"
+        )
 
     lines.extend(
         [
             "",
-            "## Unsupported Format Notes",
+            "## Unparsed Format Notes",
             "",
         ]
     )
 
-    unsupported_formats = manifest["unsupported_formats"]
-    if unsupported_formats:
-        for item in unsupported_formats:
+    unparsed_formats = manifest["unparsed_formats"]
+    if unparsed_formats:
+        for item in unparsed_formats:
             lines.append(
                 f"- `{item['path']}`: {item['note']}"
             )
@@ -256,45 +307,45 @@ def write_review(effect_dir: Path, manifest: dict[str, object]) -> None:
             "",
             "## Review Notes",
             "",
-            "- Compare the paired captures using the fidelity rubric in `checklist.md`.",
-            "- Focus first on silhouette, motion, density, palette, and finish gaps.",
-            "- If a pair is missing, capture it before calling the effect done.",
+            "- Use still-image pairs only when they represent the important questions for the effect.",
+            "- For motion-heavy or interaction-heavy scenes, pair this audit with clips, keyframes, or concise review notes.",
+            "- Focus first on silhouette, motion, density, palette, finish, and interaction gaps that the chosen artifact type can actually prove.",
             "",
         ]
     )
-    (captures_dir / "review.md").write_text("\n".join(lines))
+    (review_artifacts_dir / "review.md").write_text("\n".join(lines))
 
 
 def main() -> int:
     args = parse_args()
     effect_dir = Path(args.effect_dir).resolve()
-    captures_dir = effect_dir / "captures"
+    review_artifacts_dir = effect_dir / REVIEW_ARTIFACTS_DIRNAME
 
     if not effect_dir.exists():
         print(f"[ERROR] effect directory not found: {effect_dir}", file=sys.stderr)
         return 1
-    if not captures_dir.exists():
-        print(f"[ERROR] captures/ directory not found under: {effect_dir}", file=sys.stderr)
+    if not review_artifacts_dir.exists():
+        print(f"[ERROR] review-artifacts/ directory not found under: {effect_dir}", file=sys.stderr)
         return 1
 
-    default_slots = [slot.strip() for slot in args.slots.split(",") if slot.strip()]
-    slots = collect_capture_slots(captures_dir, default_slots)
-    manifest = build_manifest(effect_dir, slots)
+    default_ids = [artifact_id.strip() for artifact_id in args.ids.split(",") if artifact_id.strip()]
+    artifact_ids = collect_artifact_ids(review_artifacts_dir, default_ids)
+    manifest = build_manifest(effect_dir, artifact_ids)
 
-    (captures_dir / "manifest.json").write_text(json.dumps(manifest, indent=2) + "\n")
+    (review_artifacts_dir / "manifest.json").write_text(json.dumps(manifest, indent=2) + "\n")
     write_review(effect_dir, manifest)
 
-    print(f"[OK] wrote {captures_dir / 'manifest.json'}")
-    print(f"[OK] wrote {captures_dir / 'review.md'}")
+    print(f"[OK] wrote {review_artifacts_dir / 'manifest.json'}")
+    print(f"[OK] wrote {review_artifacts_dir / 'review.md'}")
 
-    unsupported_formats = manifest["unsupported_formats"]
-    if unsupported_formats:
-        print("[WARN] unsupported capture formats were detected:", file=sys.stderr)
-        for item in unsupported_formats:
+    unparsed_formats = manifest["unparsed_formats"]
+    if unparsed_formats:
+        print("[WARN] review artifact formats with limited metadata were detected:", file=sys.stderr)
+        for item in unparsed_formats:
             print(f"[WARN] {item['path']}: {item['note']}", file=sys.stderr)
 
     if args.strict and (manifest["missing_reference"] or manifest["missing_current"]):
-        print("[ERROR] capture pairs are incomplete", file=sys.stderr)
+        print("[ERROR] review artifact pairs are incomplete", file=sys.stderr)
         return 1
 
     return 0

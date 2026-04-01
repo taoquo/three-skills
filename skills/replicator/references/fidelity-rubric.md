@@ -64,13 +64,19 @@ If the score is lower:
 - record the gap explicitly
 - do not describe the effect as fully matched
 
-## Capture Guidance
+## Review Artifact Guidance
 
-Store stills under `captures/` with stable names:
+Choose the review medium that actually represents the effect:
 
-- `reference-01.png`
-- `current-01.png`
-- `reference-02.png`
-- `current-02.png`
+- Use still pairs when composition, silhouette, palette, or finish are the main questions.
+- Use short clips, GIFs, or keyframe sequences when motion or camera choreography is central.
+- Use concise notes in the report when interaction behavior matters and files alone are not enough.
 
-Use the same moments or camera angles when possible.
+Common file-based patterns under `review-artifacts/`:
+
+- still pair: `reference-01.png`, `current-01.png`
+- motion pair: `reference-motion.webm`, `current-motion.webm`
+- keyframe set: `reference-keyframe-a.png`, `current-keyframe-a.png`
+
+Use the same moments, camera angles, or interaction state when possible.
+Do not score `Motion` from a single still unless the motion question is truly irrelevant for the task.
