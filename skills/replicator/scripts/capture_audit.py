@@ -32,7 +32,7 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument(
         "effect_dir",
-        help="Effect directory that contains review-artifacts/, for example effects/my-effect or test/my-fixture.",
+        help="Effect directory that contains review-artifacts/, for example effects/my-effect.",
     )
     parser.add_argument(
         "--ids",

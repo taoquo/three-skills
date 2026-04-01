@@ -28,6 +28,7 @@ def main() -> int:
     repo_root = Path(__file__).resolve().parent.parent
     module = load_init_effect_module(repo_root)
     canonical_profiles = sorted(module.PROFILE_PRESETS)
+    defaults = module.WORKFLOW_DEFAULTS
 
     with tempfile.TemporaryDirectory(prefix="replicator-smoke-") as tmp:
         tmp_root = Path(tmp)
@@ -66,12 +67,14 @@ def main() -> int:
             assert_contains(summary_text, "## Suggested Quality Ladder", str(summary_path))
             assert_contains(summary_text, f"- Three.js version: `{module.THREE_VERSION}`", str(summary_path))
             assert_contains(summary_text, f"- lil-gui version: `{module.LIL_GUI_VERSION}`", str(summary_path))
-            assert_contains(summary_text, "- Status: `planned`", str(summary_path))
-            assert_contains(summary_text, "- Mode contract: `TODO`", str(summary_path))
-            assert_contains(summary_text, "- Reference access gate: `pending`", str(summary_path))
-            assert_contains(summary_text, "- Browser validation gate: `pending`", str(summary_path))
-            assert_contains(summary_text, "- Review artifact gate: `pending`", str(summary_path))
-            assert_contains(summary_text, "- Review artifact type: `TODO`", str(summary_path))
+            assert_contains(summary_text, f"- Target environment: `{defaults['target_environment']}`", str(summary_path))
+            assert_contains(summary_text, f"- Performance priority: `{defaults['performance_priority']}`", str(summary_path))
+            assert_contains(summary_text, f"- Status: `{defaults['status_label']}`", str(summary_path))
+            assert_contains(summary_text, f"- Mode contract: `{defaults['mode_contract']}`", str(summary_path))
+            assert_contains(summary_text, f"- Reference access gate: `{defaults['reference_access_gate']}`", str(summary_path))
+            assert_contains(summary_text, f"- Browser validation gate: `{defaults['browser_validation_gate']}`", str(summary_path))
+            assert_contains(summary_text, f"- Review artifact gate: `{defaults['review_artifact_gate']}`", str(summary_path))
+            assert_contains(summary_text, f"- Review artifact type: `{defaults['review_artifact_type']}`", str(summary_path))
 
             assert sources["profile"] == profile
             assert sources["effect_archetype"] == expected["effect_archetype"]
@@ -82,26 +85,19 @@ def main() -> int:
             assert sources["history_requirement"] == expected["history_requirement"]
             assert sources["three_version"] == module.THREE_VERSION
             assert sources["lil_gui_version"] == module.LIL_GUI_VERSION
-            assert sources["mode_contract"] == "TODO"
-            assert sources["status_label"] == "planned"
-            assert sources["reference_access_gate"] == "pending"
-            assert sources["primary_visual_artifact"] == "TODO"
-            assert sources["classic_graphics_baseline"] == "pending"
-            assert sources["first_frame_gate"] == "pending"
-            assert sources["browser_validation_gate"] == "pending"
-            assert sources["review_artifact_gate"] == "pending"
-            assert sources["review_artifact_type"] == "TODO"
-            assert sources["accepted_source_types"] == [
-                "url",
-                "keyword",
-                "image-uri",
-                "local-image-path",
-                "screenshot",
-                "video",
-                "code",
-                "derived-link",
-            ]
-            assert sources["source_roles"] == ["primary", "secondary", "accent", "derived"]
+            assert sources["target_environment"] == defaults["target_environment"]
+            assert sources["performance_priority"] == defaults["performance_priority"]
+            assert sources["mode_contract"] == defaults["mode_contract"]
+            assert sources["status_label"] == defaults["status_label"]
+            assert sources["reference_access_gate"] == defaults["reference_access_gate"]
+            assert sources["primary_visual_artifact"] == defaults["primary_visual_artifact"]
+            assert sources["classic_graphics_baseline"] == defaults["classic_graphics_baseline"]
+            assert sources["first_frame_gate"] == defaults["first_frame_gate"]
+            assert sources["browser_validation_gate"] == defaults["browser_validation_gate"]
+            assert sources["review_artifact_gate"] == defaults["review_artifact_gate"]
+            assert sources["review_artifact_type"] == defaults["review_artifact_type"]
+            assert sources["accepted_source_types"] == module.ACCEPTED_SOURCE_TYPES
+            assert sources["source_roles"] == module.SOURCE_ROLES
             assert sources["sources"] == []
 
             if "__THREE_VERSION__" in index_text or "__LIL_GUI_VERSION__" in index_text:

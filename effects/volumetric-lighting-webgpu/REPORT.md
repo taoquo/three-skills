@@ -301,7 +301,7 @@
 
 | Check | Status | Notes |
 | --- | --- | --- |
-| Review artifact type | `not-needed-yet` | This fixture has not recorded stills, clips, or notes beyond the report itself. |
+| Review artifact type | `not-recorded` | This fixture has not recorded stills, clips, or notes beyond the report itself. |
 | Reference artifact recorded | `pending` | The reference set is available as URLs, but no local review files have been stored yet. |
 | Current artifact recorded | `pending` | No stills, clips, or keyframe files have been saved under `review-artifacts/` yet. |
 | Comparison method appropriate | `pending` | The final review should likely use a short motion artifact or keyframe set, not only stills. |

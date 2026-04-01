@@ -13,6 +13,12 @@ import shutil
 import sys
 from pathlib import Path
 
+SCRIPT_DIR = Path(__file__).resolve().parent
+if str(SCRIPT_DIR) not in sys.path:
+    sys.path.insert(0, str(SCRIPT_DIR))
+
+from workflow_schema import format_option_list, workflow_defaults, workflow_option_lists
+
 DEFAULT_RUNTIME_VERSIONS = {
     "three": "0.180.0",
     "lil_gui": "0.20",
@@ -169,16 +175,16 @@ TEMPLATE_BY_KEY = {
     ("tsl", "webgl2"): "tsl-webgl2",
     ("legacy", "webgl2"): "legacy-glsl",
 }
-DEFAULT_MODE_CONTRACT = "TODO"
-DEFAULT_REFERENCE_ACCESS_GATE = "pending"
-DEFAULT_PRIMARY_VISUAL_ARTIFACT = "TODO"
-DEFAULT_CLASSIC_GRAPHICS_BASELINE = "pending"
-DEFAULT_FIRST_FRAME_GATE = "pending"
-DEFAULT_BROWSER_VALIDATION_GATE = "pending"
-DEFAULT_REVIEW_ARTIFACT_GATE = "pending"
-DEFAULT_REVIEW_ARTIFACT_TYPE = "TODO"
-DEFAULT_STATUS_LABEL = "planned"
 REVIEW_ARTIFACTS_DIRNAME = "review-artifacts"
+WORKFLOW_DEFAULTS = workflow_defaults()
+WORKFLOW_OPTION_LISTS = workflow_option_lists()
+STATUS_LABELS = WORKFLOW_OPTION_LISTS["status_labels"]
+MODE_CONTRACTS = WORKFLOW_OPTION_LISTS["mode_contracts"]
+REFERENCE_ACCESS_GATES = WORKFLOW_OPTION_LISTS["reference_access_gates"]
+REVIEW_ARTIFACT_GATES = WORKFLOW_OPTION_LISTS["review_artifact_gates"]
+REVIEW_ARTIFACT_TYPES = WORKFLOW_OPTION_LISTS["review_artifact_types"]
+ACCEPTED_SOURCE_TYPES = WORKFLOW_OPTION_LISTS["accepted_source_types"]
+SOURCE_ROLES = WORKFLOW_OPTION_LISTS["source_roles"]
 
 
 def load_runtime_versions() -> dict[str, str]:
@@ -281,6 +287,7 @@ def write_supporting_files(
     compatibility_contract = (
         "desktop-webgpu-plus-webgl2-fallback" if backend == "webgpu" else "webgl2-first"
     )
+    defaults = WORKFLOW_DEFAULTS
 
     capture_checklist = """# Review Artifact Checklist
 
@@ -333,17 +340,17 @@ def write_supporting_files(
         f"- Three.js version: `{THREE_VERSION}`",
         f"- lil-gui version: `{LIL_GUI_VERSION}`",
         f"- Profile: `{requested_profile}`",
-        "- Target environment: `desktop-first`",
-        "- Performance priority: `deferred until look is correct`",
-        f"- Status: `{DEFAULT_STATUS_LABEL}`",
-        f"- Mode contract: `{DEFAULT_MODE_CONTRACT}`",
-        f"- Reference access gate: `{DEFAULT_REFERENCE_ACCESS_GATE}`",
-        f"- Primary visual artifact: `{DEFAULT_PRIMARY_VISUAL_ARTIFACT}`",
-        f"- Classic graphics baseline: `{DEFAULT_CLASSIC_GRAPHICS_BASELINE}`",
-        f"- First-frame review gate: `{DEFAULT_FIRST_FRAME_GATE}`",
-        f"- Browser validation gate: `{DEFAULT_BROWSER_VALIDATION_GATE}`",
-        f"- Review artifact gate: `{DEFAULT_REVIEW_ARTIFACT_GATE}`",
-        f"- Review artifact type: `{DEFAULT_REVIEW_ARTIFACT_TYPE}`",
+        f"- Target environment: `{defaults['target_environment']}`",
+        f"- Performance priority: `{defaults['performance_priority']}`",
+        f"- Status: `{defaults['status_label']}`",
+        f"- Mode contract: `{defaults['mode_contract']}`",
+        f"- Reference access gate: `{defaults['reference_access_gate']}`",
+        f"- Primary visual artifact: `{defaults['primary_visual_artifact']}`",
+        f"- Classic graphics baseline: `{defaults['classic_graphics_baseline']}`",
+        f"- First-frame review gate: `{defaults['first_frame_gate']}`",
+        f"- Browser validation gate: `{defaults['browser_validation_gate']}`",
+        f"- Review artifact gate: `{defaults['review_artifact_gate']}`",
+        f"- Review artifact type: `{defaults['review_artifact_type']}`",
         "",
         "## Notes",
         "",
@@ -360,8 +367,8 @@ def write_supporting_files(
         "",
         "## Input Intake",
         "",
-        "- Accepted source kinds: `url`, `keyword`, `image-uri`, `local-image-path`, `screenshot`, `video`, `code`, `derived-link`.",
-        "- Normalize each source into one role: `primary`, `secondary`, `accent`, or `derived`.",
+        "- Accepted source kinds: " + ", ".join(f"`{item}`" for item in ACCEPTED_SOURCE_TYPES) + ".",
+        "- Normalize each source into one role: " + ", ".join(f"`{item}`" for item in SOURCE_ROLES) + ".",
         "- For keyword-only or image-only starts, record the English search phrases that produced the chosen primary reference.",
         "- Treat product copy, titles, and SEO summaries as insufficient evidence for a faithful route.",
         "",
@@ -412,30 +419,21 @@ def write_supporting_files(
         "nearest_rejected_route": nearest_rejected_route,
         "suggested_modules": suggested_modules,
         "quality_ladder": quality_ladder,
-        "target_environment": "desktop-first",
-        "performance_priority": "deferred until look is correct",
-        "mode_contract": DEFAULT_MODE_CONTRACT,
-        "status_label": DEFAULT_STATUS_LABEL,
-        "reference_access_gate": DEFAULT_REFERENCE_ACCESS_GATE,
-        "primary_visual_artifact": DEFAULT_PRIMARY_VISUAL_ARTIFACT,
-        "classic_graphics_baseline": DEFAULT_CLASSIC_GRAPHICS_BASELINE,
-        "first_frame_gate": DEFAULT_FIRST_FRAME_GATE,
-        "browser_validation_gate": DEFAULT_BROWSER_VALIDATION_GATE,
-        "review_artifact_gate": DEFAULT_REVIEW_ARTIFACT_GATE,
-        "review_artifact_type": DEFAULT_REVIEW_ARTIFACT_TYPE,
+        "target_environment": defaults["target_environment"],
+        "performance_priority": defaults["performance_priority"],
+        "mode_contract": defaults["mode_contract"],
+        "status_label": defaults["status_label"],
+        "reference_access_gate": defaults["reference_access_gate"],
+        "primary_visual_artifact": defaults["primary_visual_artifact"],
+        "classic_graphics_baseline": defaults["classic_graphics_baseline"],
+        "first_frame_gate": defaults["first_frame_gate"],
+        "browser_validation_gate": defaults["browser_validation_gate"],
+        "review_artifact_gate": defaults["review_artifact_gate"],
+        "review_artifact_type": defaults["review_artifact_type"],
         "user_decision_log": [],
         "delegated_research": [],
-        "accepted_source_types": [
-            "url",
-            "keyword",
-            "image-uri",
-            "local-image-path",
-            "screenshot",
-            "video",
-            "code",
-            "derived-link",
-        ],
-        "source_roles": ["primary", "secondary", "accent", "derived"],
+        "accepted_source_types": ACCEPTED_SOURCE_TYPES,
+        "source_roles": SOURCE_ROLES,
         "sources": [],
     }
     (research_dir / "sources.json").write_text(json.dumps(sources, indent=2) + "\n")
@@ -470,6 +468,13 @@ def scaffold_effect(
         "__PROFILE__": canonical_profile,
         "__THREE_VERSION__": THREE_VERSION,
         "__LIL_GUI_VERSION__": LIL_GUI_VERSION,
+        "__STATUS_LABEL_OPTIONS__": format_option_list(STATUS_LABELS),
+        "__MODE_CONTRACT_OPTIONS__": format_option_list(MODE_CONTRACTS),
+        "__REFERENCE_ACCESS_GATE_OPTIONS__": format_option_list(REFERENCE_ACCESS_GATES),
+        "__REVIEW_ARTIFACT_GATE_OPTIONS__": format_option_list(REVIEW_ARTIFACT_GATES),
+        "__REVIEW_ARTIFACT_TYPE_OPTIONS__": format_option_list(REVIEW_ARTIFACT_TYPES),
+        "__ACCEPTED_SOURCE_TYPE_OPTIONS__": format_option_list(ACCEPTED_SOURCE_TYPES),
+        "__SOURCE_ROLE_OPTIONS__": format_option_list(SOURCE_ROLES),
     }
 
     for path in effect_dir.rglob("*"):

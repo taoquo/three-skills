@@ -6,7 +6,7 @@ The format is intentionally simple and repository-focused.
 
 ## [Unreleased]
 
-- No unreleased entries yet.
+- Removed the redundant `test/` mirror and simplified replicator validation to use `effects/` as the only checked-in example source.
 
 ## [4.6.0] - 2026-04-01
 

@@ -16,5 +16,5 @@ jobs:
         run: python3 scripts/validate_skills.py
       - name: Smoke test replicator scaffolder
         run: python3 scripts/smoke_test_replicator.py
-      - name: Validate fixtures and public example parity
+      - name: Validate public examples
         run: python3 scripts/validate_replicator_fixtures.py

@@ -5,8 +5,7 @@ Skills repository for a single reusable Three.js workflow skill: `replicator`, d
 ## Layout
 
 - `skills/`: reusable skills, one folder per skill
-- `effects/`: public example effects generated with the Three.js Replicator workflow
-- `test/`: checked-in replicator fixtures used by validation scripts
+- `effects/`: canonical public example effects generated with the Three.js Replicator workflow
 - `plugins/`: reserved for future heavier plugin packages; currently unused
 - `.codex/`: Codex installation notes
 - `.claude/`: Claude Code local install notes plus local mirror entries that point at canonical skills
@@ -31,6 +30,7 @@ Inside `replicator`, the workflow still makes three explicit decision classes:
 - performance contract: target device class, dominant bottleneck, and degradation ladder
 
 The knowledge for those domains now lives under [`skills/replicator/references/`](skills/replicator/references/).
+The shared workflow contract for defaults, required sections, and example validation now lives under [`skills/replicator/assets/workflow-schema.json`](skills/replicator/assets/workflow-schema.json).
 
 ## Three.js Replicator v4.6 Highlights
 
@@ -136,7 +136,7 @@ For `replicator`, also run the scaffolder smoke test:
 python3 scripts/smoke_test_replicator.py
 ```
 
-And validate checked-in replicator fixtures plus public example parity:
+And validate the checked-in public examples:
 
 ```bash
 python3 scripts/validate_replicator_fixtures.py
@@ -145,7 +145,7 @@ python3 scripts/validate_replicator_fixtures.py
 When an effect has file-based review artifacts under `review-artifacts/`, refresh the manifest and review summary:
 
 ```bash
-python3 skills/replicator/scripts/capture_audit.py test/volumetric-lighting-webgpu
+python3 skills/replicator/scripts/capture_audit.py effects/volumetric-lighting-webgpu
 ```
 
 ## Contributing

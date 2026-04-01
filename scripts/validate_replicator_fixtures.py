@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate replicator artifacts under test/ and effects/."""
+"""Validate replicator public examples under effects/."""
 
 from __future__ import annotations
 
@@ -10,6 +10,12 @@ import sys
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
+REPLICATOR_SCRIPTS_DIR = REPO_ROOT / "skills" / "replicator" / "scripts"
+if str(REPLICATOR_SCRIPTS_DIR) not in sys.path:
+    sys.path.insert(0, str(REPLICATOR_SCRIPTS_DIR))
+
+from workflow_schema import workflow_list, workflow_option_lists
+
 RUNTIME_VERSIONS_PATH = REPO_ROOT / "skills" / "replicator" / "assets" / "runtime-versions.json"
 THREE_RUNTIME_VERSION = ""
 LIL_GUI_RUNTIME_VERSION = ""
@@ -22,6 +28,15 @@ if RUNTIME_VERSIONS_PATH.exists():
         THREE_RUNTIME_VERSION = ""
         LIL_GUI_RUNTIME_VERSION = ""
 
+WORKFLOW_OPTION_LISTS = workflow_option_lists()
+STATUS_LABELS = WORKFLOW_OPTION_LISTS["status_labels"]
+MODE_CONTRACTS = WORKFLOW_OPTION_LISTS["mode_contracts"]
+REFERENCE_ACCESS_GATES = WORKFLOW_OPTION_LISTS["reference_access_gates"]
+REVIEW_ARTIFACT_GATES = WORKFLOW_OPTION_LISTS["review_artifact_gates"]
+REVIEW_ARTIFACT_TYPES = WORKFLOW_OPTION_LISTS["review_artifact_types"]
+ACCEPTED_SOURCE_TYPES = WORKFLOW_OPTION_LISTS["accepted_source_types"]
+SOURCE_ROLES = WORKFLOW_OPTION_LISTS["source_roles"]
+
 API_COMPAT_RULES = {
     "0.180": [
         (r"new\s+THREE\.RenderPipeline\s*\(", "three@0.180.x uses THREE.PostProcessing, not THREE.RenderPipeline"),
@@ -30,24 +45,7 @@ API_COMPAT_RULES = {
     ]
 }
 
-REQUIRED_REPORT_SECTIONS = (
-    "## Reference Access Gate",
-    "## Mode Contract",
-    "## Archetype Route",
-    "## Visual Evidence Table",
-    "## Classic Graphics Baseline",
-    "## Search Log",
-    "## Evidence vs Inference",
-    "## Shortest Convincing Path",
-    "## First-Frame Review Gate",
-    "## PostFX Decision",
-    "## Performance Decision",
-    "## Browser Validation Gate",
-    "## Review Artifact Gate",
-    "## Visual Acceptance",
-    "## Fidelity Failure Protocol",
-    "## Completion Rule",
-)
+REQUIRED_REPORT_SECTIONS = tuple(workflow_list("report.required_sections"))
 
 REQUIRED_FILES = (
     "REPORT.md",
@@ -58,75 +56,10 @@ REQUIRED_FILES = (
     "review-artifacts/checklist.md",
 )
 
-REQUIRED_SOURCE_FIELDS = (
-    "effect_slug",
-    "effect_title",
-    "effect_archetype",
-    "canonical_profile",
-    "authoring_path",
-    "runtime_renderer",
-    "resource_model",
-    "pass_topology",
-    "compatibility_contract",
-    "target_device_class",
-    "performance_contract",
-    "dominant_bottleneck",
-    "post_pipeline_type",
-    "render_target_layout",
-    "history_requirement",
-    "nearest_rejected_route",
-    "target_environment",
-    "performance_priority",
-    "mode_contract",
-    "status_label",
-    "reference_access_gate",
-    "primary_visual_artifact",
-    "classic_graphics_baseline",
-    "first_frame_gate",
-    "browser_validation_gate",
-    "review_artifact_gate",
-    "review_artifact_type",
-    "accepted_source_types",
-    "source_roles",
-    "sources",
-)
-
-REQUIRED_SOURCE_ENTRY_FIELDS = ("type", "value", "label", "role", "contribution")
-REQUIRED_MANIFEST_FIELDS = (
-    "effect_slug",
-    "artifacts_subdir",
-    "expected_ids",
-    "complete_pairs",
-    "missing_reference",
-    "missing_current",
-    "kind_mismatches",
-    "image_dimension_mismatches",
-    "unparsed_formats",
-    "entries",
-)
-REQUIRED_MANIFEST_ENTRY_FIELDS = (
-    "artifact_id",
-    "reference_path",
-    "current_path",
-    "reference_exists",
-    "current_exists",
-    "reference_kind",
-    "current_kind",
-    "kind_match",
-    "reference_size",
-    "current_size",
-    "image_dimension_match",
-)
-PAIRED_TEXT_FILES = (
-    "REPORT.md",
-    "index.html",
-    "main.js",
-    "research/summary.md",
-    "review-artifacts/checklist.md",
-)
-PAIRED_JSON_FILES = (
-    "research/sources.json",
-)
+REQUIRED_SOURCE_FIELDS = tuple(workflow_list("sources_json.required_fields"))
+REQUIRED_SOURCE_ENTRY_FIELDS = tuple(workflow_list("sources_json.required_entry_fields"))
+REQUIRED_MANIFEST_FIELDS = tuple(workflow_list("review_artifact_manifest.required_fields"))
+REQUIRED_MANIFEST_ENTRY_FIELDS = tuple(workflow_list("review_artifact_manifest.required_entry_fields"))
 
 
 def load_json(path: Path) -> object:
@@ -166,6 +99,34 @@ def validate_sources_json(path: Path) -> list[str]:
         if not isinstance(value, list) or not value or not all(isinstance(item, str) and item for item in value):
             errors.append(f"{path}: field {field} must be a non-empty string list")
 
+    mode_contract = source_map.get("mode_contract")
+    if mode_contract not in MODE_CONTRACTS:
+        errors.append(f"{path}: mode_contract must be one of {MODE_CONTRACTS}")
+
+    status_label = source_map.get("status_label")
+    if status_label not in STATUS_LABELS:
+        errors.append(f"{path}: status_label must be one of {STATUS_LABELS}")
+
+    reference_access_gate = source_map.get("reference_access_gate")
+    if reference_access_gate not in REFERENCE_ACCESS_GATES:
+        errors.append(f"{path}: reference_access_gate must be one of {REFERENCE_ACCESS_GATES}")
+
+    review_artifact_gate = source_map.get("review_artifact_gate")
+    if review_artifact_gate not in REVIEW_ARTIFACT_GATES:
+        errors.append(f"{path}: review_artifact_gate must be one of {REVIEW_ARTIFACT_GATES}")
+
+    review_artifact_type = source_map.get("review_artifact_type")
+    if review_artifact_type not in REVIEW_ARTIFACT_TYPES:
+        errors.append(f"{path}: review_artifact_type must be one of {REVIEW_ARTIFACT_TYPES}")
+
+    accepted_source_types = source_map.get("accepted_source_types")
+    if accepted_source_types != ACCEPTED_SOURCE_TYPES:
+        errors.append(f"{path}: accepted_source_types must match the workflow schema")
+
+    source_roles = source_map.get("source_roles")
+    if source_roles != SOURCE_ROLES:
+        errors.append(f"{path}: source_roles must match the workflow schema")
+
     sources = source_map.get("sources")
     if not isinstance(sources, list) or not sources:
         errors.append(f"{path}: field sources must be a non-empty list")
@@ -181,6 +142,14 @@ def validate_sources_json(path: Path) -> list[str]:
             value = entry_map.get(field)
             if not isinstance(value, str) or not value.strip():
                 errors.append(f"{path}: sources[{index}].{field} must be a non-empty string")
+
+        entry_type = entry_map.get("type")
+        if isinstance(entry_type, str) and entry_type not in ACCEPTED_SOURCE_TYPES:
+            errors.append(f"{path}: sources[{index}].type must be one of {ACCEPTED_SOURCE_TYPES}")
+
+        role = entry_map.get("role")
+        if isinstance(role, str) and role not in SOURCE_ROLES:
+            errors.append(f"{path}: sources[{index}].role must be one of {SOURCE_ROLES}")
 
     return errors
 
@@ -419,76 +388,26 @@ def collect_artifact_dirs(root: Path) -> dict[str, Path]:
     }
 
 
-def compare_artifact_pairs(effect_dirs: dict[str, Path], fixture_dirs: dict[str, Path]) -> list[str]:
-    errors: list[str] = []
-
-    missing_effects = sorted(set(fixture_dirs) - set(effect_dirs))
-    missing_fixtures = sorted(set(effect_dirs) - set(fixture_dirs))
-
-    for slug in missing_effects:
-        errors.append(f"effects/: missing public example for fixture {slug}")
-    for slug in missing_fixtures:
-        errors.append(f"test/: missing fixture for public example {slug}")
-
-    for slug in sorted(set(effect_dirs) & set(fixture_dirs)):
-        effect_dir = effect_dirs[slug]
-        fixture_dir = fixture_dirs[slug]
-
-        for relative_path in PAIRED_TEXT_FILES:
-            effect_path = effect_dir / relative_path
-            fixture_path = fixture_dir / relative_path
-            if not effect_path.exists() or not fixture_path.exists():
-                continue
-            effect_text = effect_path.read_text()
-            fixture_text = fixture_path.read_text()
-            if effect_text != fixture_text:
-                errors.append(f"{slug}: {relative_path} differs between effects/ and test/")
-
-        for relative_path in PAIRED_JSON_FILES:
-            effect_path = effect_dir / relative_path
-            fixture_path = fixture_dir / relative_path
-            if not effect_path.exists() or not fixture_path.exists():
-                continue
-            effect_json = load_json(effect_path)
-            fixture_json = load_json(fixture_path)
-            if effect_json != fixture_json:
-                errors.append(f"{slug}: {relative_path} differs between effects/ and test/")
-
-    return errors
-
-
 def main() -> int:
     repo_root = Path(__file__).resolve().parent.parent
-    test_root = repo_root / "test"
     effects_root = repo_root / "effects"
 
-    fixture_dirs = collect_artifact_dirs(test_root)
     effect_dirs = collect_artifact_dirs(effects_root)
 
-    if not fixture_dirs:
-        print("[ERROR] no fixture directories found under test/", file=sys.stderr)
-        return 1
     if not effect_dirs:
         print("[ERROR] no public effect directories found under effects/", file=sys.stderr)
         return 1
 
     errors: list[str] = []
-    for artifact_dir in fixture_dirs.values():
-        errors.extend(validate_artifact(artifact_dir))
     for artifact_dir in effect_dirs.values():
         errors.extend(validate_artifact(artifact_dir))
-    errors.extend(compare_artifact_pairs(effect_dirs, fixture_dirs))
 
     if errors:
         for error in errors:
             print(f"[ERROR] {error}")
         return 1
 
-    print(
-        "[OK] validated "
-        f"{len(fixture_dirs)} fixture(s), {len(effect_dirs)} public effect(s), "
-        "and effect/fixture parity"
-    )
+    print(f"[OK] validated {len(effect_dirs)} public effect(s)")
     return 0
 
 

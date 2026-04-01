@@ -3,11 +3,11 @@
 ## Summary
 
 - Goal:
-- Status: `blocked-on-reference/planned/first-runnable-pass/browser-validated/evidence-reviewed/fidelity-pending/faithful-remake-complete`
-- Mode contract: `faithful-remake/approximation-from-limited-evidence/inspired-variant`
-- Reference access gate: `passed/blocked/pending`
+- Status: `__STATUS_LABEL_OPTIONS__`
+- Mode contract: `__MODE_CONTRACT_OPTIONS__`
+- Reference access gate: `__REFERENCE_ACCESS_GATE_OPTIONS__`
 - Primary visual artifact:
-- Review artifact gate: `passed/pending/not-needed`
+- Review artifact gate: `__REVIEW_ARTIFACT_GATE_OPTIONS__`
 - Review artifact type:
 - Confidence:
 - Effect archetype:
@@ -28,7 +28,7 @@
 
 | Field | Value | Notes |
 | --- | --- | --- |
-| Requested delivery mode | `faithful-remake/approximation-from-limited-evidence/inspired-variant` | `What the user asked for or what the task implies` |
+| Requested delivery mode | `__MODE_CONTRACT_OPTIONS__` | `What the user asked for or what the task implies` |
 | Accessible primary visual artifact | `TODO` | `direct URL/screenshot/video/local asset/replacement set` |
 | Gate result | `passed/blocked/pending` | `Whether faithful implementation is allowed to start` |
 | Blocking action or downgrade | `TODO` | `Requested stronger reference or explicit downgrade reason` |
@@ -37,10 +37,10 @@
 
 | Field | Choice | Notes |
 | --- | --- | --- |
-| Requested mode | `faithful-remake/approximation-from-limited-evidence/inspired-variant` | `Original request or inferred product intent` |
-| Active mode | `faithful-remake/approximation-from-limited-evidence/inspired-variant` | `Mode actually used for implementation` |
+| Requested mode | `__MODE_CONTRACT_OPTIONS__` | `Original request or inferred product intent` |
+| Active mode | `__MODE_CONTRACT_OPTIONS__` | `Mode actually used for implementation` |
 | User approval for downgrade | `yes/no/not-needed/not-recorded` | `Required when faithful was requested but the task had to downgrade` |
-| Honest status label | `blocked-on-reference/planned/first-runnable-pass/browser-validated/evidence-reviewed/fidelity-pending/faithful-remake-complete` | `Current truthful state of the work` |
+| Honest status label | `__STATUS_LABEL_OPTIONS__` | `Current truthful state of the work` |
 
 ## User Decision Log
 
@@ -52,7 +52,7 @@
 
 | Input | Type | Role | Contribution |
 | --- | --- | --- | --- |
-| `TODO` | `url/keyword/image-uri/local-image/screenshot/video/code` | `primary/secondary/accent/derived` | `TODO` |
+| `TODO` | `__ACCEPTED_SOURCE_TYPE_OPTIONS__` | `__SOURCE_ROLE_OPTIONS__` | `TODO` |
 
 ## Archetype Route
 
@@ -263,7 +263,7 @@
 
 | Check | Status | Notes |
 | --- | --- | --- |
-| Review artifact type | `stills/clip/gif/keyframes/notes/mixed/not-needed` | `Choose the medium that actually represents the effect` |
+| Review artifact type | `__REVIEW_ARTIFACT_TYPE_OPTIONS__` | `Choose the medium that actually represents the effect` |
 | Reference artifact recorded | `pass/fail/pending/not-needed` | `TODO` |
 | Current artifact recorded | `pass/fail/pending/not-needed` | `TODO` |
 | Comparison method appropriate | `pass/fail/pending` | `Why this artifact type matches the archetype` |

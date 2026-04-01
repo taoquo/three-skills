@@ -6,7 +6,7 @@ Current repository baseline:
 
 | Package | Version | Why it is pinned |
 | --- | --- | --- |
-| `three` | `0.180.0` | Current template and fixture baseline for `WebGPURenderer`, `TSL`, and addon imports |
+| `three` | `0.180.0` | Current template and canonical example baseline for `WebGPURenderer`, `TSL`, and addon imports |
 | `lil-gui` | `0.20` | Current starter GUI baseline |
 
 ## Re-check these points on every Three.js upgrade
@@ -21,10 +21,10 @@ Current repository baseline:
 
 ## Rule
 
-Do not upgrade only one template or one fixture.
+Do not upgrade only one template or one canonical example path.
 
 When the pinned version changes, update:
 
 - `assets/runtime-versions.json`
 - all generated starter expectations in tests
-- any fixture or report text that records the pinned baseline
+- any checked-in report text that records the pinned baseline

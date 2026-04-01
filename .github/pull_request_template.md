@@ -11,6 +11,6 @@
 
 ## Checklist
 
-- [ ] Public examples under `effects/` stay aligned with fixtures under `test/`
+- [ ] Public examples under `effects/` remain runnable and validator-clean
 - [ ] Docs or metadata were updated if packaging, install, or version behavior changed
 - [ ] Commit history uses clear semantic subjects

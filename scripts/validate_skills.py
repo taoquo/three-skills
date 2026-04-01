@@ -251,8 +251,29 @@ def validate_skill(skill_dir: Path) -> list[str]:
             errors.append(f"{skill_dir.name}: missing assets/templates/ directory")
         elif skill_dir.name == "replicator":
             runtime_versions = skill_dir / "assets" / "runtime-versions.json"
+            workflow_schema = skill_dir / "assets" / "workflow-schema.json"
             if not runtime_versions.exists():
                 errors.append(f"{skill_dir.name}: missing assets/runtime-versions.json")
+            if not workflow_schema.exists():
+                errors.append(f"{skill_dir.name}: missing assets/workflow-schema.json")
+            else:
+                try:
+                    schema = json.loads(workflow_schema.read_text())
+                except json.JSONDecodeError as exc:
+                    errors.append(f"{skill_dir.name}: invalid assets/workflow-schema.json ({exc})")
+                else:
+                    if not isinstance(schema, dict):
+                        errors.append(f"{skill_dir.name}: assets/workflow-schema.json must contain a top-level object")
+                    else:
+                        for field in (
+                            "defaults",
+                            "option_lists",
+                            "report",
+                            "sources_json",
+                            "review_artifact_manifest",
+                        ):
+                            if field not in schema:
+                                errors.append(f"{skill_dir.name}: assets/workflow-schema.json missing field {field}")
             expected_templates = ("tsl-webgpu", "tsl-webgl2", "legacy-glsl")
             for template_name in expected_templates:
                 template_dir = template_root / template_name
