@@ -198,6 +198,7 @@ http://localhost:4173/effects/volumetric-lighting-webgpu/
 python3 scripts/validate_skills.py
 python3 scripts/smoke_test_replicator.py
 python3 scripts/validate_replicator_fixtures.py
+python3 scripts/validate_perf_doctor_fixtures.py
 ```
 
 覆盖范围：
@@ -205,6 +206,7 @@ python3 scripts/validate_replicator_fixtures.py
 - `validate_skills.py`：技能 frontmatter、仓库元数据、宿主支持文件，以及 Claude 本地镜像入口
 - `smoke_test_replicator.py`：replicator 的规范脚手架预设
 - `validate_replicator_fixtures.py`：`effects/` 下已提交的公开示例
+- `validate_perf_doctor_fixtures.py`：`skills/perf-doctor/fixtures/` 下的规范诊断案例和报告形状示例
 
 如果某个效果在 `review-artifacts/` 下保存了文件化审阅产物，更新抓取后还要刷新 manifest 和审阅摘要：
 

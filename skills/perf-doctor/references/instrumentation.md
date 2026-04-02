@@ -2,6 +2,13 @@
 
 Measure before tuning. The minimum useful capture is a reproducible scene, a route snapshot, a frame-time split, and one metric tied to the suspected hotspot.
 
+Useful companion recipes:
+
+- [route-discovery-snippet.md](route-discovery-snippet.md)
+- [renderer-info-capture.md](renderer-info-capture.md)
+- [pass-timing-capture.md](pass-timing-capture.md)
+- [r3f-triage-notes.md](r3f-triage-notes.md)
+
 ## Route Snapshot
 
 Record these first:
@@ -70,3 +77,10 @@ Every capture should include:
 - framework layer and post stack when applicable
 - browser and OS if known
 - what changed between before and after measurements
+
+## Recipe Map
+
+- use [route-discovery-snippet.md](route-discovery-snippet.md) when the runtime surface is still unknown
+- use [renderer-info-capture.md](renderer-info-capture.md) for the smallest route snapshot and WebGL sanity metrics
+- use [pass-timing-capture.md](pass-timing-capture.md) when fullscreen or staged render cost is suspected
+- use [r3f-triage-notes.md](r3f-triage-notes.md) when the route includes `@react-three/fiber`

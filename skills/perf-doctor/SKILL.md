@@ -128,10 +128,23 @@ Use the references under [`references/`](references/) as the compact diagnosis f
 - [`references/README.md`](references/README.md) for the default investigation order
 - [`references/ecosystem-routes.md`](references/ecosystem-routes.md) to map the issue onto the current Three.js runtime surface
 - [`references/instrumentation.md`](references/instrumentation.md) to choose measurements before tuning
+- [`references/route-discovery-snippet.md`](references/route-discovery-snippet.md) for the smallest repo-first route discovery workflow
+- [`references/renderer-info-capture.md`](references/renderer-info-capture.md) for a low-friction `renderer.info` capture recipe
+- [`references/pass-timing-capture.md`](references/pass-timing-capture.md) for coarse stage and per-pass timing captures
+- [`references/r3f-triage-notes.md`](references/r3f-triage-notes.md) when `@react-three/fiber` interaction or commit churn is suspected
 - [`references/bottlenecks.md`](references/bottlenecks.md) to classify the dominant hotspot
 - [`references/diagnosis-sequence.md`](references/diagnosis-sequence.md) to keep the investigation evidence-first
 - [`references/device-targets.md`](references/device-targets.md) to set an explicit performance contract
 - [`references/degradation-ladders.md`](references/degradation-ladders.md) to design fallback tiers without losing the core look
+
+## Fixture Pack
+
+Use the report-centric fixtures under [`fixtures/`](fixtures/) as canonical examples for maintainers and contributors:
+
+- [`fixtures/README.md`](fixtures/README.md) for the current diagnosis-case index
+- [`fixtures/draw-call-saturation/README.md`](fixtures/draw-call-saturation/README.md) for a canonical scene-graph and draw-call saturation diagnosis
+- [`fixtures/post-chain-cost/README.md`](fixtures/post-chain-cost/README.md) for a canonical fullscreen-pass-chain diagnosis
+- [`fixtures/react-churn-r3f/README.md`](fixtures/react-churn-r3f/README.md) for a canonical `@react-three/fiber` interaction diagnosis with a valid `partially-diagnosed` outcome
 
 ## Constraints
 

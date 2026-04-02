@@ -198,6 +198,7 @@ Run the repository checks before publishing changes:
 python3 scripts/validate_skills.py
 python3 scripts/smoke_test_replicator.py
 python3 scripts/validate_replicator_fixtures.py
+python3 scripts/validate_perf_doctor_fixtures.py
 ```
 
 What they cover:
@@ -205,6 +206,7 @@ What they cover:
 - `validate_skills.py`: skill frontmatter, repository metadata, host support files, and Claude local mirror entries
 - `smoke_test_replicator.py`: canonical replicator scaffold presets
 - `validate_replicator_fixtures.py`: checked-in public examples under `effects/`
+- `validate_perf_doctor_fixtures.py`: canonical diagnosis fixtures and report-shape examples under `skills/perf-doctor/fixtures/`
 
 If an effect has file-based review artifacts under `review-artifacts/`, refresh the manifest and review summary after capture updates:
 

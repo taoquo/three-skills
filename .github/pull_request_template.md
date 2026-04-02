@@ -8,6 +8,7 @@
 - [ ] `python3 scripts/validate_skills.py`
 - [ ] `python3 scripts/smoke_test_replicator.py`
 - [ ] `python3 scripts/validate_replicator_fixtures.py`
+- [ ] `python3 scripts/validate_perf_doctor_fixtures.py`
 
 ## Checklist
 

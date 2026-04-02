@@ -18,3 +18,5 @@ jobs:
         run: python3 scripts/smoke_test_replicator.py
       - name: Validate public examples
         run: python3 scripts/validate_replicator_fixtures.py
+      - name: Validate perf-doctor fixtures
+        run: python3 scripts/validate_perf_doctor_fixtures.py
