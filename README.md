@@ -78,6 +78,13 @@ Use `material-lab` when the problem is narrower than a full remake: material cla
 - Expected outputs:
   - a minimal runnable Three.js material study instead of a full scene remake
   - a short report that states the material family, chosen route, lighting assumptions, major controls, and what is physically grounded versus art-directed
+  - for checked-in fixtures, a fixed report template and validator-backed route samples under `skills/material-lab/`
+
+Checked-in `material-lab` workflow assets live under:
+
+- `skills/material-lab/assets/report-template.md`
+- `skills/material-lab/fixtures/`
+- `scripts/validate_material_lab_fixtures.py`
 
 ### `perf-doctor`
 
@@ -205,6 +212,7 @@ Run the repository checks before publishing changes:
 python3 scripts/validate_skills.py
 python3 scripts/smoke_test_replicator.py
 python3 scripts/validate_replicator_fixtures.py
+python3 scripts/validate_material_lab_fixtures.py
 python3 scripts/validate_perf_doctor_fixtures.py
 python3 scripts/validate_shader_port_fixtures.py
 ```
@@ -214,6 +222,7 @@ What they cover:
 - `validate_skills.py`: skill frontmatter, repository metadata, host support files, and Claude local mirror entries
 - `smoke_test_replicator.py`: canonical replicator scaffold presets
 - `validate_replicator_fixtures.py`: checked-in public examples under `effects/`
+- `validate_material_lab_fixtures.py`: route-centric material-lab fixtures, report contracts, and runnable preview checks under `skills/material-lab/fixtures/`
 - `validate_perf_doctor_fixtures.py`: canonical diagnosis fixtures and report-shape examples under `skills/perf-doctor/fixtures/`
 - `validate_shader_port_fixtures.py`: route-centric shader-port fixtures, report contracts, and runnable archetype checks under `skills/shader-port/fixtures/`
 

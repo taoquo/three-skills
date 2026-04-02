@@ -10,12 +10,13 @@ Thanks for contributing to `three-skills`.
 
 ## Local Validation
 
-Run all five checks before opening a pull request:
+Run all six checks before opening a pull request:
 
 ```bash
 python3 scripts/validate_skills.py
 python3 scripts/smoke_test_replicator.py
 python3 scripts/validate_replicator_fixtures.py
+python3 scripts/validate_material_lab_fixtures.py
 python3 scripts/validate_perf_doctor_fixtures.py
 python3 scripts/validate_shader_port_fixtures.py
 ```

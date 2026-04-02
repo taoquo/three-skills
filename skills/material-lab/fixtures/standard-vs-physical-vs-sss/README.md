@@ -20,6 +20,12 @@ Use it as the smallest runnable sanity check for the `material-lab` capability t
 
 It also gives a stable harness for lighting, HDRI, and review logic before a larger lookdev task.
 
+## Route Decision
+
+- Proves that `transmission` and `sss` should not be treated as the same route.
+- Preserves one geometry, one camera contract, and one lighting rig so the route change stays visible.
+- Uses the addon SSS branch because the goal is route contrast, not a full production skin stack.
+
 ## Preview
 
 From the repository root:
@@ -42,7 +48,8 @@ Do not use `file://`.
 - `physical` gets reflective transmission and colored attenuation, but still reads closer to clear material transport
 - `sss` gains the soft backlit bloom and internal light spread that transmission alone does not create
 
-## Notes
+## Limits
 
-- This fixture uses the official WebGL addon [`SubsurfaceScatteringShader`](https://threejs.org/docs/pages/module-SubsurfaceScatteringShader.html) for broad preview compatibility.
-- `material-lab` also documents the WebGPU-native `MeshSSSNodeMaterial` route for projects that want the newer node-material branch.
+- This fixture is not a photoreal skin, wax, or jade benchmark.
+- It uses the official WebGL addon [`SubsurfaceScatteringShader`](https://threejs.org/docs/pages/module-SubsurfaceScatteringShader.html) for broad preview compatibility.
+- It does not prove parity with the WebGPU-native `MeshSSSNodeMaterial` route.

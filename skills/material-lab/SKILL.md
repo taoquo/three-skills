@@ -46,7 +46,7 @@ Expected capability branches:
 
 ## Deliverables
 
-- A short report that lists the reference inputs, chosen material family, critical invariants, authoring path, renderer contract, and asset assumptions.
+- A short report that lists the reference inputs, chosen material family, critical invariants, authoring path, renderer contract, and asset assumptions. For checked-in fixtures, use the `material-lab` report template.
 - A runnable Three.js snippet or scene demonstrating the material/lighting treatment with the critical controls exposed.
 - A review artifact (still frame, comparison notes, or short clip) plus fidelity observations relevant to the surface or lighting behavior.
 - An explicit note about whether the result is physically grounded, stylized on purpose, or a hybrid.
@@ -76,11 +76,18 @@ Use the references under [`references/`](references/) as the compact decision la
 - [`fixtures/scanned-pbr-vs-scan-assisted-cleanup/README.md`](fixtures/scanned-pbr-vs-scan-assisted-cleanup/README.md) for a minimal runnable comparison that keeps the stock PBR route but shows how scan cleanup changes the result
 - [`fixtures/gltf-khr-materials-vs-materialx-route/README.md`](fixtures/gltf-khr-materials-vs-materialx-route/README.md) for a minimal runnable comparison that turns the ecosystem-route decision into an executable sample
 
+Checked-in workflow assets for this skill:
+
+- [`assets/report-template.md`](assets/report-template.md)
+- [`fixtures/README.md`](fixtures/README.md)
+- [`../../scripts/validate_material_lab_fixtures.py`](../../scripts/validate_material_lab_fixtures.py)
+
 ## Constraints
 
 - Keep the prototype minimal: avoid building full scenes unless the surface requires context for validation.
 - Prefer the native three.js material stack first and use `TSL` when it improves the outcome or maintainability.
 - Document any deviation from defaults, especially when a wrapper, imported asset graph, or raw shader path is used.
+- Keep checked-in fixtures aligned with the material-lab fixture contract and report template.
 - Do not label a result as `measured` unless the data source actually supports that claim.
 - Do not confuse `transmission` with `subsurface scattering`; choose the route based on the light-transport cue you need to preserve.
 - When the reference is ambiguous, default to a neutral lighting rig and call out the missing cues in the report rather than inventing signature features.

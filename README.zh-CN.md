@@ -78,6 +78,13 @@
 - 预期产出：
   - 一个最小可运行的 Three.js 材质研究原型，而不是完整场景复刻
   - 一份短报告，说明材质分类、选用路线、灯光假设、关键控制项，以及哪些部分是物理合理、哪些是有意的艺术化处理
+  - 对于仓库内置 fixture，还会提供固定报告模板，以及经过 validator 校验的 route 样本
+
+仓库内置的 `material-lab` workflow 资产位于：
+
+- `skills/material-lab/assets/report-template.md`
+- `skills/material-lab/fixtures/`
+- `scripts/validate_material_lab_fixtures.py`
 
 ### `perf-doctor`
 
@@ -205,6 +212,7 @@ http://localhost:4173/effects/volumetric-lighting-webgpu/
 python3 scripts/validate_skills.py
 python3 scripts/smoke_test_replicator.py
 python3 scripts/validate_replicator_fixtures.py
+python3 scripts/validate_material_lab_fixtures.py
 python3 scripts/validate_perf_doctor_fixtures.py
 python3 scripts/validate_shader_port_fixtures.py
 ```
@@ -214,6 +222,7 @@ python3 scripts/validate_shader_port_fixtures.py
 - `validate_skills.py`：技能 frontmatter、仓库元数据、宿主支持文件，以及 Claude 本地镜像入口
 - `smoke_test_replicator.py`：replicator 的规范脚手架预设
 - `validate_replicator_fixtures.py`：`effects/` 下已提交的公开示例
+- `validate_material_lab_fixtures.py`：`skills/material-lab/fixtures/` 下 route 导向样本、报告契约和 runnable 预览校验
 - `validate_perf_doctor_fixtures.py`：`skills/perf-doctor/fixtures/` 下的规范诊断案例和报告形状示例
 - `validate_shader_port_fixtures.py`：`skills/shader-port/fixtures/` 下 route 导向样本、报告契约和 runnable archetype 校验
 

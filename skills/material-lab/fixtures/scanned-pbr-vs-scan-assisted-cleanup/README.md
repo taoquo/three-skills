@@ -19,6 +19,12 @@ Use it as the smallest runnable sanity check for the measured or scanned branch:
 - validate color, roughness, and normal inputs
 - clean the scan before escalating to custom shading
 
+## Route Decision
+
+- Proves that some scan-material failures should be handled as input cleanup problems first.
+- Keeps the same `MeshStandardMaterial` route on both sides so the authoring path does not move.
+- Uses procedural scan-like textures because the fixture is about the decision boundary, not asset provenance.
+
 ## Preview
 
 From the repository root:
@@ -41,7 +47,8 @@ Do not use `file://`.
 - `scan-assisted cleanup` keeps the same general surface family, but stabilizes highlights, color balance, and normal response
 - both samples stay on the same stock PBR material path
 
-## Notes
+## Limits
 
 - All textures in this fixture are generated procedurally to emulate scan-like capture and cleanup passes.
 - The fixture intentionally avoids custom shaders to reinforce the routing rule in `material-lab`.
+- It does not prove measured-material fidelity or a full scan-processing pipeline.

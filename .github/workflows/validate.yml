@@ -18,6 +18,8 @@ jobs:
         run: python3 scripts/smoke_test_replicator.py
       - name: Validate public examples
         run: python3 scripts/validate_replicator_fixtures.py
+      - name: Validate material-lab fixtures
+        run: python3 scripts/validate_material_lab_fixtures.py
       - name: Validate shader-port fixtures
         run: python3 scripts/validate_shader_port_fixtures.py
       - name: Validate perf-doctor fixtures
