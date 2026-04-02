@@ -47,6 +47,21 @@ Use `replicator` for full effect reconstruction work. It accepts multimodal inpu
 
 Use `material-lab` when the problem is narrower than a full remake: material classification, lighting validation, scan cleanup, transmission, SSS, or other surface-focused experiments.
 
+#### `material-lab` Typical Usage
+
+- Common requests:
+  - "Should this wax, jade, or skin-like surface use `transmission` or true `SSS`? Build the smallest honest Three.js prototype."
+  - "This scanned PBR set looks muddy. Clean up the scan-driven inputs and show the before or after difference."
+  - "Compare `MeshStandardMaterial`, `MeshPhysicalMaterial`, and an SSS route for this surface under the same lighting rig."
+  - "Dial in this coated metal, glass, or translucent plastic material under a fixed HDRI and explain which tuning levers matter."
+- Recommended inputs:
+  - one or more reference images, short turntable clips, scan notes, or existing material assets
+  - the target surface description and what cue matters most, such as edge tint, roughness spread, backlighting, thickness, or scan fidelity
+  - any renderer or pipeline constraint if already known, such as `WebGL2`, `WebGPU`, `R3F`, `glTF`, or `MaterialX`
+- Expected outputs:
+  - a minimal runnable Three.js material study instead of a full scene remake
+  - a short report that states the material family, chosen route, lighting assumptions, major controls, and what is physically grounded versus art-directed
+
 ### `perf-doctor`
 
 Use `perf-doctor` for explicit performance diagnosis. It is designed around current Three.js runtime routes and produces an evidence-based report instead of generic optimization advice.
