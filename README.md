@@ -120,6 +120,13 @@ Use `shader-port` when the source is a standalone shader or post-processing effe
   - a minimal runnable Three.js port using the smallest honest route, usually pure TSL first and a narrower fallback only when required
   - a short report with the source contract, chosen route, renderer or backend contract, fallback plan, and verification notes
   - a resource and pass mapping summary that states what was preserved exactly, approximated, or left unsupported
+  - for checked-in archetypes, a fixed report template, fixture metadata, and validator-backed examples under `skills/shader-port/`
+
+Checked-in `shader-port` workflow assets live under:
+
+- `skills/shader-port/assets/report-template.md`
+- `skills/shader-port/fixtures/`
+- `scripts/validate_shader_port_fixtures.py`
 
 ## Installation
 
@@ -199,6 +206,7 @@ python3 scripts/validate_skills.py
 python3 scripts/smoke_test_replicator.py
 python3 scripts/validate_replicator_fixtures.py
 python3 scripts/validate_perf_doctor_fixtures.py
+python3 scripts/validate_shader_port_fixtures.py
 ```
 
 What they cover:
@@ -207,6 +215,7 @@ What they cover:
 - `smoke_test_replicator.py`: canonical replicator scaffold presets
 - `validate_replicator_fixtures.py`: checked-in public examples under `effects/`
 - `validate_perf_doctor_fixtures.py`: canonical diagnosis fixtures and report-shape examples under `skills/perf-doctor/fixtures/`
+- `validate_shader_port_fixtures.py`: route-centric shader-port fixtures, report contracts, and runnable archetype checks under `skills/shader-port/fixtures/`
 
 If an effect has file-based review artifacts under `review-artifacts/`, refresh the manifest and review summary after capture updates:
 

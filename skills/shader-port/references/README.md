@@ -10,6 +10,9 @@ Use this reference pack when moving a standalone shader into a correct, current,
 4. [resource-mapping.md](resource-mapping.md)
 5. [porting-notes.md](porting-notes.md)
 6. [verification-checklist.md](verification-checklist.md)
+7. [../assets/report-template.md](../assets/report-template.md)
+8. [../assets/fixture-schema.json](../assets/fixture-schema.json)
+9. [../fixtures/README.md](../fixtures/README.md)
 
 ## What Each File Does
 
@@ -19,6 +22,9 @@ Use this reference pack when moving a standalone shader into a correct, current,
 - [resource-mapping.md](resource-mapping.md): route uniforms, textures, buffers, and multipass state
 - [porting-notes.md](porting-notes.md): choose the authoring route and state hard constraints honestly
 - [verification-checklist.md](verification-checklist.md): validate compilation, parity, and fallback honesty
+- [../assets/report-template.md](../assets/report-template.md): fixed report shape for checked-in shader-port examples
+- [../assets/fixture-schema.json](../assets/fixture-schema.json): canonical enums and route-to-status contract for `fixture.json`
+- [../fixtures/README.md](../fixtures/README.md): route archetypes and the minimal fixture contract used by the validator
 
 ## Operating Principle
 

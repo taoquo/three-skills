@@ -10,13 +10,14 @@ Thanks for contributing to `three-skills`.
 
 ## Local Validation
 
-Run all four checks before opening a pull request:
+Run all five checks before opening a pull request:
 
 ```bash
 python3 scripts/validate_skills.py
 python3 scripts/smoke_test_replicator.py
 python3 scripts/validate_replicator_fixtures.py
 python3 scripts/validate_perf_doctor_fixtures.py
+python3 scripts/validate_shader_port_fixtures.py
 ```
 
 If you touch capture artifacts, also refresh them:
@@ -30,6 +31,7 @@ python3 skills/replicator/scripts/capture_audit.py test/volumetric-lighting-webg
 
 - Describe the user-visible outcome, not just the files changed.
 - Keep public examples under `effects/` aligned with checked-in fixtures under `test/`.
+- Keep report-centric fixture corpora aligned with their checked-in templates, metadata, and validators.
 - Update README, install docs, or metadata when behavior or versioned packaging changes.
 - Do not merge changes that leave the public example or fixture set in a drifting state.
 

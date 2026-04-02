@@ -40,6 +40,23 @@ Repository baseline for this skill:
 - Do not claim automatic WGSL-to-TSL conversion. Current official `Transpiler` support is `GLSL -> TSL` only.
 - If a port cannot be kept correct and maintainable, say so explicitly and give the narrowest fallback that still works.
 
+## Contract Fields
+
+Keep these three fields separate in every shader-port report:
+
+- `classification`: what the source actually is at intake time
+- `authoring_route`: which implementation path the port uses
+- `status_label`: the final outcome after route choice, fallback, and verification
+
+Use one source classification in the final report:
+
+- `single-pass-fragment`
+- `material-logic`
+- `fullscreen-post`
+- `multipass-post`
+- `feedback-chain`
+- `compute-storage-pipeline`
+
 ## Status Labels
 
 Use one status label in the final report:
@@ -50,19 +67,39 @@ Use one status label in the final report:
 - `legacy-webgl-fallback`: correct result requires a raw GLSL path on `WebGLRenderer`
 - `blocked`: missing source information, unsupported feature contract, or no honest maintainable route
 
+## Route To Status Mapping
+
+The checked-in fixture corpus and report validator treat these mappings as the allowed default contract:
+
+| Authoring route | Default status label |
+| --- | --- |
+| `pure-tsl` | `ported-cleanly` |
+| `tsl-plus-interop` | `ported-with-scoped-interop` |
+| `tsl-webgpu-only` | `webgpu-only` |
+| `legacy-webgl-raw` | `legacy-webgl-fallback` |
+| `blocked` | `blocked` |
+
 ## Workflow
 
 1. **Source contract** – record the source URI or files, pass topology, required inputs, coordinate space, precision assumptions, and whether the source is authoritative enough to verify against.
-2. **TSL fit** – map each module into one of these routes:
+2. **Classification** – write down the source classification explicitly before choosing a port path:
+   - `single-pass-fragment`
+   - `material-logic`
+   - `fullscreen-post`
+   - `multipass-post`
+   - `feedback-chain`
+   - `compute-storage-pipeline`
+3. **TSL fit** – map each module into one of these routes:
    - `pure-tsl`
    - `tsl-plus-interop`
    - `tsl-webgpu-only`
    - `legacy-webgl-raw`
    - `blocked`
-3. **Port plan** – define the uniform and texture mapping, screen and viewport mapping, pass ordering, history/depth dependencies, and the exact renderer contract.
-4. **Implementation** – prefer direct TSL primitives such as `Fn`, `uniform`, `varying`, `If`, `Loop`, `screenUV`, `screenCoordinate`, `pass`, and `mrt`. Use `glslFn` or `wgslFn` only as narrow escape hatches for isolated helpers.
-5. **Fallback decision** – if the preferred path stalls, choose the smallest honest fallback: stay TSL but WebGPU-only, stay TSL and use the WebGL2 backend, or drop to a raw WebGL path.
-6. **Verification** – confirm compile status on every promised path, verify visual parity against the authoritative source, and record exactly what was preserved, simplified, or dropped.
+4. **Port plan** – define the uniform and texture mapping, screen and viewport mapping, pass ordering, history/depth dependencies, and the exact renderer contract.
+5. **Implementation** – prefer direct TSL primitives such as `Fn`, `uniform`, `varying`, `If`, `Loop`, `screenUV`, `screenCoordinate`, `pass`, and `mrt`. Use `glslFn` or `wgslFn` only as narrow escape hatches for isolated helpers.
+6. **Fallback decision** – if the preferred path stalls, choose the smallest honest fallback: stay TSL but WebGPU-only, stay TSL and use the WebGL2 backend, or drop to a raw WebGL path.
+7. **Verification** – confirm compile status on every promised path, verify visual parity against the authoritative source, and record exactly what was preserved, simplified, or dropped.
+8. **Final status** – choose the final `status_label` only after the route and verification notes are stable.
 
 ## Authoring Route Rules
 
@@ -117,6 +154,7 @@ Typical blockers:
 ## Deliverables
 
 - A short report that includes:
+  - the source classification
   - the status label
   - the source contract
   - the chosen authoring route
@@ -127,6 +165,13 @@ Typical blockers:
 - A resource and pass mapping table.
 - An explicit unsupported-case note whenever parity is not exact.
 - Optional tuning or degradation notes when the shader is expensive.
+
+For checked-in examples under [`fixtures/`](fixtures/), use:
+
+- the fixed report template at [`assets/report-template.md`](assets/report-template.md)
+- the enum and route contract at [`assets/fixture-schema.json`](assets/fixture-schema.json)
+- the fixture layout described in [`fixtures/README.md`](fixtures/README.md)
+- the contract validator in [`../../scripts/validate_shader_port_fixtures.py`](../../scripts/validate_shader_port_fixtures.py)
 
 ## Reference Pack
 
@@ -139,6 +184,9 @@ Use the references under [`references/`](references/) as the porting decision la
 - [`references/resource-mapping.md`](references/resource-mapping.md) for uniforms, textures, buffers, and multipass routing
 - [`references/porting-notes.md`](references/porting-notes.md) for authoring-path decisions, official constraints, and fallback rules
 - [`references/verification-checklist.md`](references/verification-checklist.md) to validate the final port cleanly
+- [`assets/report-template.md`](assets/report-template.md) for the fixed report shape used by the fixture corpus
+- [`assets/fixture-schema.json`](assets/fixture-schema.json) for the canonical fixture enums and route contract
+- [`fixtures/README.md`](fixtures/README.md) for route archetypes and the minimal checked-in fixture contract
 
 ## When To Call Out `Cannot Port Cleanly`
 

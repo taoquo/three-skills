@@ -120,6 +120,13 @@
   - 一个按最小诚实路线实现的 Three.js 可运行移植版本，通常先尝试纯 TSL，只有必要时才退到更窄的 fallback
   - 一份短报告，说明 source contract、所选路线、renderer 或 backend 合同、fallback 方案和验证结论
   - 一份资源与 pass 映射摘要，明确哪些部分被完整保留、哪些是近似处理、哪些暂不支持
+  - 对于仓库内置 archetype，还会提供固定报告模板、fixture 元数据，以及 `validator` 校验过的样本
+
+仓库内置的 `shader-port` workflow 资产位于：
+
+- `skills/shader-port/assets/report-template.md`
+- `skills/shader-port/fixtures/`
+- `scripts/validate_shader_port_fixtures.py`
 
 ## 安装
 
@@ -199,6 +206,7 @@ python3 scripts/validate_skills.py
 python3 scripts/smoke_test_replicator.py
 python3 scripts/validate_replicator_fixtures.py
 python3 scripts/validate_perf_doctor_fixtures.py
+python3 scripts/validate_shader_port_fixtures.py
 ```
 
 覆盖范围：
@@ -207,6 +215,7 @@ python3 scripts/validate_perf_doctor_fixtures.py
 - `smoke_test_replicator.py`：replicator 的规范脚手架预设
 - `validate_replicator_fixtures.py`：`effects/` 下已提交的公开示例
 - `validate_perf_doctor_fixtures.py`：`skills/perf-doctor/fixtures/` 下的规范诊断案例和报告形状示例
+- `validate_shader_port_fixtures.py`：`skills/shader-port/fixtures/` 下 route 导向样本、报告契约和 runnable archetype 校验
 
 如果某个效果在 `review-artifacts/` 下保存了文件化审阅产物，更新抓取后还要刷新 manifest 和审阅摘要：
 
