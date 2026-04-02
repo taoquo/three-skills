@@ -43,6 +43,23 @@ Repository scope:
 
 Use `replicator` for full effect reconstruction work. It accepts multimodal inputs, routes the effect archetype, selects an implementation surface, defines post and performance contracts, and produces a runnable demo with a `REPORT.md`.
 
+#### `replicator` Typical Usage
+
+- Common requests:
+  - "Recreate this hero effect, demo, or interactive scene from a URL, CodePen, video, or screenshot as a faithful Three.js remake."
+  - "I only have screenshots or a short social clip. Reverse-engineer the likely rendering techniques and build the closest honest approximation."
+  - "Use this repo or live demo as the primary reference, borrow post polish from this second source, and keep the interaction cues from this third one."
+  - "Start from a keyword or visual topic such as volumetric god rays, liquid chrome blobs, or stylized particle trails, gather references first, then build the effect."
+- Recommended inputs:
+  - one accessible primary reference that defines the composition, motion language, and signature modules, such as a URL, screenshot set, video, local image, or repo
+  - any secondary or accent references, plus a note about what each one is allowed to contribute
+  - the delivery intent if known: faithful remake, approximation from limited evidence, or inspired variant
+  - any target constraints that materially change the route, such as `WebGPU`, `WebGL2`, desktop-only, mobile-safe, heavy post allowed, or required interaction scope
+- Expected outputs:
+  - a runnable Three.js effect demo, typically under `effects/<effect-slug>/`, with the key controls exposed
+  - a `REPORT.md` that records the reference-access decision, chosen archetype, implementation route, post and performance decisions, validation notes, and current fidelity status
+  - review artifacts or comparison notes that show what was matched closely, what was approximated, and what remains intentionally out of scope
+
 ### `material-lab`
 
 Use `material-lab` when the problem is narrower than a full remake: material classification, lighting validation, scan cleanup, transmission, SSS, or other surface-focused experiments.

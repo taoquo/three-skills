@@ -43,6 +43,23 @@
 
 `replicator` 用于完整的效果复刻工作流。它支持多模态输入，会先做效果原型路由，再确定实现表面、后处理链和性能约束，最后产出可运行 demo 和配套的 `REPORT.md`。
 
+#### `replicator` 常见使用方式
+
+- 典型请求：
+  - “把这个 URL、CodePen、视频或截图里的 hero effect、demo 或交互场景，尽可能忠实地复刻成 Three.js 版本。”
+  - “我只有几张截图或一段社交媒体短视频。先帮我反推大概率用到的渲染技术，再做一个最诚实的近似复刻。”
+  - “以这个 repo 或在线 demo 作为主参考，再从第二个参考里借用 post 质感，从第三个参考里保留交互线索。”
+  - “从关键词或视觉方向出发，比如 volumetric god rays、liquid chrome blobs、stylized particle trails，先搜集参考，再把效果做出来。”
+- 推荐输入：
+  - 一个可访问的主参考，用来定义构图、运动语言和标志性模块，例如 URL、截图组、视频、本地图片，或代码仓库
+  - 任何 secondary 或 accent reference，并注明它们各自只负责贡献什么
+  - 如果已知，也建议说明交付意图：faithful remake、limited evidence 下的 approximation，或 inspired variant
+  - 任何会实质影响路线的目标约束，例如 `WebGPU`、`WebGL2`、仅桌面端、需要 mobile-safe、允许重 post，或必须包含哪些交互
+- 预期产出：
+  - 一个可运行的 Three.js 效果 demo，通常落在 `effects/<effect-slug>/` 下，并暴露关键调参控制项
+  - 一份 `REPORT.md`，记录 reference-access 决策、所选 archetype、实现路线、post 与性能决策、验证说明，以及当前 fidelity 状态
+  - 一组 review artifacts 或对比说明，明确哪些部分已高保真匹配、哪些只是近似、哪些是有意不纳入本次范围
+
 ### `material-lab`
 
 当问题比“完整复刻一个效果”更窄时，用 `material-lab`。它适合处理材质分类、灯光验证、扫描材质清理、透射、SSS 等偏表面与材质层面的实验。
