@@ -87,6 +87,23 @@
 
 当输入是独立着色器或后处理效果时，用 `shader-port`。它会给出可落地的 Three.js 迁移路线、明确的 fallback 合同，以及验证说明。
 
+#### `shader-port` 常见使用方式
+
+- 典型请求：
+  - “把这个 Shadertoy fragment 迁移到当前 Three.js，优先走 TSL，并说明它是否还能跑在 `WebGL2` backend 上。”
+  - “我有一个带 uniforms 和 textures 的旧 GLSL 全屏后处理 shader，帮我改写成 Three.js 版本，并写清楚资源映射。”
+  - “把这段 WGSL 迁移到最诚实的 Three.js 路线里，并明确指出哪些部分不能干净移植。”
+  - “这个旧 WebGL shader demo 或多 pass 效果到底能继续留在 TSL、只需要少量 interop，还是必须退回 raw WebGL？帮我判断并落地。”
+- 推荐输入：
+  - 权威的 shader 源输入，例如 Shadertoy URL、GLSL 文件、WGSL 片段，或旧 demo 代码
+  - 定义目标效果的参考截图、录屏，或仍可运行的演示
+  - 必需的 uniforms、textures、buffers、pass 顺序，以及已知交互输入，例如 time、mouse、audio、history、depth
+  - 如果已有明确限制，也建议直接说明，例如目标必须是 `WebGPU`、`WebGL2`、`R3F`、要接入现有 post chain，或“不能接受 raw GLSL fallback”
+- 预期产出：
+  - 一个按最小诚实路线实现的 Three.js 可运行移植版本，通常先尝试纯 TSL，只有必要时才退到更窄的 fallback
+  - 一份短报告，说明 source contract、所选路线、renderer 或 backend 合同、fallback 方案和验证结论
+  - 一份资源与 pass 映射摘要，明确哪些部分被完整保留、哪些是近似处理、哪些暂不支持
+
 ## 安装
 
 所有宿主都应以共享的 `skills/` 目录作为唯一来源。

@@ -87,6 +87,23 @@ Use `perf-doctor` for explicit performance diagnosis. It is designed around curr
 
 Use `shader-port` when the source is a standalone shader or post-processing effect that needs an honest Three.js implementation path, fallback contract, and verification notes.
 
+#### `shader-port` Typical Usage
+
+- Common requests:
+  - "Port this Shadertoy fragment to current Three.js with a TSL-first route and tell me whether it still works on a WebGL2 backend."
+  - "I have a legacy GLSL fullscreen post shader with uniforms and textures. Rebuild it in Three.js and document the resource mapping."
+  - "Translate this WGSL snippet into the narrowest honest Three.js path, and call out anything that cannot be ported cleanly."
+  - "Take this old WebGL shader demo or multipass effect and tell me whether it can stay in TSL, needs scoped interop, or must fall back to raw WebGL."
+- Recommended inputs:
+  - the authoritative shader source, such as a Shadertoy URL, GLSL files, WGSL snippet, or legacy demo code
+  - any reference screenshots, video captures, or running demos that define the expected output
+  - required uniforms, textures, buffers, pass order, and known interaction inputs such as time, mouse, audio, history, or depth
+  - explicit target constraints if they exist, such as `WebGPU`, `WebGL2`, `R3F`, post chain integration, or "must avoid raw GLSL fallback"
+- Expected outputs:
+  - a minimal runnable Three.js port using the smallest honest route, usually pure TSL first and a narrower fallback only when required
+  - a short report with the source contract, chosen route, renderer or backend contract, fallback plan, and verification notes
+  - a resource and pass mapping summary that states what was preserved exactly, approximated, or left unsupported
+
 ## Installation
 
 Use the shared `skills/` directory as the source of truth for every host integration.
