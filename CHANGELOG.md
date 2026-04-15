@@ -6,6 +6,13 @@ The format is intentionally simple and repository-focused.
 
 ## [Unreleased]
 
+## [4.6.2] - 2026-04-15
+
+- Slimmed `replicator` into a clearer remake orchestrator, keeping evidence gates and fidelity review while routing material, shader, and performance uncertainty into specialist skills.
+- Synced the `replicator` wording across the skill file, agent prompt, and repository READMEs to reflect the new orchestrator boundary.
+- Hardened `validate_skills.py` to enforce trigger-first skill descriptions and require `references/README.md` indexes for skill reference packs.
+- Added a dedicated `replicator` references index that separates active reads from on-demand specialist reference packs.
+
 ## [4.6.1] - 2026-04-15
 
 - Removed the redundant `test/` mirror and simplified replicator validation to use `effects/` as the only checked-in example source.
