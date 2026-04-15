@@ -41,7 +41,7 @@ Repository scope:
 
 ### `replicator`
 
-Use `replicator` for full effect reconstruction work. It accepts multimodal inputs, routes the effect archetype, selects an implementation surface, defines post and performance contracts, and produces a runnable demo with a `REPORT.md`.
+Use `replicator` for full effect reconstruction work. It accepts multimodal inputs, routes the dominant archetype, keeps the remake evidence-aligned, escalates to specialist skills when the main uncertainty is material, shader, or performance specific, and produces a runnable demo with a `REPORT.md`.
 
 #### `replicator` Typical Usage
 

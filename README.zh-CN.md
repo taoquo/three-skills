@@ -41,7 +41,7 @@
 
 ### `replicator`
 
-`replicator` 用于完整的效果复刻工作流。它支持多模态输入，会先做效果原型路由，再确定实现表面、后处理链和性能约束，最后产出可运行 demo 和配套的 `REPORT.md`。
+`replicator` 用于完整的效果复刻工作流。它支持多模态输入，会先确定主导 archetype，保持复刻过程与参考证据对齐，并在主要不确定性落在材质、shader 或性能时切给专门 skill，最后产出可运行 demo 和配套的 `REPORT.md`。
 
 #### `replicator` 常见使用方式
 
