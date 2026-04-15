@@ -6,9 +6,12 @@ The format is intentionally simple and repository-focused.
 
 ## [Unreleased]
 
+## [4.6.1] - 2026-04-15
+
 - Removed the redundant `test/` mirror and simplified replicator validation to use `effects/` as the only checked-in example source.
 - Added three focused public skills: `material-lab` for isolated look development, `perf-doctor` for performance diagnosis, and `shader-port` for shader translation work.
 - Tightened `shader-port` around current Three.js TSL and WebGPU constraints, added an explicit TSL mapping reference, and made unsupported-case fallback reporting mandatory.
+- Rewrote all public skill frontmatter descriptions to use trigger-first `Use when...` wording for better host-side skill selection.
 
 ## [4.6.0] - 2026-04-01
 

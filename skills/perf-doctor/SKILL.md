@@ -1,7 +1,7 @@
 ---
 name: perf-doctor
 license: MIT
-description: Diagnose Three.js performance issues, establish measurable bottlenecks, and prescribe maintenance-friendly optimizations or degradation paths.
+description: Use when a Three.js page, scene, or component has FPS drops, frame spikes, compile stutter, thermal issues, or other runtime performance problems that need diagnosis and measurement.
 metadata:
   category: threejs
   render_backends:

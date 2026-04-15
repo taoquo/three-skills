@@ -1,7 +1,7 @@
 ---
 name: shader-port
 license: MIT
-description: Port Shadertoy, GLSL, or WGSL shader logic into current Three.js TSL-first implementations with explicit unsupported-case reporting, renderer-aware fallbacks, and verification notes.
+description: Use when the task is to translate standalone shader source such as Shadertoy, GLSL, WGSL, fullscreen post code, or a legacy WebGL shader demo into a current Three.js implementation path.
 metadata:
   category: threejs
   render_backends:

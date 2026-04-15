@@ -1,7 +1,7 @@
 ---
 name: material-lab
 license: MIT
-description: Study and prototype Three.js materials, lighting, and surface treatments with focused experiments instead of a full reference replication workflow.
+description: Use when the task is to study or prototype a specific Three.js material, lighting setup, scan cleanup, transmission or SSS choice, or other surface treatment in isolation rather than recreate a full effect.
 metadata:
   category: threejs
   render_backends:

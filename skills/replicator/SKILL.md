@@ -1,7 +1,7 @@
 ---
 name: replicator
 license: MIT
-description: Analyze multimodal graphics references and recreate the effect in Three.js. Use when the user shares a URL, demo, article, video, Shadertoy, CodePen, GitHub repo, social thread, screenshot, image URI, local image path, or a keyword/topic prompt and wants: a visual breakdown, a faithful or improved Three.js remake, research on likely rendering techniques, a runnable demo, tuning controls, or a REPORT.md that records sources, decisions, and revisions.
+description: Use when the task is to analyze or recreate a reference-driven Three.js effect from a URL, demo, repo, video, screenshot, image, or keyword/topic prompt, especially when fidelity to an external visual source matters.
 metadata:
   category: threejs
   render_backends:
