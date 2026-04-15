@@ -45,15 +45,14 @@ REQUIRED_HOST_JSON_FIELDS = {
         "skills",
     ),
 }
-DESCRIPTION_WORKFLOW_HINTS = (
-    " then ",
-    "workflow",
-    "step-by-step",
-    "report.md",
-    " output",
-    " outputs",
-    " deliver ",
-    " delivers ",
+DESCRIPTION_WORKFLOW_PATTERNS = (
+    re.compile(r"\bstep-by-step\b"),
+    re.compile(r"\bworkflow\b.{0,40}\b(?:that|which|to)\b"),
+    re.compile(
+        r"\b(?:produce|produces|generate|generates|return|returns|deliver|delivers)\b.{0,50}\b(?:report\.md|artifact|artifacts|demo|demos|output|outputs|gui|controls)\b"
+    ),
+    re.compile(r"\bthen\b.{0,50}\b(?:produce|produces|generate|generates|return|returns|deliver|delivers)\b"),
+    re.compile(r"\b(?:write|writes|update|updates|create|creates)\b.{0,50}\breport\.md\b"),
 )
 
 
@@ -252,7 +251,7 @@ def validate_skill(skill_dir: Path) -> list[str]:
             errors.append(f"{skill_dir.name}: description must start with 'Use when '")
         if len(description) > MAX_DESCRIPTION_LENGTH:
             errors.append(f"{skill_dir.name}: description exceeds {MAX_DESCRIPTION_LENGTH} characters")
-        if any(hint in description.lower() for hint in DESCRIPTION_WORKFLOW_HINTS):
+        if any(pattern.search(description.lower()) for pattern in DESCRIPTION_WORKFLOW_PATTERNS):
             errors.append(
                 f"{skill_dir.name}: description should describe trigger conditions only, not workflow or outputs"
             )

@@ -6,6 +6,11 @@ The format is intentionally simple and repository-focused.
 
 ## [Unreleased]
 
+## [4.6.3] - 2026-04-15
+
+- Narrowed the skill-description lint in `validate_skills.py` so trigger-oriented descriptions that mention `output`, `deliver`, `workflow`, or `REPORT.md` as symptoms are no longer rejected.
+- Added regression tests covering valid trigger descriptions that mention outputs, delivery wording, workflow migrations, and `REPORT.md` drift without summarizing workflow steps.
+
 ## [4.6.2] - 2026-04-15
 
 - Slimmed `replicator` into a clearer remake orchestrator, keeping evidence gates and fidelity review while routing material, shader, and performance uncertainty into specialist skills.

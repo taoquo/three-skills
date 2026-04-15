@@ -123,6 +123,44 @@ class ValidateSkillsTests(unittest.TestCase):
                 errors,
             )
 
+    def test_description_allows_trigger_language_with_output_or_deliver(self) -> None:
+        descriptions = (
+            "Use when the build output is broken on mobile devices.",
+            "Use when workers deliver inconsistent previews across browsers.",
+        )
+
+        for description in descriptions:
+            with self.subTest(description=description):
+                with tempfile.TemporaryDirectory() as tmp:
+                    repo_root = Path(tmp)
+                    skill_dir = create_skill(
+                        repo_root,
+                        description=description,
+                    )
+
+                    errors = validate_skills.validate_skill(skill_dir)
+
+                    self.assertEqual(errors, [])
+
+    def test_description_allows_trigger_language_with_workflow_or_report_terms(self) -> None:
+        descriptions = (
+            "Use when a workflow migration breaks on Windows.",
+            "Use when REPORT.md links drift from generated artifacts.",
+        )
+
+        for description in descriptions:
+            with self.subTest(description=description):
+                with tempfile.TemporaryDirectory() as tmp:
+                    repo_root = Path(tmp)
+                    skill_dir = create_skill(
+                        repo_root,
+                        description=description,
+                    )
+
+                    errors = validate_skills.validate_skill(skill_dir)
+
+                    self.assertEqual(errors, [])
+
     def test_valid_skill_passes_new_rules(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             repo_root = Path(tmp)
