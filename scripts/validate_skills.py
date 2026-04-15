@@ -9,6 +9,7 @@ import sys
 from pathlib import Path
 
 MAX_NAME_LENGTH = 64
+MAX_DESCRIPTION_LENGTH = 500
 REQUIRED_TOP_LEVEL_FIELDS = ("name", "description", "license")
 REQUIRED_METADATA_FIELDS = ("category", "render_backends", "shader_language")
 REQUIRED_HOST_MARKDOWN = (
@@ -44,6 +45,16 @@ REQUIRED_HOST_JSON_FIELDS = {
         "skills",
     ),
 }
+DESCRIPTION_WORKFLOW_HINTS = (
+    " then ",
+    "workflow",
+    "step-by-step",
+    "report.md",
+    " output",
+    " outputs",
+    " deliver ",
+    " delivers ",
+)
 
 
 def parse_bool(value: object, default: bool = False) -> bool:
@@ -236,9 +247,20 @@ def validate_skill(skill_dir: Path) -> list[str]:
         errors.append(f"{skill_dir.name}: missing frontmatter description")
     elif "<" in description or ">" in description:
         errors.append(f"{skill_dir.name}: description contains angle brackets")
+    else:
+        if not description.startswith("Use when "):
+            errors.append(f"{skill_dir.name}: description must start with 'Use when '")
+        if len(description) > MAX_DESCRIPTION_LENGTH:
+            errors.append(f"{skill_dir.name}: description exceeds {MAX_DESCRIPTION_LENGTH} characters")
+        if any(hint in description.lower() for hint in DESCRIPTION_WORKFLOW_HINTS):
+            errors.append(
+                f"{skill_dir.name}: description should describe trigger conditions only, not workflow or outputs"
+            )
 
     if not (skill_dir / "references").exists():
         errors.append(f"{skill_dir.name}: missing references/ directory")
+    elif not (skill_dir / "references" / "README.md").exists():
+        errors.append(f"{skill_dir.name}: missing references/README.md")
 
     openai_yaml = skill_dir / "agents" / "openai.yaml"
     if not openai_yaml.exists():
