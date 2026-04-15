@@ -47,7 +47,6 @@ REQUIRED_HOST_JSON_FIELDS = {
 }
 DESCRIPTION_WORKFLOW_PATTERNS = (
     re.compile(r"\bstep-by-step\b"),
-    re.compile(r"\bworkflow\b.{0,40}\b(?:that|which|to)\b"),
     re.compile(
         r"\b(?:produce|produces|generate|generates|return|returns|deliver|delivers)\b.{0,50}\b(?:report\.md|artifact|artifacts|demo|demos|output|outputs|gui|controls)\b"
     ),

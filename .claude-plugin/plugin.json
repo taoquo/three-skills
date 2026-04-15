@@ -1,7 +1,7 @@
 {
   "name": "three-skills",
   "description": "Three.js skills library for effect replication, material studies, performance diagnosis, and shader porting across WebGPU and WebGL2",
-  "version": "4.6.3",
+  "version": "4.6.4",
   "author": {
     "name": "taoquo"
   },

@@ -146,6 +146,8 @@ class ValidateSkillsTests(unittest.TestCase):
         descriptions = (
             "Use when a workflow migration breaks on Windows.",
             "Use when REPORT.md links drift from generated artifacts.",
+            "Use when a CI workflow fails to publish artifacts.",
+            "Use when a workflow refuses to start on Windows.",
         )
 
         for description in descriptions:

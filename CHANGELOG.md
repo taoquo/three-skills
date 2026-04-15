@@ -6,6 +6,11 @@ The format is intentionally simple and repository-focused.
 
 ## [Unreleased]
 
+## [4.6.4] - 2026-04-15
+
+- Removed the remaining `workflow ... to/which/that` lint pattern in `validate_skills.py` so symptom-style trigger descriptions that mention broken CI workflows or startup failures are no longer rejected.
+- Added regression tests covering valid trigger descriptions such as CI workflow publish failures and workflows that refuse to start on Windows.
+
 ## [4.6.3] - 2026-04-15
 
 - Narrowed the skill-description lint in `validate_skills.py` so trigger-oriented descriptions that mention `output`, `deliver`, `workflow`, or `REPORT.md` as symptoms are no longer rejected.
